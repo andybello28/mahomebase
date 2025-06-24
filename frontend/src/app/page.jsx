@@ -1,21 +1,23 @@
 "use client";
 
 import AuthToggle from "./components/AuthToggle";
+import Navbar from "./components/Navbar";
 
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen p-[5vw] bg-black">
+      <Navbar />
       <span
         className="
-    text-[5vw] font-extrabold
-    bg-gradient-to-r from-red-500 to-yellow-400
-    bg-clip-text text-transparent
-    mb-[8vh] mt-[4vh]
-    transition-transform duration-300
-    cursor-default
-    inline-block
-    max-w-full
-  "
+          text-[5vw] font-extrabold
+          bg-gradient-to-r from-red-500 to-yellow-400
+          bg-clip-text text-transparent
+          mb-[8vh] mt-[4vh]
+          transition-transform duration-300
+          cursor-default
+          inline-block
+          max-w-full
+        "
       >
         Mahomebase
       </span>

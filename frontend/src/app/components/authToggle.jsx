@@ -7,7 +7,7 @@ export default function AuthToggle() {
 
   return (
     <div className="flex flex-col items-center justify-start bg-black p-[5vw]">
-      <span className="text-[4vw] font-extrabold text-white mb-8">
+      <span className="text-[3vw] font-extrabold text-white mb-8">
         Get Started
       </span>
 
