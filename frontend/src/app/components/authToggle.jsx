@@ -46,7 +46,7 @@ export default function AuthToggle() {
 
       {/* Forms */}
       {mode === "signup" && (
-        <form className="flex flex-col gap-4 w-[30vw] max-w-md bg-slate-200 dark:bg-gray-900 p-6 rounded-lg shadow-lg text-[var(--foreground)]">
+        <form className="flex flex-col gap-4 w-[30vw] max-w-md bg-slate-200 dark:bg-gray-900 p-6 rounded-lg shadow-lg text-[var(--foreground) text-[1.5vw]">
           <input
             type="text"
             placeholder="Username"
@@ -67,7 +67,7 @@ export default function AuthToggle() {
       )}
 
       {mode === "login" && (
-        <form className="flex flex-col gap-4 w-[30vw] max-w-md bg-slate-200 dark:bg-gray-900 p-6 rounded-lg shadow-lg text-">
+        <form className="flex flex-col gap-4 w-[30vw] max-w-md bg-slate-200 dark:bg-gray-900 p-6 rounded-lg shadow-lg text-[var(--foreground) text-[1.5vw]">
           <input
             type="text"
             placeholder="Username"
