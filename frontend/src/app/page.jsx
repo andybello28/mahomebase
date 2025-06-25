@@ -6,7 +6,9 @@ import Navbar from "./components/Navbar";
 export default function Home() {
   return (
     <div className="flex flex-col items-center justify-start min-h-screen">
-      <Navbar />
+      <div className="sticky top-0 z-50 w-full">
+        <Navbar />
+      </div>
       <span
         className="
           text-[5vw] font-extrabold
@@ -27,7 +29,6 @@ export default function Home() {
           text-[var(--foreground)]
           text-[1.5vw]
           font-semibold
-          font-[family-name:var(--font-ubuntu)]
           max-w-[70vw]
           text-center
           leading-relaxed
@@ -39,8 +40,7 @@ export default function Home() {
         recommendations that help you make smarter trades, optimize your lineup,
         and gain the competitive edge needed to dominate your league. Save time,
         minimize guesswork, and maximize your wins with our easy-to-use,
-        data-driven platform — the future of fantasy football management is
-        here.
+        data-driven platform.
       </div>
       <AuthToggle />
     </div>

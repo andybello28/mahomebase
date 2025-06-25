@@ -2,7 +2,7 @@
 
 export default function Navbar() {
   return (
-    <div className="flex flex-row gap-[5vw] justify-start items-center w-[100%]">
+    <div className="flex flex-row gap-[5vw] justify-start items-center w-[100%] bg-slate-200 dark:bg-gray-900">
       {/* Light mode logo */}
       <img
         src="/assets/Mahomebase_light.png"
@@ -14,31 +14,48 @@ export default function Navbar() {
       <img
         src="/assets/Mahomebase_dark.png"
         alt="Mahomebase logo (dark)"
-        className="w-[10vw] hidden dark:block"
+        className="w-[8vw] hidden dark:block"
       />
       <a
         href="#"
-        className="text-[var(--foreground)] text-[1.2vw] hover:scale-110 transition-transform duration-300"
+        className="text-[var(--foreground)] font-semibold text-[1.3vw] transition-transform duration-300 hover:scale-110 
+             hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
       >
         Home
       </a>
       <a
         href="#"
-        className="text-[var(--foreground)] text-[1.2vw] hover:scale-110 transition-transform duration-300"
+        className="text-[var(--foreground)] font-semibold text-[1.3vw] hover:scale-110 transition-transform duration-300 hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
       >
         My League
       </a>
       <a
         href="#"
-        className="text-[var(--foreground)] text-[1.2vw] hover:scale-110 transition-transform duration-300"
+        className="text-[var(--foreground)] font-semibold text-[1.3vw] hover:scale-110 transition-transform duration-300
+                   hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
       >
-        AI Tools
+        My Profile
       </a>
       <a
         href="#"
-        className="text-[var(--foreground)] text-[1.2vw] hover:scale-110 transition-transform duration-300"
+        className="text-[var(--foreground)] font-semibold text-[1.3vw] hover:scale-110 transition-transform duration-300
+                   hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
       >
-        My Profile
+        About
+      </a>
+      <a
+        href="#"
+        className="text-[var(--foreground)] font-semibold text-[1.3vw] hover:scale-110 transition-transform duration-300
+                   hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
+      >
+        Trade Generator
+      </a>
+      <a
+        href="#"
+        className="text-[var(--foreground)] font-semibold text-[1.3vw] hover:scale-110 transition-transform duration-300
+                   hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
+      >
+        Start/Sit
       </a>
     </div>
   );
