@@ -6,8 +6,8 @@ export default function AuthToggle() {
   const [mode, setMode] = useState("signup"); // "signup" or "login"
 
   return (
-    <div className="flex flex-col items-center justify-start bg-black p-[5vw]">
-      <span className="text-[3vw] font-extrabold text-white mb-8">
+    <div className="flex flex-col items-center justify-start bg-[var(--background)] p-[5vw]">
+      <span className="text-[3vw] font-extrabold text-[var(--foreground)] mb-8">
         Get Started
       </span>
 
@@ -20,8 +20,8 @@ export default function AuthToggle() {
             transition-transform duration-300
             ${
               mode === "signup"
-                ? "bg-gradient-to-r from-red-500 to-yellow-400 text-white scale-110"
-                : "bg-gray-700 text-gray-300 hover:scale-110"
+                ? "bg-gradient-to-r from-red-500 to-yellow-400 text-white hover:scale-110"
+                : "bg-slate-200 dark:bg-gray-700 text-[var(--foreground)] hover:scale-110"
             }
           `}
         >
@@ -35,8 +35,8 @@ export default function AuthToggle() {
             transition-transform duration-300
             ${
               mode === "login"
-                ? "bg-gradient-to-r from-red-500 to-yellow-400 text-white scale-110"
-                : "bg-gray-700 text-gray-300 hover:scale-110"
+                ? "bg-gradient-to-r from-red-500 to-yellow-400 text-white hover:scale-110"
+                : "bg-slate-200 dark:bg-gray-700 text-[var(--foreground)] hover:scale-110"
             }
           `}
         >
@@ -46,16 +46,16 @@ export default function AuthToggle() {
 
       {/* Forms */}
       {mode === "signup" && (
-        <form className="flex flex-col gap-4 w-[30vw] max-w-md bg-gray-900 p-6 rounded-lg shadow-lg text-white">
+        <form className="flex flex-col gap-4 w-[30vw] max-w-md bg-slate-200 dark:bg-gray-900 p-6 rounded-lg shadow-lg text-[var(--foreground)]">
           <input
             type="text"
             placeholder="Username"
-            className="p-3 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="p-3 rounded bg-slate-100 dark:bg-gray-800 dark:border dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <input
             type="password"
             placeholder="Password"
-            className="p-3 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="p-3 rounded bg-slate-100 dark:bg-gray-800 dark:border dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <button
             type="submit"
@@ -67,16 +67,16 @@ export default function AuthToggle() {
       )}
 
       {mode === "login" && (
-        <form className="flex flex-col gap-4 w-[30vw] max-w-md bg-gray-900 p-6 rounded-lg shadow-lg text-white">
+        <form className="flex flex-col gap-4 w-[30vw] max-w-md bg-slate-200 dark:bg-gray-900 p-6 rounded-lg shadow-lg text-">
           <input
             type="text"
             placeholder="Username"
-            className="p-3 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="p-3 rounded bg-slate-100 dark:bg-gray-800 dark:border dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <input
             type="password"
             placeholder="Password"
-            className="p-3 rounded bg-gray-800 border border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
+            className="p-3 rounded bg-slate-100 dark:bg-gray-800 dark:border dark:border-gray-700 focus:outline-none focus:ring-2 focus:ring-red-500"
           />
           <button
             type="submit"

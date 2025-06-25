@@ -5,7 +5,7 @@ import Navbar from "./components/Navbar";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-[5vw] bg-black">
+    <div className="flex flex-col items-center justify-start min-h-screen">
       <Navbar />
       <span
         className="
@@ -24,7 +24,7 @@ export default function Home() {
 
       <div
         className="
-          text-white
+          text-[var(--foreground)]
           text-[1.5vw]
           font-semibold
           font-[family-name:var(--font-ubuntu)]
