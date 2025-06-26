@@ -7,14 +7,14 @@ export default function Navbar() {
       <img
         src="/assets/Mahomebase_light.png"
         alt="Mahomebase logo"
-        className="w-[8vw] block dark:hidden"
+        className="w-[10vh] block dark:hidden"
       />
 
       {/* Dark mode logo */}
       <img
         src="/assets/Mahomebase_dark.png"
         alt="Mahomebase logo (dark)"
-        className="w-[8vw] hidden dark:block"
+        className="w-[10vh] hidden dark:block"
       />
       <a
         href="#"

@@ -8,13 +8,15 @@ export default function Footer() {
         <div className="flex flex-col gap-1 text-[var(--foreground)] text-sm md:text-base font-medium">
           <a
             href="mailto:support@mahomebase.com"
-            className="hover:scale-105 hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent transition-colors transition-transform duration-300"
+            className="text-[var(--foreground)] font-semibold text-[1.1vw] transition-transform duration-300 hover:scale-110 
+             hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
           >
             info@mahomebase.com
           </a>
           <a
             href="mailto:info@mahomebase.com"
-            className="hover:scale-105 hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent transition-colors transition-transform duration-300"
+            className="text-[var(--foreground)] font-semibold text-[1.1vw] transition-transform duration-300 hover:scale-110 
+             hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
           >
             support@mahomebase.com
           </a>
@@ -38,19 +40,22 @@ export default function Footer() {
         <div className="flex flex-col gap-1 text-[var(--foreground)] text-sm md:text-base font-medium text-right">
           <a
             href="#"
-            className="hover:scale-105 hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent transition-colors transition-transform duration-300"
+            className="text-[var(--foreground)] font-semibold text-[1.1vw] transition-transform duration-300 hover:scale-110 
+             hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
           >
             About Us
           </a>
           <a
             href="#"
-            className="hover:scale-105 hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent transition-colors transition-transform duration-300"
+            className="text-[var(--foreground)] font-semibold text-[1.1vw] transition-transform duration-300 hover:scale-110 
+             hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
           >
             Privacy Policy
           </a>
           <a
             href="#"
-            className="hover:scale-105 hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent transition-colors transition-transform duration-300"
+            className="text-[var(--foreground)] font-semibold text-[1.1vw] transition-transform duration-300 hover:scale-110 
+             hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent"
           >
             Terms of Service
           </a>

@@ -6,44 +6,32 @@ import Footer from "./components/Footer";
 
 export default function Home() {
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen">
+    <div className="flex flex-col min-h-[100vh]">
       <div className="sticky top-0 z-50 w-full">
         <Navbar />
       </div>
-      <span
-        className="
-          text-[5vw] font-extrabold
-          bg-gradient-to-r from-red-500 to-yellow-400
-          bg-clip-text text-transparent
-          mb-[8vh] mt-[4vh]
-          transition-transform duration-300
-          cursor-default
-          inline-block
-          max-w-full
-        "
-      >
-        Mahomebase
-      </span>
 
-      <div
-        className="
-          text-[var(--foreground)]
-          text-[1.5vw]
-          font-semibold
-          max-w-[70vw]
-          text-center
-          leading-relaxed
-        "
-      >
-        Mahomebase uses cutting-edge AI technology to provide personalized
-        fantasy football trade advice tailored specifically to your team. By
-        securely connecting your Sleeper account, you get real-time
-        recommendations that help you make smarter trades, optimize your lineup,
-        and gain the competitive edge needed to dominate your league. Save time,
-        minimize guesswork, and maximize your wins with our easy-to-use,
-        data-driven platform.
+      {/* Main content area that grows to fill available space */}
+      <div className="flex-grow flex flex-col items-center justify-start">
+        <span className="text-[5vw] font-extrabold bg-gradient-to-r from-red-500 to-yellow-400 bg-clip-text text-transparent mb-[5vh] mt-[4vh] transition-transform duration-300 cursor-default inline-block max-w-full">
+          Mahomebase
+        </span>
+        <div className="text-[var(--foreground)] mb-[5vh] text-[1.5vw] font-semibold max-w-[70vw] text-center leading-relaxed">
+          The future of fantasy football.
+        </div>
+        <div className="text-[var(--foreground)] text-[1.5vw] font-semibold max-w-[70vw] text-center leading-relaxed">
+          Mahomebase uses cutting-edge AI technology to provide personalized
+          fantasy football trade advice tailored specifically to your team. By
+          securely connecting your Sleeper account, you get real-time
+          recommendations that help you make smarter trades, optimize your
+          lineup, and gain the competitive edge needed to dominate your league.
+          Save time, minimize guesswork, and maximize your wins with our
+          easy-to-use, data-driven platform.
+        </div>
+        <AuthToggle />
       </div>
-      <AuthToggle />
+
+      {/* Footer stays at bottom */}
       <Footer />
     </div>
   );
