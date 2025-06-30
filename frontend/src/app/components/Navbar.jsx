@@ -15,8 +15,8 @@ export default function Navbar() {
 
   return (
     <nav className="w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16 lg:h-20">
+      <div className="w-full px-4 sm:px-6 lg:px-8">
+        <div className="flex items-center h-16 lg:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
             <img
@@ -32,8 +32,8 @@ export default function Navbar() {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="ml-10 flex items-baseline space-x-8">
+          <div className="hidden md:flex flex-1 justify-end">
+            <div className="flex items-baseline space-x-8">
               {navItems.map((item) => (
                 <a
                   key={item.name}
@@ -48,7 +48,7 @@ export default function Navbar() {
           </div>
 
           {/* Mobile menu button */}
-          <div className="md:hidden">
+          <div className="md:hidden ml-auto">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-200 

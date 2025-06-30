@@ -23,7 +23,7 @@ export default function Footer() {
         </div>
 
         {/* Center - Logo */}
-        <div className="w-24 md:w-32 mx-auto absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
+        <div className="w-[10vw] mx-auto absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2">
           <img
             src="/assets/Mahomebase_light.png"
             alt="Mahomebase logo"
