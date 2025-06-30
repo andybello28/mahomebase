@@ -14,6 +14,7 @@ signupRouter.post("/", validateSignup, (req, res) => {
   if (!errors.isEmpty()) {
     return res.status(400).json({ failMessage: messages });
   }
+
   const { Username, Password } = req.body;
 
   res.status(200).json({ success: true, Username });
