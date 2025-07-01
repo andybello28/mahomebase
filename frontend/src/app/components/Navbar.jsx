@@ -1,13 +1,29 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { CgProfile } from "react-icons/cg";
+import { fetchCurrentUser } from "../utils/auth";
+
+const backend_url = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [user, setUser] = useState(null);
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${backend_url}/auth/google`;
+  };
+
+  useEffect(() => {
+    const getUser = async () => {
+      const currentUser = await fetchCurrentUser();
+      setUser(currentUser);
+    };
+    getUser();
+  }, []);
 
   const navItems = [
-    { name: "Home", href: "#" },
+    { name: "Home", href: "/" },
     { name: "Trade Generator", href: "#" },
     { name: "Start/Sit", href: "#" },
     { name: "My League", href: "#" },
@@ -44,14 +60,25 @@ export default function Navbar() {
                   {item.name}
                 </a>
               ))}
-              <a
-                href="#"
-                className="flex flex-row gap-2 justify-center items-center font-semibold transition-transform duration-300 hover:scale-120 px-3 py-2"
-              >
-                <span className="text-[var(--foreground)] text-[2vw]">
-                  <CgProfile className="inline-block" />
-                </span>
-              </a>
+              {user ? (
+                <a
+                  href="/profile"
+                  className="flex flex-row gap-2 justify-center items-center font-semibold transition-transform duration-300 hover:scale-120 px-3 py-2"
+                >
+                  <span className="text-[var(--foreground)] text-[2vw]">
+                    <CgProfile className="inline-block" />
+                  </span>
+                </a>
+              ) : (
+                <button
+                  onClick={handleGoogleLogin}
+                  className="flex flex-row gap-2 justify-center items-center font-semibold transition-transform duration-300 hover:scale-120 px-3 py-2"
+                >
+                  <span className="text-[var(--foreground)] text-[2vw]">
+                    <CgProfile className="inline-block" />
+                  </span>
+                </button>
+              )}
             </div>
           </div>
 
