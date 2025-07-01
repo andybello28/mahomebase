@@ -16,6 +16,5 @@ datasource db {
 
 model User {
   id        Int      @id @default(autoincrement())
-  name      String   @unique
-  password  String
+  google_id      String   @unique
 }

@@ -10,6 +10,28 @@ export default function AuthToggle() {
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
+  const fetchCurrentUser = async () => {
+    try {
+      const res = await fetch("http://localhost:4000/auth/user", {
+        credentials: "include",
+      });
+      const data = await res.json();
+      console.log("Current user:", data.user);
+    } catch (err) {
+      console.error("Error fetching user:", err);
+    }
+  };
+
+  fetchCurrentUser();
+
+  const handleGoogleLogin = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/google`;
+  };
+
+  const handleGoogleLogout = () => {
+    window.location.href = `${process.env.NEXT_PUBLIC_API_URL}/auth/logout`;
+  };
+
   const resetForm = () => {
     setUsername("");
     setPassword("");
@@ -47,7 +69,6 @@ export default function AuthToggle() {
       <span className="text-[3vw] font-extrabold text-[var(--foreground)] mb-8">
         Get Started
       </span>
-
       <div className="flex flex-row items-center justify-center gap-[5vw] mb-8">
         <button
           onClick={() => handleModeSwitch("signup")}
@@ -79,7 +100,6 @@ export default function AuthToggle() {
           Log In
         </button>
       </div>
-
       {mode === "signup" && (
         <form
           onSubmit={handleSignUp}
@@ -109,7 +129,6 @@ export default function AuthToggle() {
           </button>
         </form>
       )}
-
       {mode === "login" && (
         <form className="flex flex-col gap-4 w-[30vw] max-w-md bg-slate-200 dark:bg-gray-900 p-6 rounded-lg shadow-lg text-[var(--foreground)] text-[1.5vw]">
           <input
@@ -130,6 +149,13 @@ export default function AuthToggle() {
           </button>
         </form>
       )}
+      <button
+        onClick={handleGoogleLogin}
+        className="mt-6 px-6 py-3 bg-blue-600 text-white rounded-lg shadow-lg hover:bg-blue-700 transition"
+      >
+        Login with Google
+      </button>
+      <button onClick={handleGoogleLogout}>Logout</button>
     </div>
   );
 }
