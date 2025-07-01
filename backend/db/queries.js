@@ -2,7 +2,7 @@ const { PrismaClient } = require("../generated/prisma");
 
 const prisma = new PrismaClient();
 
-async function findOrCreate(googleId) {
+async function findOrCreate(googleId, email, name) {
   try {
     let user = await prisma.user.findUnique({
       where: {
@@ -17,6 +17,8 @@ async function findOrCreate(googleId) {
     user = await prisma.user.create({
       data: {
         google_id: googleId,
+        email: email,
+        name: name,
       },
     });
 

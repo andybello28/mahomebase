@@ -87,8 +87,8 @@ export default function Navbar() {
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-200 
-                       hover:text-red-500 hover:bg-gray-100 dark:hover:bg-gray-700 
-                       transition-colors duration-200"
+                       hover:bg-gray-100 dark:hover:bg-gray-700 
+                       transition-colors duration-200 cursor-pointer"
               aria-expanded="false"
               aria-label="Toggle navigation menu"
             >
@@ -141,22 +141,27 @@ export default function Navbar() {
             <a
               key={item.name}
               href={item.href}
-              className="block px-3 py-2 text-[2vw] font-semibold text-[var(--foreground)] transition-transform duration-300
-                       hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent
-                       hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
+              className="block px-3 py-2 text-[2vw] font-semibold text-[var(--foreground)] transition-transform duration-300 rounded-md"
               onClick={() => setIsMobileMenuOpen(false)}
             >
               {item.name}
             </a>
           ))}
-          <a
-            href="#"
-            className="block px-3 py-2 text-[2vw] font-semibold text-[var(--foreground)] transition-transform duration-300
-            hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent
-            hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
-          >
-            Profile
-          </a>
+          {user ? (
+            <a
+              href="/profile"
+              className="block px-3 py-2 text-[2vw] font-semibold text-[var(--foreground)] transition-transform duration-300 rounded-md cursor-pointer"
+            >
+              Profile
+            </a>
+          ) : (
+            <button
+              onClick={handleGoogleLogin}
+              className="block px-3 py-2 text-[2vw] font-semibold text-[var(--foreground)] transition-transform duration-300 rounded-md cursor-pointer"
+            >
+              Profile
+            </button>
+          )}
         </div>
       </div>
     </nav>

@@ -51,7 +51,7 @@ export default function Home() {
           another ring, Mahomebase is your competitive edge. We're just getting
           started, and we're excited to have you on this journey with us.
         </div>
-        <div className="text-[var(--foreground)] text-[1.5vw] font-semibold max-w-[70vw] text-center leading-relaxed">
+        <div className="text-[var(--foreground)] mb-[1.5vh] text-[1.5vw] font-semibold max-w-[70vw] text-center leading-relaxed">
           Ready to dominate your leagues?
         </div>
         {!user && <Login />}

@@ -4,17 +4,19 @@ import { useState, useEffect } from "react";
 import { fetchCurrentUser } from "../utils/auth";
 
 import Footer from "../components/Footer";
-import Login from "../components/Login";
 import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
 
 export default function Users() {
   const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
+      setIsLoading(true);
       const currentUser = await fetchCurrentUser();
       setUser(currentUser);
+      setIsLoading(false);
     };
     getUser();
   }, []);
@@ -25,14 +27,8 @@ export default function Users() {
       <div className="flex-grow flex flex-col items-center justify-start">
         {user && (
           <>
-            <span>Welcome, {user.id}</span>
-            <Logout />{" "}
-          </>
-        )}
-        {!user && (
-          <>
-            <span>Please log in...</span>
-            <Login />
+            <span>Welcome, {user.name}</span>
+            <Logout />
           </>
         )}
       </div>

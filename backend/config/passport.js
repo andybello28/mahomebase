@@ -14,7 +14,12 @@ passport.use(
     },
     async function (accessToken, refreshToken, profile, cb) {
       try {
-        const user = await findOrCreate(profile.id);
+        console.log(JSON.stringify(profile, null, 2));
+        const user = await findOrCreate(
+          profile.id,
+          profile.emails[0].value,
+          profile.displayName
+        );
         return cb(null, user);
       } catch (error) {
         console.error("Error during authentication:", error);
