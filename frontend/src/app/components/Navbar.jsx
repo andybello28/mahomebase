@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { CgProfile } from "react-icons/cg";
 
 export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -10,24 +11,23 @@ export default function Navbar() {
     { name: "Trade Generator", href: "#" },
     { name: "Start/Sit", href: "#" },
     { name: "My League", href: "#" },
-    { name: "My Profile", href: "#" },
   ];
 
   return (
-    <nav className="w-full bg-white/80 dark:bg-gray-900/80 backdrop-blur-md border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-      <div className="w-full px-4 sm:px-6 lg:px-8">
+    <nav className="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
+      <div className="w-full px-4 sm:px-6 lg:px-8 py-2">
         <div className="flex items-center h-16 lg:h-20">
           {/* Logo */}
           <div className="flex-shrink-0">
             <img
               src="/assets/Mahomebase_light.png"
               alt="Mahomebase logo"
-              className="w-[10vh] block dark:hidden"
+              className="w-[10vw] block dark:hidden"
             />
             <img
               src="/assets/Mahomebase_dark.png"
               alt="Mahomebase logo"
-              className="w-[10vh] hidden dark:block"
+              className="w-[10vw] hidden dark:block"
             />
           </div>
 
@@ -44,6 +44,14 @@ export default function Navbar() {
                   {item.name}
                 </a>
               ))}
+              <a
+                href="#"
+                className="flex flex-row gap-2 justify-center items-center font-semibold transition-transform duration-300 hover:scale-120 px-3 py-2"
+              >
+                <span className="text-[var(--foreground)] text-[2vw]">
+                  <CgProfile className="inline-block" />
+                </span>
+              </a>
             </div>
           </div>
 
@@ -114,6 +122,14 @@ export default function Navbar() {
               {item.name}
             </a>
           ))}
+          <a
+            href="#"
+            className="block px-3 py-2 text-[2vw] font-semibold text-[var(--foreground)] transition-transform duration-300
+            hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent
+            hover:bg-gray-50 dark:hover:bg-gray-800 rounded-md"
+          >
+            Profile
+          </a>
         </div>
       </div>
     </nav>

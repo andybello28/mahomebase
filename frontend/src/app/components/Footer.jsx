@@ -2,7 +2,7 @@
 
 export default function Footer() {
   return (
-    <footer className="relative w-full bg-slate-100 dark:bg-gray-900 py-6">
+    <footer className="relative w-full border-t border-gray-200 dark:border-gray-700 dark:bg-gray-900 py-[3vh]">
       <div className="flex justify-between items-center px-6">
         {/* Left - Contact Links */}
         <div className="flex flex-col gap-1 text-[var(--foreground)] text-sm md:text-base font-medium">
