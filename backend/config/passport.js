@@ -1,9 +1,7 @@
 const passport = require("passport");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const { findOrCreate } = require("../db/queries");
-const { PrismaClient } = require("../generated/prisma");
-
-const prisma = new PrismaClient();
+const prisma = require("../db/prisma");
 
 passport.use(
   new GoogleStrategy(
@@ -14,7 +12,6 @@ passport.use(
     },
     async function (accessToken, refreshToken, profile, cb) {
       try {
-        console.log(JSON.stringify(profile, null, 2));
         const user = await findOrCreate(
           profile.id,
           profile.emails[0].value,

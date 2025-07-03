@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const session = require("express-session");
+const prisma = require("./db/prisma");
+const { PrismaSessionStore } = require("@quixo3/prisma-session-store");
 const passport = require("./config/passport");
 require("dotenv").config();
 const app = express();
@@ -21,9 +23,17 @@ app.use(
 
 app.use(
   session({
-    secret: process.env.SESSION_SECRET || "your-secret",
+    cookie: {
+      maxAge: 60 * 60 * 1000, // 1 hour in ms
+    },
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 2 * 60 * 1000, //ms
+      dbRecordIdIsSessionId: true,
+      dbRecordIdFunction: undefined,
+    }),
   })
 );
 

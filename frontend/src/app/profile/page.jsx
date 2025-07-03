@@ -16,6 +16,7 @@ export default function Users() {
       setIsLoading(true);
       const currentUser = await fetchCurrentUser();
       setUser(currentUser);
+      console.log(currentUser);
       setIsLoading(false);
     };
     getUser();
@@ -28,6 +29,10 @@ export default function Users() {
         {user && (
           <>
             <span>Welcome, {user.name}</span>
+            <span>
+              Winning leagues with Mahomebase since{" "}
+              {new Date(user.createdAt).toLocaleDateString()}
+            </span>
             <Logout />
           </>
         )}
