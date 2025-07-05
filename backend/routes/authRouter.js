@@ -20,8 +20,8 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:3000",
-    successRedirect: "http://localhost:3000/profile",
+    failureRedirect: "http://localhost:3000?login=fail",
+    successRedirect: "http://localhost:3000/profile?login=success",
     session: true,
   })
 );
@@ -37,7 +37,7 @@ router.get("/logout", (req, res, next) => {
       }
 
       res.clearCookie("connect.sid");
-      res.redirect("http://localhost:3000");
+      res.redirect("http://localhost:3000?logout=success");
     });
   });
 });

@@ -4,12 +4,14 @@ import { useState, useEffect } from "react";
 import { fetchCurrentUser } from "../utils/auth";
 import { addLeague } from "../utils/league";
 import { toast } from "react-toastify";
+import { useSearchParams } from "next/navigation";
 
 import Footer from "../components/Footer";
 import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
 
 export default function Users() {
+  const searchParams = useSearchParams();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   //Used for ui experience with the form for entering league id
@@ -19,6 +21,9 @@ export default function Users() {
     const getUser = async () => {
       setIsLoading(true);
       const currentUser = await fetchCurrentUser();
+      if (currentUser && searchParams.get("login") == "success") {
+        toast.success("Login Successful");
+      }
       setUser(currentUser);
       setIsLoading(false);
     };

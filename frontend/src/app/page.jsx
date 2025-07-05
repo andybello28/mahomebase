@@ -3,17 +3,23 @@
 import { useState, useEffect } from "react";
 
 import { fetchCurrentUser } from "./utils/auth";
+import { useSearchParams } from "next/navigation";
+import { toast } from "react-toastify";
 
 import Login from "./components/Login";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 
 export default function Home() {
+  const searchParams = useSearchParams();
   const [user, setUser] = useState(null);
 
   useEffect(() => {
     const getUser = async () => {
       const currentUser = await fetchCurrentUser();
+      if (!currentUser && searchParams.get("logout") == "success") {
+        toast.success("Logout Successful");
+      }
       setUser(currentUser);
     };
     getUser();

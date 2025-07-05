@@ -6,11 +6,11 @@ import { toast } from "react-toastify";
 export default function AuthToggle() {
   const handleGoogleLogout = () => {
     toast("Redirecting for logout...", {
-      autoClose: 1000,
+      autoClose: 500,
     });
     setTimeout(() => {
       window.location.href = `${backend_url}/auth/logout`;
-    }, 2000);
+    }, 1000);
   };
 
   return (
