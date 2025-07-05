@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { CgProfile } from "react-icons/cg";
 import { fetchCurrentUser } from "../utils/auth";
+import { toast } from "react-toastify";
 
 const backend_url = process.env.NEXT_PUBLIC_API_URL;
 
@@ -11,7 +12,12 @@ export default function Navbar() {
   const [user, setUser] = useState(null);
 
   const handleGoogleLogin = () => {
-    window.location.href = `${backend_url}/auth/google`;
+    toast("Redirecting for sign in...", {
+      autoClose: 1000,
+    });
+    setTimeout(() => {
+      window.location.href = `${backend_url}/auth/google`;
+    }, 2000);
   };
 
   useEffect(() => {

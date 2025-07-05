@@ -1,10 +1,16 @@
 "use client";
 
 const backend_url = process.env.NEXT_PUBLIC_API_URL;
+import { toast } from "react-toastify";
 
 export default function AuthToggle() {
   const handleGoogleLogin = () => {
-    window.location.href = `${backend_url}/auth/google`;
+    toast("Redirecting for sign in...", {
+      autoClose: 1000,
+    });
+    setTimeout(() => {
+      window.location.href = `${backend_url}/auth/google`;
+    }, 2000);
   };
 
   return (
