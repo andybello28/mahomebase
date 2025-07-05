@@ -1,6 +1,6 @@
 const prisma = require("./prisma");
 
-async function findOrCreate(googleId, email, name) {
+async function findOrCreate(googleId, email, name, leagues) {
   try {
     let user = await prisma.user.findUnique({
       where: {
