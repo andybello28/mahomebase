@@ -25,13 +25,13 @@ app.use(
 app.use(
   session({
     cookie: {
-      maxAge: 60 * 60 * 1000, // 1 hour in ms
+      maxAge: 60 * 60 * 1000, // 1 hr in ms
     },
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store: new PrismaSessionStore(prisma, {
-      checkPeriod: 2 * 60 * 1000, //ms
+      checkPeriod: 2 * 60 * 1000,
       dbRecordIdIsSessionId: true,
       dbRecordIdFunction: undefined,
     }),

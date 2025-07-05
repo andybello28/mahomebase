@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { fetchCurrentUser } from "../utils/auth";
 import { addLeague } from "../utils/league";
+import { toast } from "react-toastify";
 
 import Footer from "../components/Footer";
 import Logout from "../components/Logout";
@@ -11,8 +12,8 @@ import Navbar from "../components/Navbar";
 export default function Users() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
+  //Used for ui experience with the form for entering league id
   const [leagueId, setLeagueId] = useState("");
-  const [isAddingLeague, setIsAddingLeague] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -29,11 +30,9 @@ export default function Users() {
     console.log("FORM SUBMITTED");
 
     if (!leagueId.trim()) {
-      alert("Please enter a league ID.");
+      toast.error("Please enter a league ID.");
       return;
     }
-
-    setIsAddingLeague(true);
 
     try {
       const result = await addLeague(leagueId.trim());
@@ -44,14 +43,16 @@ export default function Users() {
           ...prev,
           leagues: result.leagues,
         }));
-        alert("League added!");
+        toast.success("League Created");
       } else {
-        alert(result?.message);
+        result?.message.map((e) => {
+          toast.error(e);
+        });
       }
       setLeagueId("");
     } catch (error) {
       console.error("Error in handleAddLeague:", error);
-      alert("Failed to add league.");
+      toast.error("Failed to add league.");
     }
   }
 
@@ -86,7 +87,7 @@ export default function Users() {
                   placeholder="Sleeper League ID"
                   onChange={(e) => setLeagueId(e.target.value)}
                   aria-label="Sleeper League ID"
-                  className="mb-2 px-2 py-1 text-black"
+                  className="mb-2 px-2 py-1 text-[var(--foreground)] focus-none"
                 />
                 <button
                   type="submit"
