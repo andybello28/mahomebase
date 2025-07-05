@@ -26,7 +26,7 @@ export default function Navbar() {
     { name: "Home", href: "/" },
     { name: "Trade Generator", href: "#" },
     { name: "Start/Sit", href: "#" },
-    { name: "My League", href: "#" },
+    { name: "League Overview", href: "#" },
   ];
 
   return (

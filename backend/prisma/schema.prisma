@@ -19,6 +19,7 @@ model User {
   google_id    String   @unique
   email        String?  @unique
   name         String
+  leagues      String[]    
   createdAt    DateTime @default(now())
 }
 
