@@ -32,7 +32,6 @@ export default function Users() {
 
   async function handleAddLeague(e) {
     e.preventDefault();
-    console.log("FORM SUBMITTED");
 
     if (!leagueId.trim()) {
       toast.error("Please enter a league ID.");
@@ -48,7 +47,7 @@ export default function Users() {
           ...prev,
           leagues: result.leagues,
         }));
-        toast.success("League Created");
+        toast.success("League Registered");
       } else {
         result?.message.map((e) => {
           toast.error(e);

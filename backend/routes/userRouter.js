@@ -7,8 +7,7 @@ const { createLeague } = require("../db/queries");
 router.post("/leagues", validateLeague, async (req, res) => {
   try {
     const errors = validationResult(req);
-    //message will be an array of messages saying why the requested league failed to be pushed. Some of these
-    //are gotten straight from the express validator or if the requested league to be added is already assigned to a user.
+    //message will be an array of messages saying why the requested league failed to be pushed.
     if (!errors.isEmpty()) {
       let msgArray = [];
       errors.array().forEach((e) => {
@@ -18,6 +17,18 @@ router.post("/leagues", validateLeague, async (req, res) => {
     }
     const { leagueId } = req.body;
     const { google_id: googleId, leagues: leagues } = req.user;
+
+    //Check if the league is in sleeper api
+    const sleeperRes = await fetch(
+      `https://api.sleeper.app/v1/league/${leagueId.trim()}`
+    );
+    const sleeperResText = await sleeperRes.text();
+    if (sleeperResText === "null") {
+      return res.json({
+        message: ["Could not find this league in Sleeper"],
+      });
+    }
+
     const newLeagues = await createLeague(googleId, leagues, leagueId);
 
     if (!newLeagues) {
