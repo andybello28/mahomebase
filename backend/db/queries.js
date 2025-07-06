@@ -50,4 +50,21 @@ async function createLeague(googleId, currentLeagues, leagueId) {
   }
 }
 
-module.exports = { findOrCreate, createLeague };
+async function deleteLeague(googleId, currentLeagues, leagueId) {
+  try {
+    const updatedLeagues = currentLeagues.filter((id) => id !== leagueId);
+    const updatedUser = await prisma.user.update({
+      where: { google_id: googleId },
+      data: {
+        leagues: updatedLeagues,
+      },
+    });
+    console.log(updatedLeagues);
+    return updatedUser.leagues;
+  } catch (error) {
+    console.error("Error removing league from list:", error);
+    throw error;
+  }
+}
+
+module.exports = { findOrCreate, createLeague, deleteLeague };

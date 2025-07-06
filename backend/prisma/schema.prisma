@@ -19,8 +19,16 @@ model User {
   google_id    String   @unique
   email        String?  @unique
   name         String
-  leagues      String[]    
+  leagues      League[]    
   createdAt    DateTime @default(now())
+}
+
+model League {
+  id           Int      @id @default(autoincrement())
+  league_id    String   @unique
+  name         String 
+  rosters      Int
+  previous_league_id
 }
 
 model Session {

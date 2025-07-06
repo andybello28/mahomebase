@@ -2,13 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { fetchCurrentUser } from "../utils/auth";
-import { addLeague } from "../utils/league";
+import { addLeague, deleteLeague } from "../utils/league";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 
 import Footer from "../components/Footer";
 import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
+
+import { FaRegTrashAlt } from "react-icons/fa";
 
 export default function Users() {
   const searchParams = useSearchParams();
@@ -60,6 +62,25 @@ export default function Users() {
     }
   }
 
+  async function handleDeleteLeague(e, leagueId) {
+    e.preventDefault();
+    try {
+      console.log("Deleting: ", leagueId);
+      //Returns new list of leagues
+      const result = await deleteLeague(leagueId);
+      if (result?.leagues) {
+        setUser((prev) => ({
+          ...prev,
+          leagues: result.leagues,
+        }));
+        toast.success("League Deleted From Mahomebase");
+      }
+    } catch (error) {
+      console.error("Error in handleAddLeague:", error);
+      toast.error("Failed to delete league");
+    }
+  }
+
   return (
     <div className="flex flex-col items-center justify-start min-h-[100vh]">
       <Navbar />
@@ -78,8 +99,18 @@ export default function Users() {
             </div>
             <div className="flex flex-col gap-[3vh] items-center justify-center bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 flex-1">
               <span className="text-2xl font-bold">My Leagues</span>
-              {user.leagues.map((e, index) => (
-                <span key={index}>{e}</span>
+              {user.leagues.map((leagueId, index) => (
+                <div key={index} className="flex flex-row gap-[2vw]">
+                  <div>{leagueId}</div>
+                  <button
+                    onClick={(e) => {
+                      handleDeleteLeague(e, leagueId);
+                    }}
+                    className="hover:scale-120"
+                  >
+                    <FaRegTrashAlt />
+                  </button>
+                </div>
               ))}
               <form
                 className="flex flex-col bg-[var(--background)] border border-[var(--foreground)] text-[var(--foreground)] font-semibold px-6 py-3 rounded-lg"

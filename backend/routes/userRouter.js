@@ -2,9 +2,9 @@ const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
 const validateLeague = require("../validators/leagueValidator");
-const { createLeague } = require("../db/queries");
+const { createLeague, deleteLeague } = require("../db/queries");
 
-router.post("/leagues", validateLeague, async (req, res) => {
+router.post("/leagues/create", validateLeague, async (req, res) => {
   try {
     const errors = validationResult(req);
     //message will be an array of messages saying why the requested league failed to be pushed.
@@ -13,7 +13,7 @@ router.post("/leagues", validateLeague, async (req, res) => {
       errors.array().forEach((e) => {
         msgArray.push(e.msg);
       });
-      return res.json({ message: msgArray });
+      return res.status(400).json({ message: msgArray });
     }
     const { leagueId } = req.body;
     const { google_id: googleId, leagues: leagues } = req.user;
@@ -24,7 +24,7 @@ router.post("/leagues", validateLeague, async (req, res) => {
     );
     const sleeperResText = await sleeperRes.text();
     if (sleeperResText === "null") {
-      return res.json({
+      return res.status(404).json({
         message: ["Could not find this league in Sleeper"],
       });
     }
@@ -32,16 +32,33 @@ router.post("/leagues", validateLeague, async (req, res) => {
     const newLeagues = await createLeague(googleId, leagues, leagueId);
 
     if (!newLeagues) {
-      return res.json({
-        message: [`${leagueId} already registered to your account`],
+      return res.status(409).json({
+        message: [
+          `This league is already registered to your Mahomebase account`,
+        ],
       });
     } else {
-      return res.json({
+      return res.status(200).json({
         leagues: newLeagues,
       });
     }
   } catch (error) {
-    console.error("Error in POST /leagues:", error);
+    console.error("Error in POST /leagues/create:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/leagues/delete", async (req, res) => {
+  try {
+    const { leagueId } = req.body;
+    const { google_id: googleId, leagues: leagues } = req.user;
+
+    const updatedLeagues = await deleteLeague(googleId, leagues, leagueId);
+    return res.status(200).json({
+      leagues: updatedLeagues,
+    });
+  } catch (error) {
+    console.error("Error in POST /leagues/delete:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
