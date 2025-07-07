@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { fetchCurrentUser } from "../utils/auth";
-import { addLeague, deleteLeague } from "../utils/league";
+import { linkSleeper, unlinkSleeper } from "../utils/sleeperUsername";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 
@@ -16,8 +16,9 @@ export default function Users() {
   const searchParams = useSearchParams();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  //Used for ui experience with the form for entering league id
-  const [leagueId, setLeagueId] = useState("");
+  //Used for ui experience with the form for entering sleeper username
+  const [sleeperUsername, setSleeperUsername] = useState("");
+  const [showSleeperForm, setShowSleeperForm] = useState(false);
 
   useEffect(() => {
     const getUser = async () => {
@@ -32,52 +33,50 @@ export default function Users() {
     getUser();
   }, []);
 
-  async function handleAddLeague(e) {
+  async function handleAddUsername(e) {
     e.preventDefault();
 
-    if (!leagueId.trim()) {
-      toast.error("Please enter a league ID.");
+    if (!sleeperUsername.trim()) {
+      toast.error("Please enter a sleeper username.");
       return;
     }
 
     try {
-      const result = await addLeague(leagueId.trim());
+      const result = await linkSleeper(sleeperUsername.trim());
       console.log("Server response:", result);
 
-      if (result?.leagues) {
+      if (result?.sleeper_username) {
         setUser((prev) => ({
           ...prev,
-          leagues: result.leagues,
+          sleeper_username: result.sleeper_username,
         }));
-        toast.success("League Registered");
+        toast.success("Sleeper Account Linked");
       } else {
         result?.message.map((e) => {
           toast.error(e);
         });
       }
-      setLeagueId("");
+      setSleeperUsername("");
     } catch (error) {
-      console.error("Error in handleAddLeague:", error);
-      toast.error("Failed to add league.");
+      console.error("Error in linkSleeper:", error);
+      toast.error("Failed to link Sleeper.");
     }
   }
 
-  async function handleDeleteLeague(e, leagueId) {
+  async function handleDeleteUsername(e) {
     e.preventDefault();
     try {
-      console.log("Deleting: ", leagueId);
-      //Returns new list of leagues
-      const result = await deleteLeague(leagueId);
-      if (result?.leagues) {
+      const result = await unlinkSleeper();
+      if (result.sleeper_username == null) {
         setUser((prev) => ({
           ...prev,
-          leagues: result.leagues,
+          sleeper_username: null,
         }));
-        toast.success("League Deleted From Mahomebase");
+        toast.success("Sleeper account unlinked from Mahomebase");
       }
     } catch (error) {
-      console.error("Error in handleAddLeague:", error);
-      toast.error("Failed to delete league");
+      console.error("Error in unlinkedSleeper:", error);
+      toast.error("Failed to unlink sleeper");
     }
   }
 
@@ -92,6 +91,77 @@ export default function Users() {
               <span className="text-lg font-semibold text-[var(--foreground)] text-center">
                 Welcome, {user.name}
               </span>
+              {!user.sleeper_username && (
+                <>
+                  {!showSleeperForm && (
+                    <button
+                      onClick={() => setShowSleeperForm(true)}
+                      className="flex items-center gap-3 py-3 px-6 rounded-lg bg-[var(--foreground)] text-[var(--background)] font-semibold transition-all duration-300 hover:scale-105 hover:shadow-md w-full justify-center mt-4"
+                    >
+                      <img
+                        src="/assets/sleeper.png"
+                        alt="Sleeper logo"
+                        className="w-6 h-6 object-contain"
+                      />
+                      Link Sleeper Account
+                    </button>
+                  )}
+                  {showSleeperForm && (
+                    <form
+                      className="flex flex-col gap-3 bg-[var(--background)] border border-[var(--foreground)] text-[var(--foreground)] font-semibold p-4 rounded-lg w-full mt-4"
+                      onSubmit={handleAddUsername}
+                    >
+                      <input
+                        type="text"
+                        value={sleeperUsername}
+                        placeholder="Enter Sleeper Username"
+                        onChange={(e) => setSleeperUsername(e.target.value)}
+                        aria-label="Sleeper"
+                        className="px-3 py-2 text-[var(--foreground)] bg-[var(--background)] border border-[var(--foreground)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] transition-all duration-300"
+                      />
+                      <div className="flex gap-2">
+                        <button
+                          type="submit"
+                          className="py-2 flex-1 rounded-lg bg-[var(--foreground)] text-[var(--background)] font-semibold transition-all duration-300 hover:scale-105"
+                        >
+                          Link Sleeper
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => setShowSleeperForm(false)}
+                          className="py-2 px-4 rounded-lg border border-[var(--foreground)] text-[var(--foreground)] transition-all duration-300 hover:bg-[var(--foreground)] hover:text-[var(--background)]"
+                        >
+                          Cancel
+                        </button>
+                      </div>
+                    </form>
+                  )}
+                </>
+              )}
+              {user.sleeper_username && (
+                <div className="flex items-center justify-between w-full mt-4 p-4 bg-[var(--background)] border border-[var(--foreground)] rounded-lg">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src="/assets/sleeper.png"
+                      alt="Sleeper logo"
+                      className="w-8 h-8 object-contain"
+                    />
+                    <span className="text-lg font-semibold text-[var(--foreground)]">
+                      {user.sleeper_username}
+                    </span>
+                  </div>
+                  <button
+                    onClick={(e) => {
+                      handleDeleteUsername(e);
+                      setShowSleeperForm(false);
+                    }}
+                    className="flex items-center justify-center p-2 text-[var(--foreground)] hover:text-red-500 hover:scale-105 transition-all duration-300 rounded-lg border border-[var(--foreground)] hover:border-red-500"
+                    aria-label="Delete sleeper username"
+                  >
+                    <FaRegTrashAlt className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
               <span className="text-sm text-[var(--foreground)] text-center ">
                 Winning leagues with Mahomebase since{" "}
                 {new Date(user.createdAt).toLocaleDateString()}
@@ -99,38 +169,6 @@ export default function Users() {
             </div>
             <div className="flex flex-col gap-[3vh] items-center justify-center bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 flex-1">
               <span className="text-2xl font-bold">My Leagues</span>
-              {user.leagues.map((leagueId, index) => (
-                <div key={index} className="flex flex-row gap-[2vw]">
-                  <div>{leagueId}</div>
-                  <button
-                    onClick={(e) => {
-                      handleDeleteLeague(e, leagueId);
-                    }}
-                    className="hover:scale-120"
-                  >
-                    <FaRegTrashAlt />
-                  </button>
-                </div>
-              ))}
-              <form
-                className="flex flex-col bg-[var(--background)] border border-[var(--foreground)] text-[var(--foreground)] font-semibold px-6 py-3 rounded-lg"
-                onSubmit={handleAddLeague}
-              >
-                <input
-                  type="text"
-                  value={leagueId}
-                  placeholder="Sleeper League ID"
-                  onChange={(e) => setLeagueId(e.target.value)}
-                  aria-label="Sleeper League ID"
-                  className="mb-2 px-2 py-1 text-[var(--foreground)] focus-none"
-                />
-                <button
-                  type="submit"
-                  className="py-2 rounded bg-[var(--foreground)] text-[var(--background)] transition-colors duration-300"
-                >
-                  Add League
-                </button>
-              </form>
             </div>
           </div>
 

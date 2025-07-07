@@ -15,8 +15,7 @@ passport.use(
         const user = await findOrCreate(
           profile.id,
           profile.emails[0].value,
-          profile.displayName,
-          profile.leagues
+          profile.displayName
         );
         return cb(null, user);
       } catch (error) {

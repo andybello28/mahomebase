@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
-const validateLeague = require("../validators/leagueValidator");
-const { createLeague, deleteLeague } = require("../db/queries");
+const validateSleeper = require("../validators/sleeperValidator");
+const { linkSleeperId, unlinkSleeperId } = require("../db/queries");
 
-router.post("/leagues/create", validateLeague, async (req, res) => {
+router.post("/link", validateSleeper, async (req, res) => {
   try {
     const errors = validationResult(req);
     //message will be an array of messages saying why the requested league failed to be pushed.
@@ -15,50 +15,40 @@ router.post("/leagues/create", validateLeague, async (req, res) => {
       });
       return res.status(400).json({ message: msgArray });
     }
-    const { leagueId } = req.body;
-    const { google_id: googleId, leagues: leagues } = req.user;
+    const { sleeperUsername } = req.body;
+    const { google_id: googleId } = req.user;
 
-    //Check if the league is in sleeper api
+    //Check if the user is in sleeper api
     const sleeperRes = await fetch(
-      `https://api.sleeper.app/v1/league/${leagueId.trim()}`
+      `https://api.sleeper.app/v1/user/${sleeperUsername}`
     );
-    const sleeperResText = await sleeperRes.text();
-    if (sleeperResText === "null") {
+    const sleeperData = await sleeperRes.json();
+    if (!sleeperData) {
       return res.status(404).json({
-        message: ["Could not find this league in Sleeper"],
+        message: [`Could not find ${sleeperUsername} in Sleeper`],
       });
     }
 
-    const newLeagues = await createLeague(googleId, leagues, leagueId);
-
-    if (!newLeagues) {
-      return res.status(409).json({
-        message: [
-          `This league is already registered to your Mahomebase account`,
-        ],
-      });
-    } else {
-      return res.status(200).json({
-        leagues: newLeagues,
-      });
-    }
+    const connectSleeper = await linkSleeperId(googleId, sleeperUsername);
+    return res.status(200).json({
+      sleeper_username: connectSleeper,
+    });
   } catch (error) {
-    console.error("Error in POST /leagues/create:", error);
+    console.error("Error in POST /link:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });
 
-router.post("/leagues/delete", async (req, res) => {
+router.post("/unlink", async (req, res) => {
   try {
-    const { leagueId } = req.body;
-    const { google_id: googleId, leagues: leagues } = req.user;
+    const { google_id: googleId } = req.user;
 
-    const updatedLeagues = await deleteLeague(googleId, leagues, leagueId);
+    const nullUsername = await unlinkSleeperId(googleId);
     return res.status(200).json({
-      leagues: updatedLeagues,
+      sleeper_username: nullUsername,
     });
   } catch (error) {
-    console.error("Error in POST /leagues/delete:", error);
+    console.error("Error in POST /unlink:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 });

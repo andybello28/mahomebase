@@ -1,39 +1,36 @@
-const addLeague = async (inputLeague) => {
+const linkSleeper = async (inputUsername) => {
   try {
-    const res = await fetch("http://localhost:4000/user/leagues/create", {
+    const res = await fetch("http://localhost:4000/user/link", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include",
       body: JSON.stringify({
-        leagueId: inputLeague,
+        sleeperUsername: inputUsername,
       }),
     });
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error();
+    console.error("Error linking sleeper username:", error);
   }
 };
 
-const deleteLeague = async (leagueId) => {
+const unlinkSleeper = async () => {
   try {
-    const res = await fetch("http://localhost:4000/user/leagues/delete", {
+    const res = await fetch("http://localhost:4000/user/unlink", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       credentials: "include",
-      body: JSON.stringify({
-        leagueId: leagueId,
-      }),
     });
     const data = await res.json();
     return data;
   } catch (error) {
-    console.error();
+    console.error("Error unlinking sleeper username:", error);
   }
 };
 
-export { addLeague, deleteLeague };
+export { linkSleeper, unlinkSleeper };

@@ -1,6 +1,6 @@
 const prisma = require("./prisma");
 
-async function findOrCreate(googleId, email, name, leagues) {
+async function findOrCreate(googleId, email, name) {
   try {
     let user = await prisma.user.findUnique({
       where: {
@@ -17,7 +17,6 @@ async function findOrCreate(googleId, email, name, leagues) {
         google_id: googleId,
         email: email,
         name: name,
-        leagues: leagues,
       },
     });
 
@@ -28,43 +27,34 @@ async function findOrCreate(googleId, email, name, leagues) {
   }
 }
 
-async function createLeague(googleId, currentLeagues, leagueId) {
+async function linkSleeperId(googleId, sleeperUsername) {
   try {
-    if (currentLeagues.includes(leagueId)) {
-      return null;
-    }
-
     const updatedUser = await prisma.user.update({
       where: { google_id: googleId },
       data: {
-        leagues: {
-          push: leagueId,
-        },
+        sleeper_username: sleeperUsername,
       },
     });
-
-    return updatedUser.leagues;
+    return updatedUser.sleeper_username;
   } catch (error) {
-    console.error("Error adding league to list: ", error);
+    console.error("Error linking sleeperId: ", error);
     throw error;
   }
 }
 
-async function deleteLeague(googleId, currentLeagues, leagueId) {
+async function unlinkSleeperId(googleId) {
   try {
-    const updatedLeagues = currentLeagues.filter((id) => id !== leagueId);
     const updatedUser = await prisma.user.update({
       where: { google_id: googleId },
       data: {
-        leagues: updatedLeagues,
+        sleeper_username: null,
       },
     });
-    console.log(updatedLeagues);
-    return updatedUser.leagues;
+    return updatedUser.sleeper_username;
   } catch (error) {
-    console.error("Error removing league from list:", error);
+    console.error("Error unlinking sleeper account:", error);
     throw error;
   }
 }
 
-module.exports = { findOrCreate, createLeague, deleteLeague };
+module.exports = { findOrCreate, linkSleeperId, unlinkSleeperId };
