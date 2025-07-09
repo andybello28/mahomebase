@@ -1,6 +1,8 @@
+const backend_url = process.env.NEXT_PUBLIC_API_URL;
+
 const linkSleeper = async (inputUsername) => {
   try {
-    const res = await fetch("http://localhost:4000/user/link", {
+    const res = await fetch(`${backend_url}/user/link`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,7 +21,7 @@ const linkSleeper = async (inputUsername) => {
 
 const unlinkSleeper = async () => {
   try {
-    const res = await fetch("http://localhost:4000/user/unlink", {
+    const res = await fetch(`${backend_url}/user/unlink`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

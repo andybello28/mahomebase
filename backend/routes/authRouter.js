@@ -2,6 +2,8 @@ const express = require("express");
 const passport = require("../config/passport");
 const router = express.Router();
 
+const frontendUrl = process.env.FRONTEND_URL;
+
 router.get("/user", (req, res) => {
   if (req.isAuthenticated()) {
     res.json({ user: req.user });
@@ -20,8 +22,8 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    failureRedirect: "http://localhost:3000?login=fail",
-    successRedirect: "http://localhost:3000/profile?login=success",
+    failureRedirect: `${frontendUrl}?login=fail`,
+    successRedirect: `${frontendUrl}/profile?login=success`,
     session: true,
   })
 );
@@ -37,7 +39,7 @@ router.get("/logout", (req, res, next) => {
       }
 
       res.clearCookie("connect.sid");
-      res.redirect("http://localhost:3000?logout=success");
+      res.redirect(`${frontendUrl}?logout=success`);
     });
   });
 });

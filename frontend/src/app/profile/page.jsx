@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { fetchCurrentUser } from "../utils/auth";
 import { linkSleeper, unlinkSleeper } from "../utils/sleeperUsername";
+import { fetchAllLeagues } from "../utils/leagues";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 
@@ -14,11 +15,23 @@ import { FaRegTrashAlt } from "react-icons/fa";
 
 export default function Users() {
   const searchParams = useSearchParams();
+
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  //Used for ui experience with the form for entering sleeper username
+
   const [sleeperUsername, setSleeperUsername] = useState("");
   const [showSleeperForm, setShowSleeperForm] = useState(false);
+
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [leagues, setLeagues] = useState([]);
+  const [isLoadingLeagues, setIsLoadingLeagues] = useState(false);
+
+  // Generate years array from 2017 to current year instead of hardcoding to 2025
+  const currentYear = new Date().getFullYear();
+  const years = [];
+  for (let year = currentYear; year >= 2017; year--) {
+    years.push(year);
+  }
 
   useEffect(() => {
     const getUser = async () => {
@@ -33,6 +46,30 @@ export default function Users() {
     getUser();
   }, []);
 
+  const handleFetchLeagues = async (year) => {
+    setIsLoadingLeagues(true);
+    try {
+      const response = await fetchAllLeagues(year);
+      if (response?.leagueData) {
+        setLeagues(response.leagueData);
+      } else {
+        setLeagues([]);
+      }
+    } catch (error) {
+      console.error("Error fetching leagues:", error);
+      toast.error("Failed to fetch leagues");
+      setLeagues([]);
+    } finally {
+      setIsLoadingLeagues(false);
+    }
+  };
+
+  const handleYearChange = (e) => {
+    const year = parseInt(e.target.value);
+    setSelectedYear(year);
+    handleFetchLeagues(year);
+  };
+
   async function handleAddUsername(e) {
     e.preventDefault();
 
@@ -43,7 +80,6 @@ export default function Users() {
 
     try {
       const result = await linkSleeper(sleeperUsername.trim());
-      console.log("Server response:", result);
 
       if (result?.sleeper_username) {
         setUser((prev) => ({
@@ -51,6 +87,12 @@ export default function Users() {
           sleeper_username: result.sleeper_username,
         }));
         toast.success("Sleeper Account Linked");
+        // If we do not add this next part, then the leagues do not get automatically shown to refresh user session
+        const updatedUser = await fetchCurrentUser();
+        if (updatedUser?.sleeper_username) {
+          setUser(updatedUser);
+          await handleFetchLeagues(selectedYear);
+        }
       } else {
         result?.message.map((e) => {
           toast.error(e);
@@ -73,6 +115,7 @@ export default function Users() {
           sleeper_username: null,
         }));
         toast.success("Sleeper account unlinked from Mahomebase");
+        setLeagues([]);
       }
     } catch (error) {
       console.error("Error in unlinkedSleeper:", error);
@@ -96,7 +139,7 @@ export default function Users() {
                   {!showSleeperForm && (
                     <button
                       onClick={() => setShowSleeperForm(true)}
-                      className="flex items-center gap-3 py-3 px-6 rounded-lg bg-[var(--foreground)] text-[var(--background)] font-semibold transition-all duration-300 hover:scale-105 hover:shadow-md w-full justify-center mt-4"
+                      className="flex items-center gap-3 py-3 px-6 rounded-lg bg-[var(--foreground)] text-[var(--background)] font-semibold transition-all duration-300 hover:scale-105 hover:shadow-md w-full justify-center"
                     >
                       <img
                         src="/assets/sleeper.png"
@@ -108,7 +151,7 @@ export default function Users() {
                   )}
                   {showSleeperForm && (
                     <form
-                      className="flex flex-col gap-3 bg-[var(--background)] border border-[var(--foreground)] text-[var(--foreground)] font-semibold p-4 rounded-lg w-full mt-4"
+                      className="flex flex-col gap-3 bg-[var(--background)] border border-[var(--foreground)] text-[var(--foreground)] font-semibold p-4 rounded-lg w-full"
                       onSubmit={handleAddUsername}
                     >
                       <input
@@ -169,6 +212,67 @@ export default function Users() {
             </div>
             <div className="flex flex-col gap-[3vh] items-center justify-center bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 flex-1">
               <span className="text-2xl font-bold">My Leagues</span>
+              {user.sleeper_username && (
+                <>
+                  <div className="flex flex-col gap-2 w-full max-w-xs">
+                    <label
+                      htmlFor="year-select"
+                      className="text-sm font-medium text-[var(--foreground)]"
+                    >
+                      Select Year:
+                    </label>
+                    <select
+                      id="year-select"
+                      value={selectedYear}
+                      onChange={handleYearChange}
+                      className="px-3 py-2 text-[var(--foreground)] bg-[var(--background)] border border-[var(--foreground)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] transition-all duration-300"
+                    >
+                      {years.map((year) => (
+                        <option key={year} value={year}>
+                          {year}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  {isLoadingLeagues && (
+                    <div className="text-[var(--foreground)]">
+                      Loading leagues...
+                    </div>
+                  )}
+
+                  {!isLoadingLeagues && leagues.length > 0 && (
+                    <div className="w-full max-h-40 overflow-y-auto">
+                      {leagues.map((league, index) => (
+                        <div
+                          key={index}
+                          className="p-2 border-b border-[var(--foreground)] last:border-b-0"
+                        >
+                          <div className="text-sm font-medium text-[var(--foreground)]">
+                            {league.name || `League ${index + 1}`}
+                          </div>
+                          <div className="text-xs text-[var(--foreground)] opacity-75">
+                            {league.total_rosters || 0} teams
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {!isLoadingLeagues &&
+                    leagues.length === 0 &&
+                    selectedYear && (
+                      <div className="text-[var(--foreground)] text-center">
+                        No leagues found for {selectedYear}
+                      </div>
+                    )}
+                </>
+              )}
+              {!user.sleeper_username && (
+                <div className="text-[var(--foreground)] text-center opacity-75">
+                  Link your Sleeper account to view leagues
+                </div>
+              )}
             </div>
           </div>
 

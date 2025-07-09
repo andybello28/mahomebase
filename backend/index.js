@@ -9,6 +9,7 @@ const app = express();
 
 const authRouter = require("./routes/authRouter");
 const userRouter = require("./routes/userRouter");
+const leaguesRouter = require("./routes/leaguesRouter");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -41,6 +42,7 @@ app.use(passport.session());
 
 app.use("/auth", authRouter);
 app.use("/user", userRouter);
+app.use("/leagues", leaguesRouter);
 
 port = process.env.PORT || 5000;
 app.listen(port, () => {
