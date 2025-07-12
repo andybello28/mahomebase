@@ -20,8 +20,23 @@ model User {
   email        String?  @unique
   name         String
   sleeper_username   String?
+  sleeper_id         String?
+  league_ids       String[] // Just store Sleeper league IDs
   createdAt    DateTime @default(now())
 }
+
+model League {
+  id                Int    @id @default(autoincrement())
+  league_id         String @unique
+  name              String
+  season            String
+  rosters           Int
+  roster_positions  Json
+  scoring_settings  Json
+  createdAt         DateTime @default(now())
+  total_linked     Int      @default(0)
+}
+
 
 model Session {
   id        String   @id @default(cuid())

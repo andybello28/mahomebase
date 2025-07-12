@@ -22,23 +22,30 @@ export default function Users() {
   const [sleeperUsername, setSleeperUsername] = useState("");
   const [showSleeperForm, setShowSleeperForm] = useState(false);
 
-  const [selectedYear, setSelectedYear] = useState("2022");
+  const [years, setYears] = useState([]);
+  const [selectedYear, setSelectedYear] = useState("All");
+  const [allLeagues, setAllLeagues] = useState([]);
   const [leagues, setLeagues] = useState([]);
   const [isLoadingLeagues, setIsLoadingLeagues] = useState(false);
-
-  const currentYear = new Date().getFullYear();
-  const years = [];
-  for (let year = currentYear; year >= 2017; year--) {
-    years.push(year);
-  }
 
   const handleFetchLeagues = async (year) => {
     setIsLoadingLeagues(true);
     try {
-      const response = await fetchAllLeagues(year);
-      if (response?.leagueData) {
-        setLeagues(response.leagueData);
+      const response = await fetchAllLeagues();
+      if (response?.leagues) {
+        setAllLeagues(response.leagues);
+        setLeagues(response.leagues);
+        console.log(response.leagues);
+        const years = [];
+        for (const league of response.leagues) {
+          if (!years.includes(league.season)) {
+            years.push(league.season);
+          }
+        }
+        console.log(years);
+        await setYears(years);
       } else {
+        setAllLeagues([]);
         setLeagues([]);
       }
     } catch (error) {
@@ -51,10 +58,20 @@ export default function Users() {
   };
 
   const handleYearChange = (e) => {
-    const year = parseInt(e.target.value);
+    const year = e.target.value;
     setSelectedYear(year);
-    handleFetchLeagues(year);
+
+    if (year === "All") {
+      setLeagues(allLeagues);
+    } else {
+      const filtered = allLeagues.filter((league) => league.season === year);
+      setLeagues(filtered);
+    }
   };
+
+  useEffect(() => {
+    console.log("leagues", leagues);
+  }, [leagues]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -81,7 +98,7 @@ export default function Users() {
     }
 
     try {
-      const result = await linkSleeper(sleeperUsername.trim());
+      const result = await linkSleeper(user.google_id, sleeperUsername.trim());
 
       if (result?.sleeper_username) {
         setUser((prev) => ({
@@ -110,7 +127,7 @@ export default function Users() {
   async function handleDeleteUsername(e) {
     e.preventDefault();
     try {
-      const result = await unlinkSleeper();
+      const result = await unlinkSleeper(user.google_id);
       if (result.sleeper_username == null) {
         setUser((prev) => ({
           ...prev,
@@ -229,6 +246,7 @@ export default function Users() {
                       onChange={handleYearChange}
                       className="px-3 py-2 text-[var(--foreground)] bg-[var(--background)] border border-[var(--foreground)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] transition-all duration-300"
                     >
+                      <option value="All">All</option>
                       {years.map((year) => (
                         <option key={year} value={year}>
                           {year}
@@ -254,20 +272,18 @@ export default function Users() {
                             {league.name || `League ${index + 1}`}
                           </div>
                           <div className="text-xs text-[var(--foreground)] opacity-75">
-                            {league.total_rosters || 0} teams
+                            {league.rosters || 0} teams
                           </div>
                         </div>
                       ))}
                     </div>
                   )}
 
-                  {!isLoadingLeagues &&
-                    leagues.length === 0 &&
-                    selectedYear && (
-                      <div className="text-[var(--foreground)] text-center">
-                        No leagues found for {selectedYear}
-                      </div>
-                    )}
+                  {!isLoadingLeagues && leagues.length === 0 && (
+                    <div className="text-[var(--foreground)] text-center">
+                      No leagues found for {selectedYear}
+                    </div>
+                  )}
                 </>
               )}
               {!user.sleeper_username && (

@@ -1,8 +1,8 @@
 const backend_url = process.env.NEXT_PUBLIC_API_URL;
 
-const linkSleeper = async (inputUsername) => {
+const linkSleeper = async (googleId, inputUsername) => {
   try {
-    const res = await fetch(`${backend_url}/user/link`, {
+    const res = await fetch(`${backend_url}/users/${googleId}/link`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -19,9 +19,9 @@ const linkSleeper = async (inputUsername) => {
   }
 };
 
-const unlinkSleeper = async () => {
+const unlinkSleeper = async (googleId) => {
   try {
-    const res = await fetch(`${backend_url}/user/unlink`, {
+    const res = await fetch(`${backend_url}/users/${googleId}/unlink`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
