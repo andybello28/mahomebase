@@ -10,7 +10,6 @@ router.post("/", async (req, res) => {
     );
     const sleeper_user = await idResponse.json();
     sleeper_id = sleeper_user.user_id;
-    console.log(sleeper_id);
     const response = await fetch(
       // This needs to be user ID not sleeper username so we need to do an intermediate fetch
       `https://api.sleeper.app/v1/user/${sleeper_id}/leagues/nfl/${season}`

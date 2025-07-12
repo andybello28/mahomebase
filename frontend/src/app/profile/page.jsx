@@ -22,29 +22,15 @@ export default function Users() {
   const [sleeperUsername, setSleeperUsername] = useState("");
   const [showSleeperForm, setShowSleeperForm] = useState(false);
 
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedYear, setSelectedYear] = useState("2022");
   const [leagues, setLeagues] = useState([]);
   const [isLoadingLeagues, setIsLoadingLeagues] = useState(false);
 
-  // Generate years array from 2017 to current year instead of hardcoding to 2025
   const currentYear = new Date().getFullYear();
   const years = [];
   for (let year = currentYear; year >= 2017; year--) {
     years.push(year);
   }
-
-  useEffect(() => {
-    const getUser = async () => {
-      setIsLoading(true);
-      const currentUser = await fetchCurrentUser();
-      if (currentUser && searchParams.get("login") == "success") {
-        toast.success("Login Successful");
-      }
-      setUser(currentUser);
-      setIsLoading(false);
-    };
-    getUser();
-  }, []);
 
   const handleFetchLeagues = async (year) => {
     setIsLoadingLeagues(true);
@@ -69,6 +55,22 @@ export default function Users() {
     setSelectedYear(year);
     handleFetchLeagues(year);
   };
+
+  useEffect(() => {
+    const getUser = async () => {
+      setIsLoading(true);
+      const currentUser = await fetchCurrentUser();
+      if (currentUser && searchParams.get("login") == "success") {
+        toast.success("Login Successful");
+      }
+      setUser(currentUser);
+      if (currentUser.sleeper_username) {
+        await handleFetchLeagues(selectedYear);
+      }
+      setIsLoading(false);
+    };
+    getUser();
+  }, []);
 
   async function handleAddUsername(e) {
     e.preventDefault();
@@ -124,7 +126,7 @@ export default function Users() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-[100vh]">
+    <div className="flex flex-grow flex-col items-center justify-start min-h-[100vh]">
       <Navbar />
       {user && (
         <div className="flex flex-grow flex-col gap-8 p-4 h-full w-full">
@@ -278,15 +280,25 @@ export default function Users() {
 
           {/* Bottom row with two equal boxes */}
           <div className="flex flex-row gap-4 h-1/3">
-            <div className="flex items-center justify-center bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 flex-1">
+            <div className="flex flex-col items-center justify-center bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 flex-1">
               <span className="text-xl font-semibold text-[var(--foreground)]">
                 Stats
               </span>
+              {!user.sleeper_username && (
+                <div className="text-[var(--foreground)] text-center opacity-75">
+                  Link your Sleeper account to view leagues
+                </div>
+              )}
             </div>
-            <div className="flex items-center justify-center bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 flex-1">
+            <div className="flex flex-col items-center justify-between bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 flex-1">
               <span className="text-xl font-semibold text-[var(--foreground)]">
                 Recent Activity
               </span>
+              {!user.sleeper_username && (
+                <div className="text-[var(--foreground)] text-center opacity-75">
+                  Link your Sleeper account to view leagues
+                </div>
+              )}
             </div>
           </div>
 
