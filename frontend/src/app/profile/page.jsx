@@ -11,7 +11,7 @@ import Footer from "../components/Footer";
 import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
 
-import { FaRegTrashAlt } from "react-icons/fa";
+import { GoLink, GoUnlink } from "react-icons/go";
 
 export default function Users() {
   const searchParams = useSearchParams();
@@ -181,17 +181,17 @@ export default function Users() {
                         aria-label="Sleeper"
                         className="px-3 py-2 text-[var(--foreground)] bg-[var(--background)] border border-[var(--foreground)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] transition-all duration-300"
                       />
-                      <div className="flex gap-2">
+                      <div className="flex gap-3 items-center justify-end">
                         <button
                           type="submit"
-                          className="py-2 flex-1 rounded-lg bg-[var(--foreground)] text-[var(--background)] font-semibold transition-all duration-300 hover:scale-105"
+                          className="flex items-center justify-center flex-1 py-2 rounded-md bg-[var(--foreground)] text-[var(--background)] font-semibold shadow-sm transition-transform duration-200 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] focus:ring-offset-2"
                         >
-                          Link Sleeper
+                          <GoLink className="text-lg" />
                         </button>
                         <button
                           type="button"
                           onClick={() => setShowSleeperForm(false)}
-                          className="py-2 px-4 rounded-lg border border-[var(--foreground)] text-[var(--foreground)] transition-all duration-300 hover:bg-[var(--foreground)] hover:text-[var(--background)]"
+                          className="px-4 py-2 rounded-md border border-[var(--foreground)] text-[var(--foreground)] font-medium transition-colors duration-200 hover:bg-[var(--foreground)] hover:text-[var(--background)] focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] focus:ring-offset-2"
                         >
                           Cancel
                         </button>
@@ -220,7 +220,7 @@ export default function Users() {
                     className="flex items-center justify-center p-2 text-[var(--foreground)] hover:text-red-500 hover:scale-105 transition-all duration-300 rounded-lg border border-[var(--foreground)] hover:border-red-500"
                     aria-label="Delete sleeper username"
                   >
-                    <FaRegTrashAlt className="w-4 h-4" />
+                    <GoUnlink className="w-4 h-4" />
                   </button>
                 </div>
               )}
@@ -273,6 +273,7 @@ export default function Users() {
                           </div>
                           <div className="text-xs text-[var(--foreground)] opacity-75">
                             {league.rosters || 0} teams
+                            <span> | {league.season}</span>
                           </div>
                         </div>
                       ))}
