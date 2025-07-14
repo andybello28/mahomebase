@@ -36,6 +36,10 @@ export default function Users() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
+    console.log(user);
+  }, [user]);
+
+  useEffect(() => {
     const fetchRound = async () => {
       const roundData = await getRound();
       setSeason(roundData.season);

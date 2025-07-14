@@ -97,9 +97,23 @@ router.post("/:googleid/unlink", async (req, res) => {
 });
 
 router.get("/:googleid/leagues", async (req, res) => {
-  const { league_ids: league_ids } = req.user;
+  const { google_id: google_id, league_ids: league_ids } = req.user;
+  const sleeperId = req.user.sleeper_id;
+  const currentYear = new Date().getFullYear().toString();
 
   try {
+    const response = await fetch(
+      `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${currentYear}`
+    );
+    const leagues = await response.json();
+    console.log(leagues);
+    for (const league of leagues) {
+      if (league_ids.includes(league.league_id)) {
+        continue;
+      } else {
+        await createLeague(google_id, league);
+      }
+    }
     let allLeaguesData = [];
     for (const id of league_ids) {
       const leagueData = await getLeague(id);
