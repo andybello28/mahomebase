@@ -101,7 +101,6 @@ router.post("/:googleid/leagues", async (req, res) => {
       `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${currentYear}`
     );
     const leagues = await response.json();
-    console.log(leagues);
     for (const league of leagues) {
       if (league_ids.includes(league.league_id)) {
         continue;

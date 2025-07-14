@@ -34,10 +34,13 @@ export default function Users() {
   const [week, setWeek] = useState(null);
 
   const [transactions, setTransactions] = useState([]);
+  const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
 
   useEffect(() => {
+    console.log("user", user);
     console.log("transactions: ", transactions);
-  }, [transactions]);
+    console.log("is loading:", isLoadingTransactions);
+  }, [transactions, isLoadingTransactions, user]);
 
   useEffect(() => {
     const fetchRound = async () => {
@@ -57,7 +60,6 @@ export default function Users() {
       if (response?.leagues) {
         setAllLeagues(response.leagues);
         setLeagues(response.leagues);
-        console.log("Leagues: ", response.leagues);
         const years = [];
         for (const league of response.leagues) {
           if (!years.includes(league.season)) {
@@ -91,6 +93,7 @@ export default function Users() {
   };
 
   const handleFetchTransactions = async () => {
+    setIsLoadingTransactions(true);
     try {
       const googleId = user?.google_id;
       const transactions = await fetchTransactions(googleId);
@@ -99,6 +102,9 @@ export default function Users() {
     } catch (error) {
       console.error("Error fetching transactions:", error);
       toast.error("Failed to fetch transactions from sleeper");
+      return [];
+    } finally {
+      setIsLoadingTransactions(false);
     }
   };
 
@@ -121,7 +127,7 @@ export default function Users() {
 
   async function handleAddUsername(e) {
     e.preventDefault();
-
+    console.log("We here");
     if (!sleeperUsername.trim()) {
       toast.error("Please enter a sleeper username.");
       return;
@@ -292,7 +298,10 @@ export default function Users() {
 
                   {isLoadingLeagues && (
                     <div className="text-[var(--foreground)]">
-                      Loading leagues...
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
+                      <span className="ml-2 text-sm text-gray-600">
+                        Loading leagues...
+                      </span>
                     </div>
                   )}
 
@@ -347,51 +356,107 @@ export default function Users() {
                 Recent Activity
               </span>
               {user.sleeper_username && (
-                <div className="text-[var(--foreground)] text-center opacity-75">
-                  {week === 0 && <>Preseason {season}</>}
-                  {week !== 0 && (
-                    <>
-                      Week {week} — Season {season}
-                    </>
+                <>
+                  {isLoadingTransactions && (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
+                      <span className="ml-2 text-sm text-gray-600">
+                        Loading transactions...
+                      </span>
+                    </div>
                   )}
-                  {transactions.length > 0 ? (
-                    <div className="w-full space-y-2 max-h-96 overflow-y-auto">
+                  {!isLoadingTransactions && transactions.length > 0 && (
+                    <div className="w-full space-y-3 max-h-96 overflow-y-auto">
                       {transactions.map((tx, index) => (
                         <div
-                          key={index}
-                          className="p-3 rounded-lg bg-white text-black border border-gray-300 shadow-sm"
+                          key={tx.id || index}
+                          className="p-4 rounded-lg bg-white text-black border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
                         >
-                          <p className="text-sm">
-                            <strong>Type:</strong> {tx.type}
-                          </p>
-                          <p className="text-sm">
-                            <strong>Status:</strong> {tx.status}
-                          </p>
-                          <p className="text-sm">
-                            <strong>Roster ID:</strong>{" "}
-                            {tx.roster_ids?.join(", ") || "N/A"}
-                          </p>
-                          <p className="text-sm">
-                            <strong>Updated:</strong>{" "}
-                            {tx.status_updated
-                              ? new Date(tx.status_updated).toLocaleString(
-                                  undefined,
-                                  {
-                                    dateStyle: "medium",
-                                    timeStyle: "short",
-                                  }
-                                )
-                              : "Unknown"}
-                          </p>
+                          <div className="grid grid-cols-2 gap-3 text-sm">
+                            <div>
+                              <span className="font-semibold text-gray-700">
+                                Type:
+                              </span>
+                              <span className="ml-2 capitalize">{tx.type}</span>
+                            </div>
+
+                            <div>
+                              <span className="font-semibold text-gray-700">
+                                Status:
+                              </span>
+                              <span
+                                className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                                  tx.status === "completed"
+                                    ? "bg-green-100 text-green-800"
+                                    : tx.status === "pending"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : tx.status === "failed"
+                                    ? "bg-red-100 text-red-800"
+                                    : "bg-gray-100 text-gray-800"
+                                }`}
+                              >
+                                {tx.status}
+                              </span>
+                            </div>
+
+                            <div>
+                              <span className="font-semibold text-gray-700">
+                                Roster ID:
+                              </span>
+                              <span className="ml-2 font-mono text-xs">
+                                {tx.roster_ids?.join(", ") || "N/A"}
+                              </span>
+                            </div>
+
+                            <div>
+                              <span className="font-semibold text-gray-700">
+                                Updated:
+                              </span>
+                              <span className="ml-2">
+                                {tx.status_updated
+                                  ? new Date(tx.status_updated).toLocaleString(
+                                      undefined,
+                                      {
+                                        dateStyle: "medium",
+                                        timeStyle: "short",
+                                      }
+                                    )
+                                  : "Unknown"}
+                              </span>
+                            </div>
+                          </div>
                         </div>
                       ))}
                     </div>
-                  ) : (
-                    <div className="text-sm text-gray-400">
-                      No recent transactions
-                    </div>
                   )}
-                </div>
+                  {!isLoadingTransactions &&
+                    user.sleeper_username &&
+                    transactions.length === 0 && (
+                      <div className="flex flex-col items-center justify-center py-12 text-center">
+                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                          <svg
+                            className="w-6 h-6 text-gray-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                            />
+                          </svg>
+                        </div>
+                        <p className="text-sm text-gray-500 font-medium">
+                          No recent transactions
+                        </p>
+                        <p className="text-xs text-gray-400 mt-1">
+                          Transaction history will appear here
+                        </p>
+                      </div>
+                    )}
+                </>
               )}
               {!user.sleeper_username && (
                 <div className="text-[var(--foreground)] text-center opacity-75">
