@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { fetchCurrentUser } from "../utils/auth";
 import { linkSleeper, unlinkSleeper } from "../utils/sleeperUsername";
-import { fetchAllLeagues } from "../utils/leagues";
+import { fetchAllLeagues, updateLeagues } from "../utils/leagues";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import { getRound } from "../utils/round";
@@ -36,8 +36,8 @@ export default function Users() {
   const [transactions, setTransactions] = useState([]);
 
   useEffect(() => {
-    console.log(user);
-  }, [user]);
+    console.log("transactions: ", transactions);
+  }, [transactions]);
 
   useEffect(() => {
     const fetchRound = async () => {
@@ -52,6 +52,7 @@ export default function Users() {
     setIsLoadingLeagues(true);
     try {
       const googleId = user?.google_id;
+      await updateLeagues(googleId);
       const response = await fetchAllLeagues(googleId);
       if (response?.leagues) {
         setAllLeagues(response.leagues);
@@ -373,7 +374,13 @@ export default function Users() {
                           <p className="text-sm">
                             <strong>Updated:</strong>{" "}
                             {tx.status_updated
-                              ? new Date(tx.status_updated).toLocaleString()
+                              ? new Date(tx.status_updated).toLocaleString(
+                                  undefined,
+                                  {
+                                    dateStyle: "medium",
+                                    timeStyle: "short",
+                                  }
+                                )
                               : "Unknown"}
                           </p>
                         </div>

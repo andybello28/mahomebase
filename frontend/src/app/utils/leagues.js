@@ -17,4 +17,19 @@ const fetchAllLeagues = async (googleId) => {
   }
 };
 
-export { fetchAllLeagues };
+const updateLeagues = async (googleId) => {
+  try {
+    const res = await fetch(`${backend_url}/users/${googleId}/leagues`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
+  } catch (error) {
+    console.error("Error updating league data:", error);
+    throw error;
+  }
+};
+
+export { fetchAllLeagues, updateLeagues };

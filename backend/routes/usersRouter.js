@@ -22,12 +22,6 @@ router.post("/:googleid/link", validateSleeper, async (req, res) => {
       return res.status(400).json({ message: msgArray });
     }
 
-    const currentYear = new Date().getFullYear();
-    const years = [];
-    for (let year = currentYear; year >= 2017; year--) {
-      years.push(year);
-    }
-
     const { sleeperUsername } = req.body;
     const { google_id: googleId } = req.user;
 
@@ -49,29 +43,6 @@ router.post("/:googleid/link", validateSleeper, async (req, res) => {
       sleeperUsername,
       sleeperId
     );
-
-    let allLeaguesData = [];
-    for (const season of years) {
-      const response = await fetch(
-        `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${season}`
-      );
-
-      if (!response.ok) {
-        console.error(
-          `API request failed for season ${season} with status ${response.status}`
-        );
-        continue;
-      }
-
-      const leaguesData = await response.json();
-
-      if (leaguesData && leaguesData.length > 0) {
-        for (const element of leaguesData) {
-          allLeaguesData.push(element);
-          await createLeague(googleId, element);
-        }
-      }
-    }
     return res.status(200).json({
       sleeper_username: connectSleeper,
     });
@@ -97,23 +68,9 @@ router.post("/:googleid/unlink", async (req, res) => {
 });
 
 router.get("/:googleid/leagues", async (req, res) => {
-  const { google_id: google_id, league_ids: league_ids } = req.user;
-  const sleeperId = req.user.sleeper_id;
-  const currentYear = new Date().getFullYear().toString();
+  const { league_ids: league_ids } = req.user;
 
   try {
-    const response = await fetch(
-      `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${currentYear}`
-    );
-    const leagues = await response.json();
-    console.log(leagues);
-    for (const league of leagues) {
-      if (league_ids.includes(league.league_id)) {
-        continue;
-      } else {
-        await createLeague(google_id, league);
-      }
-    }
     let allLeaguesData = [];
     for (const id of league_ids) {
       const leagueData = await getLeague(id);
@@ -129,6 +86,30 @@ router.get("/:googleid/leagues", async (req, res) => {
     return res.status(200).json({
       leagues: allLeaguesData,
     });
+  } catch (error) {
+    console.error("Error in GET /users/:googleid/leagues", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.post("/:googleid/leagues", async (req, res) => {
+  const { google_id: google_id, league_ids: league_ids } = req.user;
+  const sleeperId = req.user.sleeper_id;
+  const currentYear = new Date().getFullYear().toString();
+  try {
+    const response = await fetch(
+      `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${currentYear}`
+    );
+    const leagues = await response.json();
+    console.log(leagues);
+    for (const league of leagues) {
+      if (league_ids.includes(league.league_id)) {
+        continue;
+      } else {
+        await createLeague(google_id, league);
+      }
+    }
+    return res.status(200).json({ message: "Leagues updated successfully" });
   } catch (error) {
     console.error("Error in POST /users/:googleid/leagues", error);
     return res.status(500).json({ error: "Internal server error" });
