@@ -6,6 +6,8 @@ import { linkSleeper, unlinkSleeper } from "../utils/sleeperUsername";
 import { fetchAllLeagues } from "../utils/leagues";
 import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
+import { getRound } from "../utils/round";
+import { fetchTransactions } from "../utils/transactions";
 
 import Footer from "../components/Footer";
 import Logout from "../components/Logout";
@@ -28,21 +30,35 @@ export default function Users() {
   const [leagues, setLeagues] = useState([]);
   const [isLoadingLeagues, setIsLoadingLeagues] = useState(false);
 
-  const handleFetchLeagues = async (year) => {
+  const [season, setSeason] = useState(null);
+  const [week, setWeek] = useState(null);
+
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    const fetchRound = async () => {
+      const roundData = await getRound();
+      setSeason(roundData.season);
+      setWeek(roundData.week);
+    };
+    fetchRound();
+  }, []);
+
+  const handleFetchLeagues = async () => {
     setIsLoadingLeagues(true);
     try {
-      const response = await fetchAllLeagues();
+      const googleId = user?.google_id;
+      const response = await fetchAllLeagues(googleId);
       if (response?.leagues) {
         setAllLeagues(response.leagues);
         setLeagues(response.leagues);
-        console.log(response.leagues);
+        console.log("Leagues: ", response.leagues);
         const years = [];
         for (const league of response.leagues) {
           if (!years.includes(league.season)) {
             years.push(league.season);
           }
         }
-        console.log(years);
         await setYears(years);
       } else {
         setAllLeagues([]);
@@ -69,9 +85,17 @@ export default function Users() {
     }
   };
 
-  useEffect(() => {
-    console.log("leagues", leagues);
-  }, [leagues]);
+  const handleFetchTransactions = async () => {
+    try {
+      const googleId = user?.google_id;
+      const transactions = await fetchTransactions(googleId);
+      setTransactions(transactions);
+      return transactions;
+    } catch (error) {
+      console.error("Error fetching transactions:", error);
+      toast.error("Failed to fetch transactions from sleeper");
+    }
+  };
 
   useEffect(() => {
     const getUser = async () => {
@@ -82,7 +106,8 @@ export default function Users() {
       }
       setUser(currentUser);
       if (currentUser.sleeper_username) {
-        await handleFetchLeagues(selectedYear);
+        await handleFetchLeagues();
+        await handleFetchTransactions();
       }
       setIsLoading(false);
     };
@@ -98,7 +123,8 @@ export default function Users() {
     }
 
     try {
-      const result = await linkSleeper(user.google_id, sleeperUsername.trim());
+      const googleId = user?.google_id;
+      const result = await linkSleeper(googleId, sleeperUsername.trim());
 
       if (result?.sleeper_username) {
         setUser((prev) => ({
@@ -110,7 +136,8 @@ export default function Users() {
         const updatedUser = await fetchCurrentUser();
         if (updatedUser?.sleeper_username) {
           setUser(updatedUser);
-          await handleFetchLeagues(selectedYear);
+          await handleFetchLeagues();
+          await handleFetchTransactions();
         }
       } else {
         result?.message.map((e) => {
@@ -127,12 +154,15 @@ export default function Users() {
   async function handleDeleteUsername(e) {
     e.preventDefault();
     try {
-      const result = await unlinkSleeper(user.google_id);
+      const googleId = user?.google_id;
+      const result = await unlinkSleeper(googleId);
       if (result.sleeper_username == null) {
         setUser((prev) => ({
           ...prev,
           sleeper_username: null,
         }));
+        setLeagues([]);
+        setTransactions([]);
         toast.success("Sleeper account unlinked from Mahomebase");
         setLeagues([]);
       }
@@ -303,7 +333,7 @@ export default function Users() {
               </span>
               {!user.sleeper_username && (
                 <div className="text-[var(--foreground)] text-center opacity-75">
-                  Link your Sleeper account to view leagues
+                  Link your Sleeper account to view
                 </div>
               )}
             </div>
@@ -311,9 +341,50 @@ export default function Users() {
               <span className="text-xl font-semibold text-[var(--foreground)]">
                 Recent Activity
               </span>
+              {user.sleeper_username && (
+                <div className="text-[var(--foreground)] text-center opacity-75">
+                  {week === 0 && <>Preseason {season}</>}
+                  {week !== 0 && (
+                    <>
+                      Week {week} — Season {season}
+                    </>
+                  )}
+                  {transactions.length > 0 ? (
+                    <div className="w-full space-y-2 max-h-96 overflow-y-auto">
+                      {transactions.map((tx, index) => (
+                        <div
+                          key={index}
+                          className="p-3 rounded-lg bg-white text-black border border-gray-300 shadow-sm"
+                        >
+                          <p className="text-sm">
+                            <strong>Type:</strong> {tx.type}
+                          </p>
+                          <p className="text-sm">
+                            <strong>Status:</strong> {tx.status}
+                          </p>
+                          <p className="text-sm">
+                            <strong>Roster ID:</strong>{" "}
+                            {tx.roster_ids?.join(", ") || "N/A"}
+                          </p>
+                          <p className="text-sm">
+                            <strong>Updated:</strong>{" "}
+                            {tx.status_updated
+                              ? new Date(tx.status_updated).toLocaleString()
+                              : "Unknown"}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-gray-400">
+                      No recent transactions
+                    </div>
+                  )}
+                </div>
+              )}
               {!user.sleeper_username && (
                 <div className="text-[var(--foreground)] text-center opacity-75">
-                  Link your Sleeper account to view leagues
+                  Link your Sleeper account to view
                 </div>
               )}
             </div>

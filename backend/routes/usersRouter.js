@@ -121,12 +121,42 @@ router.get("/:googleid/leagues", async (req, res) => {
   }
 });
 
+router.get("/:googleid/leagues/transactions", async (req, res) => {
+  try {
+    const { league_ids: league_ids } = req.user;
+    const currentYear = new Date().getFullYear().toString();
+    const leagues = await Promise.all(league_ids.map((id) => getLeague(id)));
+    const filteredLeagues = leagues.filter(
+      (league) => league.season === currentYear
+    );
+    const response1 = await fetch("https://api.sleeper.app/v1/state/nfl");
+    const state = await response1.json();
+    const round = state.week === 0 ? 1 : state.week;
+    let transactions = [];
+    for (const filteredLeague of filteredLeagues) {
+      const response2 = await fetch(
+        `https://api.sleeper.app/v1/league/${filteredLeague.league_id}/transactions/${round}`
+      );
+      const leagueTransaction = await response2.json();
+      transactions.push(...leagueTransaction);
+    }
+    res.json(transactions);
+  } catch (error) {
+    console.error("Error getting recent activity");
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
 router.get("/:googleid/leagues/:leagueid", async (req, res) => {
   try {
+    const { league_id } = req.params;
     const response = await fetch(
-      `https://api.sleeper.app/v1/user/${sleeper_id}/leagues/nfl/${season}`
+      `https://api.sleeper.app/v1/league/${league_id}`
     );
-    const leagueData = response.json();
+    const leagueData = await response.json();
+    return res.status(200).json({
+      league: leagueData,
+    });
   } catch (error) {
     console.error("Error in POST /users/:googleid/leagues/:season", error);
     return res.status(500).json({ error: "Internal server error" });

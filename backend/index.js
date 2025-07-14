@@ -9,13 +9,16 @@ const app = express();
 
 const authRouter = require("./routes/authRouter");
 const usersRouter = require("./routes/usersRouter");
+const nflRouter = require("./routes/nflRouter");
+
+const startPlayerScheduler = require("./schedulers/playerScheduler");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: `${process.env.FRONTEND_URL}`,
     credentials: true,
   })
 );
@@ -41,6 +44,9 @@ app.use(passport.session());
 
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
+app.use("/nfl", nflRouter);
+
+startPlayerScheduler();
 
 port = process.env.PORT || 5000;
 app.listen(port, () => {

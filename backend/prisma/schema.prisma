@@ -37,6 +37,21 @@ model League {
   total_linked     Int      @default(0)
 }
 
+model Player {
+  id                 String   @id @map("player_id")
+  first_name         String?
+  last_name          String?
+  search_full_name   String?
+  team               String?
+  position           String?
+  fantasy_positions  String[]
+  age                Int?
+  status             String?
+  college            String?
+  years_exp          Int?
+  updatedAt          DateTime @updatedAt
+}
+
 
 model Session {
   id        String   @id @default(cuid())

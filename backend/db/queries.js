@@ -27,40 +27,6 @@ async function findOrCreate(googleId, email, name) {
   }
 }
 
-async function createLeague(sleeper_username) {
-  try {
-    // Step 1: Get Sleeper user ID
-    const idResponse = await fetch(
-      `https://api.sleeper.app/v1/user/${sleeper_username}`
-    );
-    if (!idResponse.ok) throw new Error("Failed to fetch user ID");
-
-    const sleeper_user = await idResponse.json();
-    const sleeper_id = sleeper_user.user_id;
-
-    const updatedLeagues = [];
-    const currentYear = new Date().getFullYear();
-
-    for (let year = currentYear; year >= 2017; year--) {
-      const response = await fetch(
-        `https://api.sleeper.app/v1/user/${sleeper_id}/leagues/nfl/${year}`
-      );
-
-      if (response.ok) {
-        const leagues = await response.json();
-        updatedLeagues.push(...leagues);
-      } else {
-        console.warn(`Failed to fetch leagues for ${year}`);
-      }
-    }
-
-    const final = await prisma.league.create;
-  } catch (error) {
-    console.error("Error fetching leagues: ", error);
-    throw error;
-  }
-}
-
 async function linkSleeperId(googleId, sleeperUsername, sleeperId) {
   try {
     const updatedUser = await prisma.user.update({
@@ -113,37 +79,25 @@ async function createLeague(googleId, leagueData) {
       });
     }
 
-    const existingLeague = await prisma.league.findUnique({
+    const league = await prisma.league.upsert({
       where: {
         league_id: leagueData.league_id,
       },
+      update: {
+        total_linked: {
+          increment: 1,
+        },
+      },
+      create: {
+        league_id: leagueData.league_id,
+        name: leagueData.name,
+        rosters: leagueData.total_rosters,
+        roster_positions: leagueData.roster_positions,
+        scoring_settings: leagueData.scoring_settings,
+        season: leagueData.season,
+        total_linked: 1,
+      },
     });
-
-    let league;
-    if (!existingLeague) {
-      league = await prisma.league.create({
-        data: {
-          league_id: leagueData.league_id,
-          name: leagueData.name,
-          rosters: leagueData.total_rosters,
-          roster_positions: leagueData.roster_positions,
-          scoring_settings: leagueData.scoring_settings,
-          season: leagueData.season,
-          total_linked: 1,
-        },
-      });
-    } else {
-      league = await prisma.league.update({
-        where: {
-          league_id: leagueData.league_id,
-        },
-        data: {
-          total_linked: {
-            increment: 1,
-          },
-        },
-      });
-    }
 
     return league;
   } catch (error) {
@@ -202,6 +156,50 @@ async function getLeague(league_id) {
   }
 }
 
+async function createPlayers() {
+  try {
+    const response = await fetch("https://api.sleeper.app/v1/players/nfl");
+    if (!response.ok) {
+      throw new Error(`Failed to fetch players: ${response.status}`);
+    }
+    const players = await response.json();
+    for (const [id, playerData] of Object.entries(players)) {
+      await prisma.player.upsert({
+        where: { id },
+        update: {
+          first_name: playerData.first_name,
+          last_name: playerData.last_name,
+          search_full_name: playerData.search_full_name,
+          team: playerData.team,
+          position: playerData.position,
+          fantasy_positions: playerData.fantasy_positions ?? [],
+          age: playerData.age,
+          status: playerData.status,
+          college: playerData.college,
+          years_exp: playerData.years_exp,
+        },
+        create: {
+          id,
+          first_name: playerData.first_name,
+          last_name: playerData.last_name,
+          search_full_name: playerData.search_full_name,
+          team: playerData.team,
+          position: playerData.position,
+          fantasy_positions: playerData.fantasy_positions ?? [],
+          age: playerData.age,
+          status: playerData.status,
+          college: playerData.college,
+          years_exp: playerData.years_exp,
+        },
+      });
+    }
+    return players;
+  } catch (error) {
+    console.error("Error getting players:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   findOrCreate,
   linkSleeperId,
@@ -209,4 +207,5 @@ module.exports = {
   createLeague,
   deleteLeagues,
   getLeague,
+  createPlayers,
 };
