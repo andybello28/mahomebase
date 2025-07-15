@@ -82,7 +82,6 @@ router.get("/:googleid/leagues", async (req, res) => {
 
       allLeaguesData.push(leagueData);
     }
-    console.log(allLeaguesData);
     return res.status(200).json({
       leagues: allLeaguesData,
     });

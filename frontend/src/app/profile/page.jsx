@@ -8,7 +8,9 @@ import { toast } from "react-toastify";
 import { useSearchParams } from "next/navigation";
 import { getRound } from "../utils/round";
 import { fetchTransactions } from "../utils/transactions";
+import { fetchTrendingPlayers } from "../utils/players";
 
+import Login from "../components/Login";
 import Footer from "../components/Footer";
 import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
@@ -36,11 +38,9 @@ export default function Users() {
   const [transactions, setTransactions] = useState([]);
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
 
-  useEffect(() => {
-    console.log("user", user);
-    console.log("transactions: ", transactions);
-    console.log("is loading:", isLoadingTransactions);
-  }, [transactions, isLoadingTransactions, user]);
+  const [trendingPlayers, setTrendingPlayers] = useState([]);
+  const [isLoadingTrendingPlayers, setIsLoadingTrendingPlayers] =
+    useState(false);
 
   useEffect(() => {
     const fetchRound = async () => {
@@ -51,8 +51,11 @@ export default function Users() {
     fetchRound();
   }, []);
 
+  useEffect(() => {
+    console.log(trendingPlayers);
+  }, [trendingPlayers]);
+
   const handleFetchLeagues = async () => {
-    setIsLoadingLeagues(true);
     try {
       const googleId = user?.google_id;
       await updateLeagues(googleId);
@@ -75,8 +78,6 @@ export default function Users() {
       console.error("Error fetching leagues:", error);
       toast.error("Failed to fetch leagues");
       setLeagues([]);
-    } finally {
-      setIsLoadingLeagues(false);
     }
   };
 
@@ -93,7 +94,6 @@ export default function Users() {
   };
 
   const handleFetchTransactions = async () => {
-    setIsLoadingTransactions(true);
     try {
       const googleId = user?.google_id;
       const transactions = await fetchTransactions(googleId);
@@ -103,8 +103,17 @@ export default function Users() {
       console.error("Error fetching transactions:", error);
       toast.error("Failed to fetch transactions from sleeper");
       return [];
-    } finally {
-      setIsLoadingTransactions(false);
+    }
+  };
+
+  const handleFetchTrendingPlayers = async () => {
+    try {
+      const players = await fetchTrendingPlayers();
+      setTrendingPlayers(players);
+      return players;
+    } catch (error) {
+      console.error("Error fetching trending players:", error);
+      return [];
     }
   };
 
@@ -116,9 +125,16 @@ export default function Users() {
         toast.success("Login Successful");
       }
       setUser(currentUser);
-      if (currentUser.sleeper_username) {
+      if (currentUser?.sleeper_username) {
+        setIsLoadingTrendingPlayers(true);
+        setIsLoadingTransactions(true);
+        setIsLoadingLeagues(true);
+        await handleFetchTrendingPlayers();
         await handleFetchLeagues();
         await handleFetchTransactions();
+        setIsLoadingTrendingPlayers(false);
+        setIsLoadingTransactions(false);
+        setIsLoadingLeagues(false);
       }
       setIsLoading(false);
     };
@@ -127,7 +143,6 @@ export default function Users() {
 
   async function handleAddUsername(e) {
     e.preventDefault();
-    console.log("We here");
     if (!sleeperUsername.trim()) {
       toast.error("Please enter a sleeper username.");
       return;
@@ -146,9 +161,17 @@ export default function Users() {
         // If we do not add this next part, then the leagues do not get automatically shown to refresh user session
         const updatedUser = await fetchCurrentUser();
         if (updatedUser?.sleeper_username) {
-          setUser(updatedUser);
-          await handleFetchLeagues();
-          await handleFetchTransactions();
+          if (currentUser?.sleeper_username) {
+            setIsLoadingTrendingPlayers(true);
+            setIsLoadingTransactions(true);
+            setIsLoadingLeagues(true);
+            await handleFetchTrendingPlayers();
+            await handleFetchLeagues();
+            await handleFetchTransactions();
+            setIsLoadingTrendingPlayers(false);
+            setIsLoadingTransactions(false);
+            setIsLoadingLeagues(false);
+          }
         }
       } else {
         result?.message.map((e) => {
@@ -340,79 +363,217 @@ export default function Users() {
           </div>
 
           {/* Bottom row with two equal boxes */}
-          <div className="flex flex-row gap-4 h-1/3">
-            <div className="flex flex-col items-center justify-center bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 flex-1">
-              <span className="text-xl font-semibold text-[var(--foreground)]">
-                Stats
+          <div className="flex flex-row gap-6 h-1/3">
+            {/* Left side - Trending Players */}
+            <div className="flex flex-col items-center justify-around bg-white/90 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-6 flex-1 shadow-lg hover:shadow-xl transition-all duration-300">
+              <span className="text-2xl font-bold text-slate-800 bg-gradient-to-r mb-2 from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                Trending Waiver Wire Adds On Sleeper
               </span>
+
+              {user.sleeper_username && (
+                <>
+                  {isLoadingTrendingPlayers && (
+                    <div className="flex items-center justify-center py-8">
+                      <div className="animate-spin rounded-full h-8 w-8 border-3 border-blue-600 border-t-transparent"></div>
+                      <span className="ml-3 text-sm text-slate-600 font-medium">
+                        Loading Trending Players...
+                      </span>
+                    </div>
+                  )}
+
+                  {!isLoadingTrendingPlayers && trendingPlayers.length > 0 && (
+                    <div className="w-full space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
+                      {trendingPlayers.map((player, index) => (
+                        <div
+                          key={player.id || index}
+                          className="p-5 rounded-xl bg-gradient-to-r from-white to-slate-50 border border-slate-200/80 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200 cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between mb-3">
+                            <div className="flex items-center gap-3">
+                              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                {player.first_name[0]}
+                                {player.last_name[0]}
+                              </div>
+                              <div>
+                                <h3 className="font-semibold text-gray-900 text-lg">
+                                  {player.first_name} {player.last_name}
+                                </h3>
+                                <p className="text-sm text-gray-500">
+                                  {player.college}
+                                </p>
+                              </div>
+                            </div>
+                            <div className="text-right">
+                              <div className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                                {player.team}
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-4">
+                              <div className="flex items-center gap-1">
+                                <span className="text-xs text-gray-500">
+                                  Position:
+                                </span>
+                                <span className="text-sm font-medium text-gray-700 bg-blue-100 px-2 py-1 rounded-full">
+                                  {player.position}
+                                </span>
+                              </div>
+                              <div className="flex items-center gap-1">
+                                <span className="text-xs text-gray-500">
+                                  Age:
+                                </span>
+                                <span className="text-sm font-medium text-gray-700">
+                                  {player.age}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <div className="text-xs text-gray-500">
+                                {player.years_exp === 0
+                                  ? "Rookie"
+                                  : `${player.years_exp} yr${
+                                      player.years_exp > 1 ? "s" : ""
+                                    }`}
+                              </div>
+                              <div
+                                className={`w-2 h-2 rounded-full ${
+                                  player.status === "Active"
+                                    ? "bg-green-500"
+                                    : "bg-red-500"
+                                }`}
+                              ></div>
+                            </div>
+                          </div>
+
+                          <div className="mt-3 pt-3 border-t border-slate-200/60">
+                            <div className="flex items-center justify-between text-xs text-gray-500">
+                              <span>{index + 1}</span>
+                              <span>
+                                Fantasy Eligible:{" "}
+                                {player.fantasy_positions.join(", ")}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {!isLoadingTrendingPlayers &&
+                    trendingPlayers.length === 0 && (
+                      <div className="flex flex-col items-center justify-center py-12 text-center">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mb-4 shadow-sm">
+                          <svg
+                            className="w-8 h-8 text-slate-400"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                            />
+                          </svg>
+                        </div>
+                        <p className="text-base text-slate-600 font-semibold">
+                          No trending players
+                        </p>
+                        <p className="text-sm text-slate-400 mt-2">
+                          Trending players will appear here
+                        </p>
+                      </div>
+                    )}
+                </>
+              )}
+
               {!user.sleeper_username && (
-                <div className="text-[var(--foreground)] text-center opacity-75">
-                  Link your Sleeper account to view
+                <div className="text-slate-600 text-center opacity-75 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                  Link your Sleeper account to view trending players
                 </div>
               )}
             </div>
-            <div className="flex flex-col items-center justify-between bg-[var(--background)] border border-[var(--foreground)] rounded-lg p-4 flex-1">
-              <span className="text-xl font-semibold text-[var(--foreground)]">
+
+            {/* Right side - Recent Activity */}
+            <div className="flex flex-col items-center justify-around bg-white/90 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-6 flex-1 shadow-lg hover:shadow-xl transition-all duration-300">
+              <span className="text-2xl font-bold text-slate-800 bg-gradient-to-r mb-2 from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Recent Activity
               </span>
+
               {user.sleeper_username && (
                 <>
+                  <span className="text-xl font-bold text-slate-800 bg-gradient-to-r mb-2 from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    {week === 0 && <>Preseason {season}</>}
+                    {week !== 0 && (
+                      <>
+                        Week {week} {season}
+                      </>
+                    )}
+                  </span>
+
                   {isLoadingTransactions && (
                     <div className="flex items-center justify-center py-8">
-                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
-                      <span className="ml-2 text-sm text-gray-600">
+                      <div className="animate-spin rounded-full h-8 w-8 border-3 border-blue-600 border-t-transparent"></div>
+                      <span className="ml-3 text-sm text-slate-600 font-medium">
                         Loading transactions...
                       </span>
                     </div>
                   )}
+
                   {!isLoadingTransactions && transactions.length > 0 && (
-                    <div className="w-full space-y-3 max-h-96 overflow-y-auto">
+                    <div className="w-full space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
                       {transactions.map((tx, index) => (
                         <div
                           key={tx.id || index}
-                          className="p-4 rounded-lg bg-white text-black border border-gray-200 shadow-sm hover:shadow-md transition-shadow"
+                          className="p-5 rounded-xl bg-gradient-to-r from-white to-slate-50 border border-slate-200/80 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200"
                         >
-                          <div className="grid grid-cols-2 gap-3 text-sm">
-                            <div>
-                              <span className="font-semibold text-gray-700">
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-slate-700">
                                 Type:
                               </span>
-                              <span className="ml-2 capitalize">{tx.type}</span>
+                              <span className="ml-2 capitalize bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
+                                {tx.type}
+                              </span>
                             </div>
 
-                            <div>
-                              <span className="font-semibold text-gray-700">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-slate-700">
                                 Status:
                               </span>
                               <span
-                                className={`ml-2 px-2 py-1 rounded-full text-xs font-medium ${
+                                className={`ml-2 px-3 py-1 rounded-full text-xs font-medium border ${
                                   tx.status === "completed"
-                                    ? "bg-green-100 text-green-800"
+                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
                                     : tx.status === "pending"
-                                    ? "bg-yellow-100 text-yellow-800"
+                                    ? "bg-amber-50 text-amber-700 border-amber-200"
                                     : tx.status === "failed"
-                                    ? "bg-red-100 text-red-800"
-                                    : "bg-gray-100 text-gray-800"
+                                    ? "bg-red-50 text-red-700 border-red-200"
+                                    : "bg-slate-50 text-slate-700 border-slate-200"
                                 }`}
                               >
                                 {tx.status}
                               </span>
                             </div>
 
-                            <div>
-                              <span className="font-semibold text-gray-700">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-slate-700">
                                 Roster ID:
                               </span>
-                              <span className="ml-2 font-mono text-xs">
+                              <span className="ml-2 font-mono text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
                                 {tx.roster_ids?.join(", ") || "N/A"}
                               </span>
                             </div>
 
-                            <div>
-                              <span className="font-semibold text-gray-700">
+                            <div className="flex items-center gap-2">
+                              <span className="font-semibold text-slate-700">
                                 Updated:
                               </span>
-                              <span className="ml-2">
+                              <span className="ml-2 text-slate-600">
                                 {tx.status_updated
                                   ? new Date(tx.status_updated).toLocaleString(
                                       undefined,
@@ -429,13 +590,14 @@ export default function Users() {
                       ))}
                     </div>
                   )}
+
                   {!isLoadingTransactions &&
                     user.sleeper_username &&
                     transactions.length === 0 && (
                       <div className="flex flex-col items-center justify-center py-12 text-center">
-                        <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center mb-3">
+                        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-blue-100 to-purple-100 flex items-center justify-center mb-4 shadow-sm">
                           <svg
-                            className="w-6 h-6 text-gray-400"
+                            className="w-8 h-8 text-slate-400"
                             fill="none"
                             stroke="currentColor"
                             viewBox="0 0 24 24"
@@ -448,19 +610,20 @@ export default function Users() {
                             />
                           </svg>
                         </div>
-                        <p className="text-sm text-gray-500 font-medium">
+                        <p className="text-base text-slate-600 font-semibold">
                           No recent transactions
                         </p>
-                        <p className="text-xs text-gray-400 mt-1">
+                        <p className="text-sm text-slate-400 mt-2">
                           Transaction history will appear here
                         </p>
                       </div>
                     )}
                 </>
               )}
+
               {!user.sleeper_username && (
-                <div className="text-[var(--foreground)] text-center opacity-75">
-                  Link your Sleeper account to view
+                <div className="text-slate-600 text-center opacity-75 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                  Link your Sleeper account to view recent activity
                 </div>
               )}
             </div>
@@ -471,6 +634,12 @@ export default function Users() {
             <Logout />
           </div>
         </div>
+      )}
+      {!user && (
+        <>
+          <div>Please Log In</div>
+          <Login />
+        </>
       )}
       <Footer />
     </div>

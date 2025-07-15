@@ -200,6 +200,16 @@ async function createPlayers() {
   }
 }
 
+async function getPlayer(player) {
+  const player_id = player.player_id;
+  const player_ret = await prisma.player.findUnique({
+    where: {
+      id: player_id,
+    },
+  });
+  return player_ret;
+}
+
 module.exports = {
   findOrCreate,
   linkSleeperId,
@@ -208,4 +218,5 @@ module.exports = {
   deleteLeagues,
   getLeague,
   createPlayers,
+  getPlayer,
 };
