@@ -33,7 +33,7 @@ export default function Navbar() {
     { name: "Trade Generator", href: "#" },
     { name: "Start/Sit", href: "#" },
     { name: "Waiver Wire", href: "#" },
-    { name: "League Overview", href: "#" },
+    { name: "League Overview", href: "/profile/leagues" },
   ];
 
   return (
