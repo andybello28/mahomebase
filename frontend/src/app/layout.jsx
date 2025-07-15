@@ -1,17 +1,24 @@
 import "./globals.css";
 import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { Providers } from "./context/Context";
 
 export const metadata = {
-  title: "Mahomebase Fantasy",
+  title: "Mahomebase",
   description: "AI Fantasy Football Trade Advice",
+  openGraph: {
+    title: "Mahomebase Fantasy",
+    description: "Smarter trades. Better wins.",
+    url: "https://mahomebase.com",
+    siteName: "Mahomebase",
+  },
 };
 
 export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        {children}
+        <Providers>{children}</Providers>
         <ToastContainer
           position="top-right"
           autoClose={5000}
