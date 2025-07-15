@@ -161,7 +161,7 @@ export default function Users() {
         // If we do not add this next part, then the leagues do not get automatically shown to refresh user session
         const updatedUser = await fetchCurrentUser();
         if (updatedUser?.sleeper_username) {
-          if (currentUser?.sleeper_username) {
+          if (updatedUser?.sleeper_username) {
             setIsLoadingTrendingPlayers(true);
             setIsLoadingTransactions(true);
             setIsLoadingLeagues(true);
