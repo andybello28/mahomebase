@@ -82,7 +82,7 @@ router.get("/:googleid/leagues", async (req, res) => {
 
       allLeaguesData.push(leagueData);
     }
-
+    console.log(allLeaguesData);
     return res.status(200).json({
       leagues: allLeaguesData,
     });
@@ -96,16 +96,21 @@ router.post("/:googleid/leagues", async (req, res) => {
   const { google_id: google_id, league_ids: league_ids } = req.user;
   const sleeperId = req.user.sleeper_id;
   const currentYear = new Date().getFullYear().toString();
+  const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) =>
+    (currentYear - i).toString()
+  );
   try {
-    const response = await fetch(
-      `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${currentYear}`
-    );
-    const leagues = await response.json();
-    for (const league of leagues) {
-      if (league_ids.includes(league.league_id)) {
-        continue;
-      } else {
-        await createLeague(google_id, league);
+    for (const year of years) {
+      const response = await fetch(
+        `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${year}`
+      );
+      const leagues = await response.json();
+      for (const league of leagues) {
+        if (league_ids.includes(league.league_id)) {
+          continue;
+        } else {
+          await createLeague(google_id, league);
+        }
       }
     }
     return res.status(200).json({ message: "Leagues updated successfully" });
