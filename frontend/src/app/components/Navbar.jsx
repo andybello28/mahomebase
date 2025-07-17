@@ -5,11 +5,13 @@ import { CgProfile } from "react-icons/cg";
 import { fetchCurrentUser } from "../utils/auth";
 import { toast } from "react-toastify";
 
+import { useUser } from "../context/Context.jsx";
+
 const backend_url = process.env.NEXT_PUBLIC_API_URL;
 
 export default function Navbar() {
+  const { user } = useUser();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [user, setUser] = useState(null);
 
   const handleGoogleLogin = () => {
     toast("Redirecting for sign in...", {
@@ -19,14 +21,6 @@ export default function Navbar() {
       window.location.href = `${backend_url}/auth/google`;
     }, 1000);
   };
-
-  useEffect(() => {
-    const getUser = async () => {
-      const currentUser = await fetchCurrentUser();
-      setUser(currentUser);
-    };
-    getUser();
-  }, []);
 
   const navItems = [
     { name: "Home", href: "/" },

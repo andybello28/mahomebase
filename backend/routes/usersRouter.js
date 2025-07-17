@@ -68,7 +68,10 @@ router.post("/:googleid/unlink", async (req, res) => {
 });
 
 router.get("/:googleid/leagues", async (req, res) => {
-  const { league_ids: league_ids } = req.user;
+  const { sleeper_id: sleeper_id, league_ids: league_ids } = req.user;
+  if (!sleeper_id) {
+    return;
+  }
 
   try {
     let allLeaguesData = [];
@@ -94,6 +97,9 @@ router.get("/:googleid/leagues", async (req, res) => {
 router.post("/:googleid/leagues", async (req, res) => {
   const { google_id: google_id, league_ids: league_ids } = req.user;
   const sleeperId = req.user.sleeper_id;
+  if (!sleeperId) {
+    return;
+  }
   const currentYear = new Date().getFullYear().toString();
   const years = Array.from({ length: currentYear - 2017 + 1 }, (_, i) =>
     (currentYear - i).toString()

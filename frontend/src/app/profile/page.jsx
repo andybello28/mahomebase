@@ -1,85 +1,65 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { fetchCurrentUser } from "../utils/auth";
 import { linkSleeper, unlinkSleeper } from "../utils/sleeperUsername";
-import { fetchAllLeagues, updateLeagues } from "../utils/leagues";
 import { toast } from "react-toastify";
+import { GoLink, GoUnlink } from "react-icons/go";
 import { useSearchParams } from "next/navigation";
-import { getRound } from "../utils/round";
-import { fetchTransactions } from "../utils/transactions";
-import { fetchTrendingPlayers } from "../utils/players";
+
+import {
+  useUser,
+  useLeagues,
+  useSeason,
+  useTransactions,
+  useTrendingPlayers,
+} from "../context/Context.jsx";
 
 import Login from "../components/Login";
 import Footer from "../components/Footer";
 import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
 
-import { GoLink, GoUnlink } from "react-icons/go";
-
 export default function Users() {
   const searchParams = useSearchParams();
 
-  const [user, setUser] = useState(null);
+  const {
+    user,
+    setUser,
+    sleeperUsername,
+    setSleeperUsername,
+    sleeperId,
+    setSleeperId,
+  } = useUser();
+  const { allLeagues, years, isLoadingLeagues } = useLeagues();
+  const { season, week } = useSeason();
+  const { transactions, setTransactions, isLoadingTransactions } =
+    useTransactions();
+  const { trendingPlayers, isLoadingTrendingPlayers } = useTrendingPlayers();
+
+  // UI states
   const [isLoading, setIsLoading] = useState(false);
-
-  const [sleeperUsername, setSleeperUsername] = useState("");
   const [showSleeperForm, setShowSleeperForm] = useState(false);
-
-  const [years, setYears] = useState([]);
   const [selectedYear, setSelectedYear] = useState("All");
-  const [allLeagues, setAllLeagues] = useState([]);
   const [leagues, setLeagues] = useState([]);
-  const [isLoadingLeagues, setIsLoadingLeagues] = useState(false);
-
-  const [season, setSeason] = useState(null);
-  const [week, setWeek] = useState(null);
-
-  const [transactions, setTransactions] = useState([]);
-  const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
-
-  const [trendingPlayers, setTrendingPlayers] = useState([]);
-  const [isLoadingTrendingPlayers, setIsLoadingTrendingPlayers] =
-    useState(false);
+  const [inputSleeperUsername, setInputSleeperUsername] = useState("");
 
   useEffect(() => {
-    const fetchRound = async () => {
-      const roundData = await getRound();
-      setSeason(roundData.season);
-      setWeek(roundData.week);
-    };
-    fetchRound();
-  }, []);
+    console.log("s.u: ", sleeperUsername);
+  }, [sleeperUsername]);
 
   useEffect(() => {
-    console.log(trendingPlayers);
-  }, [trendingPlayers]);
+    console.log("s.id: ", sleeperId);
+  }, [sleeperId]);
 
-  const handleFetchLeagues = async () => {
-    try {
-      const googleId = user?.google_id;
-      await updateLeagues(googleId);
-      const response = await fetchAllLeagues(googleId);
-      if (response?.leagues) {
-        setAllLeagues(response.leagues);
-        setLeagues(response.leagues);
-        const years = [];
-        for (const league of response.leagues) {
-          if (!years.includes(league.season)) {
-            years.push(league.season);
-          }
-        }
-        await setYears(years);
-      } else {
-        setAllLeagues([]);
-        setLeagues([]);
-      }
-    } catch (error) {
-      console.error("Error fetching leagues:", error);
-      toast.error("Failed to fetch leagues");
-      setLeagues([]);
+  useEffect(() => {
+    if (user && searchParams.get("login") == "success") {
+      toast.success("Login Successful");
     }
-  };
+  }, [user]);
+
+  useEffect(() => {
+    setLeagues(allLeagues);
+  }, [allLeagues]);
 
   const handleYearChange = (e) => {
     const year = e.target.value;
@@ -93,92 +73,33 @@ export default function Users() {
     }
   };
 
-  const handleFetchTransactions = async () => {
-    try {
-      const googleId = user?.google_id;
-      const transactions = await fetchTransactions(googleId);
-      setTransactions(transactions);
-      return transactions;
-    } catch (error) {
-      console.error("Error fetching transactions:", error);
-      toast.error("Failed to fetch transactions from sleeper");
-      return [];
-    }
-  };
-
-  const handleFetchTrendingPlayers = async () => {
-    try {
-      const players = await fetchTrendingPlayers();
-      setTrendingPlayers(players);
-      return players;
-    } catch (error) {
-      console.error("Error fetching trending players:", error);
-      return [];
-    }
-  };
-
-  useEffect(() => {
-    const getUser = async () => {
-      setIsLoading(true);
-      const currentUser = await fetchCurrentUser();
-      if (currentUser && searchParams.get("login") == "success") {
-        toast.success("Login Successful");
-      }
-      setUser(currentUser);
-      if (currentUser?.sleeper_username) {
-        setIsLoadingTrendingPlayers(true);
-        setIsLoadingTransactions(true);
-        setIsLoadingLeagues(true);
-        await handleFetchTrendingPlayers();
-        await handleFetchLeagues();
-        await handleFetchTransactions();
-        setIsLoadingTrendingPlayers(false);
-        setIsLoadingTransactions(false);
-        setIsLoadingLeagues(false);
-      }
-      setIsLoading(false);
-    };
-    getUser();
-  }, []);
-
   async function handleAddUsername(e) {
     e.preventDefault();
-    if (!sleeperUsername.trim()) {
+    if (!inputSleeperUsername.trim()) {
       toast.error("Please enter a sleeper username.");
       return;
     }
 
     try {
       const googleId = user?.google_id;
-      const result = await linkSleeper(googleId, sleeperUsername.trim());
+      const result = await linkSleeper(googleId, inputSleeperUsername.trim());
 
       if (result?.sleeper_username) {
+        setSleeperUsername(result.sleeper_username);
+        setSleeperId(result.sleeper_id);
         setUser((prev) => ({
           ...prev,
           sleeper_username: result.sleeper_username,
+          sleeper_id: result.sleeper_id,
         }));
         toast.success("Sleeper Account Linked");
         // If we do not add this next part, then the leagues do not get automatically shown to refresh user session
-        const updatedUser = await fetchCurrentUser();
-        if (updatedUser?.sleeper_username) {
-          if (updatedUser?.sleeper_username) {
-            setIsLoadingTrendingPlayers(true);
-            setIsLoadingTransactions(true);
-            setIsLoadingLeagues(true);
-            await handleFetchTrendingPlayers();
-            await handleFetchLeagues();
-            await handleFetchTransactions();
-            setIsLoadingTrendingPlayers(false);
-            setIsLoadingTransactions(false);
-            setIsLoadingLeagues(false);
-          }
-        }
       } else {
         result?.message.map((e) => {
           toast.error(e);
         });
       }
-      setSleeperUsername("");
+      setInputSleeperUsername("");
     } catch (error) {
       console.error("Error in linkSleeper:", error);
       toast.error("Failed to link Sleeper.");
@@ -189,16 +110,22 @@ export default function Users() {
     e.preventDefault();
     try {
       const googleId = user?.google_id;
+      if (!googleId) {
+        toast.error("User not logged in");
+        return;
+      }
       const result = await unlinkSleeper(googleId);
       if (result.sleeper_username == null) {
         setUser((prev) => ({
           ...prev,
           sleeper_username: null,
+          sleeper_id: null,
         }));
         setLeagues([]);
         setTransactions([]);
+        setSleeperId("");
+        setSleeperUsername("");
         toast.success("Sleeper account unlinked from Mahomebase");
-        setLeagues([]);
       }
     } catch (error) {
       console.error("Error in unlinkedSleeper:", error);
@@ -239,9 +166,11 @@ export default function Users() {
                     >
                       <input
                         type="text"
-                        value={sleeperUsername}
+                        value={inputSleeperUsername}
                         placeholder="Enter Sleeper Username"
-                        onChange={(e) => setSleeperUsername(e.target.value)}
+                        onChange={(e) =>
+                          setInputSleeperUsername(e.target.value)
+                        }
                         aria-label="Sleeper"
                         className="px-3 py-2 text-[var(--foreground)] bg-[var(--background)] border border-[var(--foreground)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] transition-all duration-300"
                       />
@@ -592,6 +521,7 @@ export default function Users() {
                   )}
 
                   {!isLoadingTransactions &&
+                    !isLoadingLeagues &&
                     user.sleeper_username &&
                     transactions.length === 0 && (
                       <div className="flex flex-col items-center justify-center py-12 text-center">
