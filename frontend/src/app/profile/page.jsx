@@ -31,6 +31,7 @@ export default function Users() {
   const { transactions, setTransactions, isLoadingTransactions } =
     useTransactions();
   const { trendingPlayers, isLoadingTrendingPlayers } = useTrendingPlayers();
+  const [searchTerm, setSearchTerm] = useState("");
 
   // UI states
   const [isLoading, setIsLoading] = useState(false);
@@ -44,6 +45,13 @@ export default function Users() {
       toast.success("Login Successful");
     }
   }, [user?.google_id]);
+
+  useEffect(() => {
+    const filtered = allLeagues.filter((league) =>
+      league.name?.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+    setLeagues(filtered);
+  }, [searchTerm, allLeagues]);
 
   useEffect(() => {
     setLeagues(allLeagues);
@@ -219,8 +227,15 @@ export default function Users() {
                     </div>
                   )}
 
-                  {!isLoadingLeagues && leagues.length > 0 && (
+                  {!isLoadingLeagues && allLeagues.length > 0 && (
                     <div className="w-full max-h-40 overflow-y-auto">
+                      <input
+                        type="text"
+                        placeholder="Search leagues..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                      />
                       {leagues.map((league, index) => (
                         <div
                           key={index}
