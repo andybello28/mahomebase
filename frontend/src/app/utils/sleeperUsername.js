@@ -35,4 +35,21 @@ const unlinkSleeper = async (googleId) => {
   }
 };
 
-export { linkSleeper, unlinkSleeper };
+const getSleeperUsername = async (sleeper_id) => {
+  try {
+    const response = await fetch(
+      `https://api.sleeper.app/v1/user/${sleeper_id}`
+    );
+    if (!response.ok) {
+      throw new Error(`Failed to fetch user with id ${sleeper_id}`);
+    }
+
+    const data = await response.json();
+    return data.username;
+  } catch (error) {
+    console.error("Error fetching Sleeper username:", error);
+    return null;
+  }
+};
+
+export { linkSleeper, unlinkSleeper, getSleeperUsername };

@@ -153,16 +153,13 @@ router.get("/:googleid/leagues/transactions", async (req, res) => {
 
 router.get("/:googleid/leagues/:leagueid", async (req, res) => {
   try {
-    const { league_id } = req.params;
-    const response = await fetch(
-      `https://api.sleeper.app/v1/league/${league_id}`
-    );
-    const leagueData = await response.json();
+    const { leagueid } = req.params;
+    const leagueData = await getLeague(leagueid);
     return res.status(200).json({
       league: leagueData,
     });
   } catch (error) {
-    console.error("Error in POST /users/:googleid/leagues/:season", error);
+    console.error("Error in GET /:googleid/leagues/:leagueid", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });

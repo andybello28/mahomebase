@@ -68,6 +68,16 @@ async function createLeague(googleId, leagueData) {
 
     const currentLeagueIds = currentUser.league_ids || [];
 
+    const response = await fetch(
+      `https://api.sleeper.app/v1/league/${leagueData.league_id}/rosters`
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch roster data: ${response.status}`);
+    }
+
+    const roster_data = await response.json();
+
     if (!currentLeagueIds.includes(leagueData.league_id)) {
       await prisma.user.update({
         where: { google_id: googleId },
@@ -78,7 +88,6 @@ async function createLeague(googleId, leagueData) {
         },
       });
     }
-
     const league = await prisma.league.upsert({
       where: {
         league_id: leagueData.league_id,
@@ -94,6 +103,7 @@ async function createLeague(googleId, leagueData) {
         rosters: leagueData.total_rosters,
         roster_positions: leagueData.roster_positions,
         scoring_settings: leagueData.scoring_settings,
+        roster_data: roster_data,
         season: leagueData.season,
         total_linked: 1,
       },
@@ -200,14 +210,13 @@ async function createPlayers() {
   }
 }
 
-async function getPlayer(player) {
-  const player_id = player.player_id;
-  const player_ret = await prisma.player.findUnique({
+async function getPlayer(player_id) {
+  const player = await prisma.player.findUnique({
     where: {
       id: player_id,
     },
   });
-  return player_ret;
+  return player;
 }
 
 module.exports = {

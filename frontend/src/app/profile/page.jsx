@@ -19,8 +19,11 @@ import Footer from "../components/Footer";
 import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
 
+import { useRouter } from "next/navigation";
+
 export default function Users() {
   const searchParams = useSearchParams();
+  const router = useRouter();
 
   const {
     user,
@@ -44,18 +47,10 @@ export default function Users() {
   const [inputSleeperUsername, setInputSleeperUsername] = useState("");
 
   useEffect(() => {
-    console.log("s.u: ", sleeperUsername);
-  }, [sleeperUsername]);
-
-  useEffect(() => {
-    console.log("s.id: ", sleeperId);
-  }, [sleeperId]);
-
-  useEffect(() => {
     if (user && searchParams.get("login") == "success") {
       toast.success("Login Successful");
     }
-  }, [user]);
+  }, [user?.google_id]);
 
   useEffect(() => {
     setLeagues(allLeagues);
@@ -271,6 +266,16 @@ export default function Users() {
                             {league.rosters || 0} teams
                             <span> | {league.season}</span>
                           </div>
+                          <button
+                            onClick={() => {
+                              router.push(
+                                `/profile/leagues/${league.league_id}`
+                              );
+                            }}
+                            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl shadow hover:brightness-110 transition-all"
+                          >
+                            More
+                          </button>
                         </div>
                       ))}
                     </div>

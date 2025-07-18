@@ -21,12 +21,25 @@ router.get("/players/trending", async (req, res) => {
     const trendingPlayers = await response.json();
     let output = [];
     for (const player of trendingPlayers) {
-      output.push(await getPlayer(player));
+      output.push(await getPlayer(player.player_id));
     }
     res.json(output);
   } catch (error) {
     console.error("Error getting trending players from sleeper: ", error);
     throw error;
+  }
+});
+
+router.get("/players/:playerid", async (req, res) => {
+  try {
+    const { playerid } = req.params;
+
+    const playerData = await getPlayer(playerid);
+
+    return res.status(200).json(playerData);
+  } catch (error) {
+    console.error("Error fetching player:", error);
+    return res.status(500).json({ error: "Internal server error" });
   }
 });
 

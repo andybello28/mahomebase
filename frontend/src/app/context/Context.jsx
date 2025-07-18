@@ -2,11 +2,11 @@
 import { createContext, useContext, useState, useEffect } from "react";
 
 import { fetchCurrentUser } from "../utils/auth";
-import { linkSleeper, unlinkSleeper } from "../utils/sleeperUsername";
-import { fetchAllLeagues, updateLeagues } from "../utils/leagues";
+import { fetchAllLeagues, updateLeagues, getLeague } from "../utils/leagues";
 import { getRound } from "../utils/round";
 import { fetchTransactions } from "../utils/transactions";
-import { fetchTrendingPlayers } from "../utils/players";
+import { fetchTrendingPlayers, getPlayer } from "../utils/players";
+import { getSleeperUsername } from "../utils/sleeperUsername";
 
 const UserContext = createContext();
 export function UserProvider({ children }) {
@@ -197,6 +197,96 @@ export function TrendingProvider({ children }) {
 }
 export function useTrendingPlayers() {
   return useContext(TrendingPlayersContext);
+}
+
+// Because this requires a prop, you must individually wrap it and pass leagueid as a prop if you want rosters.
+// You must wrap it individually, like how it was done in [leagueid] page
+const LeagueContext = createContext();
+export function LeagueProvider({ children, leagueid }) {
+  const { user } = useUser();
+  const [league, setLeague] = useState(null);
+  const [leagueRosters, setLeagueRosters] = useState(null);
+
+  useEffect(() => {
+    const fetchLeague = async () => {
+      const res = await getLeague(user?.google_id, leagueid);
+      setLeague(res.league);
+    };
+    if (user && leagueid) fetchLeague();
+  }, [user, leagueid]);
+
+  useEffect(() => {
+    const fetchRosterPlayers = async () => {
+      if (!league?.roster_data) return;
+
+      const enrichedRosters = await Promise.all(
+        league.roster_data.map(async (roster) => {
+          let username = "Unknown";
+          if (roster.owner_id) {
+            try {
+              const fetchedUsername = await getSleeperUsername(roster.owner_id);
+              username = fetchedUsername || "Unknown";
+            } catch {
+              username = "Unknown";
+            }
+          }
+
+          if (!roster.players || roster.players.length === 0) {
+            return {
+              ...roster,
+              players: [],
+              starters: [],
+              username,
+            };
+          }
+
+          const playersWithData = await Promise.all(
+            roster.players.map(async (playerId) => {
+              try {
+                const player = await getPlayer(playerId);
+                return { id: playerId, data: player };
+              } catch (err) {
+                console.error(`Failed to fetch player ${playerId}`, err);
+                return { id: playerId, player: null };
+              }
+            })
+          );
+
+          const startersWithData = await Promise.all(
+            roster.starters.map(async (playerId) => {
+              try {
+                const player = await getPlayer(playerId);
+                return { id: playerId, data: player };
+              } catch (err) {
+                console.error(`Failed to fetch player ${playerId}`, err);
+                return { id: playerId, player: null };
+              }
+            })
+          );
+
+          return {
+            ...roster,
+            starters: startersWithData,
+            players: playersWithData,
+            username,
+          };
+        })
+      );
+
+      setLeagueRosters(enrichedRosters);
+    };
+
+    fetchRosterPlayers();
+  }, [league]);
+
+  return (
+    <LeagueContext.Provider value={{ league, leagueRosters, setLeagueRosters }}>
+      {children}
+    </LeagueContext.Provider>
+  );
+}
+export function useLeague() {
+  return useContext(LeagueContext);
 }
 
 export function Providers({ children }) {

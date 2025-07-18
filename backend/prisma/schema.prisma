@@ -33,6 +33,7 @@ model League {
   rosters           Int
   roster_positions  Json
   scoring_settings  Json
+  roster_data       Json
   createdAt         DateTime @default(now())
   total_linked     Int      @default(0)
 }
