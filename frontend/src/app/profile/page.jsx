@@ -25,15 +25,8 @@ export default function Users() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const {
-    user,
-    setUser,
-    sleeperUsername,
-    setSleeperUsername,
-    sleeperId,
-    setSleeperId,
-  } = useUser();
-  const { allLeagues, years, isLoadingLeagues } = useLeagues();
+  const { user, setUser, setSleeperUsername, setSleeperId } = useUser();
+  const { allLeagues, isLoadingLeagues } = useLeagues();
   const { season, week } = useSeason();
   const { transactions, setTransactions, isLoadingTransactions } =
     useTransactions();
@@ -55,18 +48,6 @@ export default function Users() {
   useEffect(() => {
     setLeagues(allLeagues);
   }, [allLeagues]);
-
-  const handleYearChange = (e) => {
-    const year = e.target.value;
-    setSelectedYear(year);
-
-    if (year === "All") {
-      setLeagues(allLeagues);
-    } else {
-      const filtered = allLeagues.filter((league) => league.season === year);
-      setLeagues(filtered);
-    }
-  };
 
   async function handleAddUsername(e) {
     e.preventDefault();
@@ -221,28 +202,14 @@ export default function Users() {
               <span className="text-2xl font-bold">My Leagues</span>
               {user.sleeper_username && (
                 <>
-                  <div className="flex flex-col gap-2 w-full max-w-xs">
-                    <label
-                      htmlFor="year-select"
-                      className="text-sm font-medium text-[var(--foreground)]"
-                    >
-                      Select Year:
-                    </label>
-                    <select
-                      id="year-select"
-                      value={selectedYear}
-                      onChange={handleYearChange}
-                      className="px-3 py-2 text-[var(--foreground)] bg-[var(--background)] border border-[var(--foreground)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] transition-all duration-300"
-                    >
-                      <option value="All">All</option>
-                      {years.map((year) => (
-                        <option key={year} value={year}>
-                          {year}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
+                  <span className="text-xl font-bold text-slate-800 bg-gradient-to-r mb-2 from-blue-600 to-purple-600 bg-clip-text text-transparent">
+                    {week === 0 && <>Preseason {season}</>}
+                    {week !== 0 && (
+                      <>
+                        Week {week} {season}
+                      </>
+                    )}
+                  </span>
                   {isLoadingLeagues && (
                     <div className="text-[var(--foreground)]">
                       <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-red-600"></div>
@@ -283,7 +250,7 @@ export default function Users() {
 
                   {!isLoadingLeagues && leagues.length === 0 && (
                     <div className="text-[var(--foreground)] text-center">
-                      No leagues found for {selectedYear}
+                      No leagues found
                     </div>
                   )}
                 </>

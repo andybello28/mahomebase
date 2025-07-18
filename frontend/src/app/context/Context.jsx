@@ -49,7 +49,6 @@ const LeaguesContext = createContext();
 export function LeaguesProvider({ children }) {
   const { user } = useUser();
   const [allLeagues, setAllLeagues] = useState([]);
-  const [years, setYears] = useState([]);
   const [isLoadingLeagues, setIsLoadingLeagues] = useState(false);
   useEffect(() => {
     const fetchLeagues = async () => {
@@ -61,20 +60,12 @@ export function LeaguesProvider({ children }) {
         const response = await fetchAllLeagues(googleId);
         if (response?.leagues) {
           setAllLeagues(response.leagues);
-          const years = [];
-          for (const league of response.leagues) {
-            if (!years.includes(league.season)) {
-              years.push(league.season);
-            }
-          }
-          setYears(years);
         } else {
           setAllLeagues([]);
         }
       } catch (error) {
         console.error("Error fetching leagues: ", error);
         setAllLeagues([]);
-        setYears([]);
       } finally {
         setIsLoadingLeagues(false);
       }
@@ -86,8 +77,6 @@ export function LeaguesProvider({ children }) {
       value={{
         allLeagues,
         setAllLeagues,
-        years,
-        setYears,
         isLoadingLeagues,
         setIsLoadingLeagues,
       }}

@@ -8,9 +8,8 @@ import { useRouter } from "next/navigation";
 import { useLeagues } from "../../context/Context.jsx";
 
 export default function Leagues() {
-  const { allLeagues, years } = useLeagues();
+  const { allLeagues } = useLeagues();
   const [selectedLeagues, setSelectedLeagues] = useState([]);
-  const [selectedYear, setSelectedYear] = useState("All");
 
   const router = useRouter();
 
@@ -37,22 +36,6 @@ export default function Leagues() {
   return (
     <>
       <Navbar />
-      <div className="flex flex-col justify-center items-center">
-        {" "}
-        <select
-          id="year-select"
-          value={selectedYear}
-          onChange={handleYearChange}
-          className="px-3 py-2 text-[var(--foreground)] bg-[var(--background)] border border-[var(--foreground)] rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] transition-all duration-300"
-        >
-          <option value="All">All</option>
-          {years.map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </div>
       <div className="w-full grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 p-4">
         {selectedLeagues.map((league, index) => (
           <div

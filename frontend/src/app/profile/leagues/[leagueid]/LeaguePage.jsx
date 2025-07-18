@@ -22,10 +22,6 @@ export default function LeaguePage() {
     ([key]) => key.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  useEffect(() => {
-    console.log(league);
-  }, [league]);
-
   return (
     <>
       <Navbar />
