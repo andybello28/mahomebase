@@ -16,12 +16,17 @@ export function UserProvider({ children }) {
   useEffect(() => {
     const getUser = async () => {
       const currentUser = await fetchCurrentUser();
-      setUser(currentUser);
+
+      setUser((prev) => {
+        if (prev?.sleeper_id) return prev;
+        return currentUser;
+      });
+
       if (currentUser?.sleeper_username) {
-        setSleeperUsername(currentUser?.sleeper_username);
+        setSleeperUsername(currentUser.sleeper_username);
       }
       if (currentUser?.sleeper_id) {
-        setSleeperId(currentUser?.sleeper_id);
+        setSleeperId(currentUser.sleeper_id);
       }
     };
     getUser();
@@ -119,21 +124,23 @@ export function TransactionsProvider({ children }) {
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
   useEffect(() => {
     const handleFetchTransactions = async () => {
+      if (!user?.google_id || allLeagues.length === 0) return;
+
+      setIsLoadingTransactions(true);
       try {
-        if (!user?.google_id || allLeagues.length === 0) return;
-        setIsLoadingTransactions(true);
-        const googleId = user?.google_id;
-        const transactions = await fetchTransactions(googleId);
+        console.log("Transactions context");
+        const transactions = await fetchTransactions(user.google_id);
         setTransactions(transactions);
-        return transactions;
-      } catch (error) {
-        console.error("Error fetching transactions: ", error);
+      } catch (err) {
+        console.error("Error fetching transactions:", err);
       } finally {
         setIsLoadingTransactions(false);
       }
     };
+
     handleFetchTransactions();
-  }, [allLeagues]);
+  }, [user?.google_id, allLeagues]);
+
   return (
     <TransactionsContext.Provider
       value={{

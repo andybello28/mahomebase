@@ -27,6 +27,20 @@ async function findOrCreate(googleId, email, name) {
   }
 }
 
+async function getUserByGoogleId(googleId) {
+  try {
+    const user = await prisma.user.findUnique({
+      where: {
+        google_id: googleId,
+      },
+    });
+    return user;
+  } catch (error) {
+    console.error("Error fetching user by googleId:", error);
+    throw error;
+  }
+}
+
 async function linkSleeperId(googleId, sleeperUsername, sleeperId) {
   try {
     const updatedUser = await prisma.user.update({
@@ -59,15 +73,17 @@ async function unlinkSleeperId(googleId) {
   }
 }
 
-async function createLeague(googleId, leagueData) {
+async function upsertLeague(googleId, leagueData) {
   try {
+    // Get the user's current league_ids
     const currentUser = await prisma.user.findUnique({
       where: { google_id: googleId },
       select: { league_ids: true },
     });
 
-    const currentLeagueIds = currentUser.league_ids || [];
+    const currentLeagueIds = currentUser?.league_ids || [];
 
+    // Always fetch fresh roster data from Sleeper
     const response = await fetch(
       `https://api.sleeper.app/v1/league/${leagueData.league_id}/rosters`
     );
@@ -88,30 +104,32 @@ async function createLeague(googleId, leagueData) {
         },
       });
     }
+
     const league = await prisma.league.upsert({
-      where: {
-        league_id: leagueData.league_id,
-      },
+      where: { league_id: leagueData.league_id },
       update: {
-        total_linked: {
-          increment: 1,
-        },
-      },
-      create: {
-        league_id: leagueData.league_id,
         name: leagueData.name,
+        season: leagueData.season,
         rosters: leagueData.total_rosters,
         roster_positions: leagueData.roster_positions,
         scoring_settings: leagueData.scoring_settings,
         roster_data: roster_data,
+      },
+      create: {
+        league_id: leagueData.league_id,
+        name: leagueData.name,
         season: leagueData.season,
+        rosters: leagueData.total_rosters,
+        roster_positions: leagueData.roster_positions,
+        scoring_settings: leagueData.scoring_settings,
+        roster_data: roster_data,
         total_linked: 1,
       },
     });
 
     return league;
   } catch (error) {
-    console.error("Error updating user leagues:", error);
+    console.error("Error in upsertLeague:", error);
     throw error;
   }
 }
@@ -223,9 +241,10 @@ module.exports = {
   findOrCreate,
   linkSleeperId,
   unlinkSleeperId,
-  createLeague,
+  upsertLeague,
   deleteLeagues,
   getLeague,
   createPlayers,
   getPlayer,
+  getUserByGoogleId,
 };

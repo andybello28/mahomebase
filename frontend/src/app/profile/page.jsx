@@ -20,12 +20,17 @@ import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
 
 import { useRouter } from "next/navigation";
+import { getPlayer } from "../utils/players";
+
+import { fetchAllLeagues } from "../utils/leagues";
+import { fetchTransactions } from "../utils/transactions";
 
 export default function Users() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const { user, setUser, setSleeperUsername, setSleeperId } = useUser();
+  const { user, setUser, setSleeperUsername, sleeperId, setSleeperId } =
+    useUser();
   const { allLeagues, isLoadingLeagues } = useLeagues();
   const { season, week } = useSeason();
   const { transactions, setTransactions, isLoadingTransactions } =
@@ -39,6 +44,7 @@ export default function Users() {
   const [selectedYear, setSelectedYear] = useState("All");
   const [leagues, setLeagues] = useState([]);
   const [inputSleeperUsername, setInputSleeperUsername] = useState("");
+  const [fetchedPlayers, setFetchedPlayers] = useState({});
 
   useEffect(() => {
     if (user && searchParams.get("login") == "success") {
@@ -57,6 +63,43 @@ export default function Users() {
     setLeagues(allLeagues);
   }, [allLeagues]);
 
+  //Fetches the players from our transactions so they can be displayed
+  useEffect(() => {
+    const fetchPlayers = async () => {
+      const playerPromises = [];
+
+      transactions.forEach((tx) => {
+        if (tx.adds) {
+          Object.entries(tx.adds).forEach(([playerId]) => {
+            // Push a promise that resolves to an object with playerId and playerData
+            playerPromises.push(
+              getPlayer(playerId).then((playerData) => ({
+                playerId,
+                playerData,
+              }))
+            );
+          });
+        }
+        if (tx.drops) {
+          Object.entries(tx.drops).forEach(([playerId]) => {
+            playerPromises.push(
+              getPlayer(playerId).then((playerData) => ({
+                playerId,
+                playerData,
+              }))
+            );
+          });
+        }
+      });
+      const playerResults = await Promise.all(playerPromises);
+      setFetchedPlayers(playerResults);
+    };
+
+    if (transactions.length > 0) {
+      fetchPlayers();
+    }
+  }, [transactions]);
+
   async function handleAddUsername(e) {
     e.preventDefault();
     if (!inputSleeperUsername.trim()) {
@@ -65,6 +108,7 @@ export default function Users() {
     }
 
     try {
+      setIsLoading(true); // Add loading state
       const googleId = user?.google_id;
       const result = await linkSleeper(googleId, inputSleeperUsername.trim());
 
@@ -76,8 +120,21 @@ export default function Users() {
           sleeper_username: result.sleeper_username,
           sleeper_id: result.sleeper_id,
         }));
+
+        // Fetch leagues and transactions
+        const leaguesData = await fetchAllLeagues(googleId);
+        const transactionsData = await fetchTransactions(googleId);
+
+        // Set leagues first
+        setLeagues(leaguesData.leagues || []);
+
+        // Set transactions - this will trigger the player fetching effect
+        setTransactions(transactionsData);
+
+        // Give the transactions state update time to trigger the player fetch effect
+        // The useEffect that fetches players will handle the player data
+
         toast.success("Sleeper Account Linked");
-        // If we do not add this next part, then the leagues do not get automatically shown to refresh user session
       } else {
         result?.message.map((e) => {
           toast.error(e);
@@ -87,6 +144,8 @@ export default function Users() {
     } catch (error) {
       console.error("Error in linkSleeper:", error);
       toast.error("Failed to link Sleeper.");
+    } finally {
+      setIsLoading(false);
     }
   }
 
@@ -441,67 +500,199 @@ export default function Users() {
                   )}
 
                   {!isLoadingTransactions && transactions.length > 0 && (
-                    <div className="w-full space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
-                      {transactions.map((tx, index) => (
+                    <div className="w-full space-y-4 max-h-96 overflow-y-auto custom-scrollbar px-4 py-2">
+                      {transactions.map((tx) => (
                         <div
-                          key={tx.id || index}
-                          className="p-5 rounded-xl bg-gradient-to-r from-white to-slate-50 border border-slate-200/80 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200"
+                          key={tx.transaction_id}
+                          className="p-5 rounded-xl bg-white border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-300"
                         >
-                          <div className="grid grid-cols-2 gap-4 text-sm">
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-slate-700">
-                                Type:
-                              </span>
-                              <span className="ml-2 capitalize bg-blue-100 text-blue-700 px-2 py-1 rounded-full text-xs font-medium">
-                                {tx.type}
-                              </span>
-                            </div>
+                          <p className="text-sm text-gray-600 font-semibold">
+                            Type:{" "}
+                            <span
+                              className={`ml-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                                tx.type === "free_agent"
+                                  ? "bg-blue-100 text-blue-800"
+                                  : tx.type === "waiver"
+                                  ? "bg-yellow-100 text-yellow-800"
+                                  : "bg-gray-100 text-gray-800"
+                              }`}
+                            >
+                              {tx.type === "free_agent"
+                                ? "free agent"
+                                : tx.type}
+                            </span>
+                          </p>
 
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-slate-700">
-                                Status:
-                              </span>
-                              <span
-                                className={`ml-2 px-3 py-1 rounded-full text-xs font-medium border ${
-                                  tx.status === "completed"
-                                    ? "bg-emerald-50 text-emerald-700 border-emerald-200"
-                                    : tx.status === "pending"
-                                    ? "bg-amber-50 text-amber-700 border-amber-200"
-                                    : tx.status === "failed"
-                                    ? "bg-red-50 text-red-700 border-red-200"
-                                    : "bg-slate-50 text-slate-700 border-slate-200"
-                                }`}
-                              >
-                                {tx.status}
-                              </span>
-                            </div>
+                          {(tx.type === "free_agent" ||
+                            tx.type === "waiver") && (
+                            <>
+                              {tx.adds && (
+                                <div className="mt-2 text-sm text-green-700">
+                                  <p className="font-semibold">+:</p>
+                                  <ul className="list-disc list-inside">
+                                    {Object.entries(tx.adds).map(
+                                      ([playerId]) => {
+                                        const playerObj = Array.isArray(
+                                          fetchedPlayers
+                                        )
+                                          ? fetchedPlayers.find(
+                                              (p) => p.playerId === playerId
+                                            )
+                                          : null;
 
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-slate-700">
-                                Roster ID:
-                              </span>
-                              <span className="ml-2 font-mono text-xs bg-slate-100 text-slate-600 px-2 py-1 rounded">
-                                {tx.roster_ids?.join(", ") || "N/A"}
-                              </span>
-                            </div>
+                                        const playerName = playerObj
+                                          ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
+                                          : "Loading...";
 
-                            <div className="flex items-center gap-2">
-                              <span className="font-semibold text-slate-700">
-                                Updated:
-                              </span>
-                              <span className="ml-2 text-slate-600">
-                                {tx.status_updated
-                                  ? new Date(tx.status_updated).toLocaleString(
-                                      undefined,
-                                      {
-                                        dateStyle: "medium",
-                                        timeStyle: "short",
+                                        return (
+                                          <li key={playerId}>{playerName}</li>
+                                        );
                                       }
-                                    )
-                                  : "Unknown"}
-                              </span>
-                            </div>
-                          </div>
+                                    )}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {tx.drops && (
+                                <div className="mt-2 text-sm text-red-700">
+                                  <p className="font-semibold">-</p>
+                                  <ul className="list-disc list-inside">
+                                    {Object.entries(tx.drops).map(
+                                      ([playerId]) => {
+                                        const playerObj = Array.isArray(
+                                          fetchedPlayers
+                                        )
+                                          ? fetchedPlayers.find(
+                                              (p) => p.playerId === playerId
+                                            )
+                                          : null;
+
+                                        const playerName = playerObj
+                                          ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
+                                          : "Loading...";
+
+                                        return (
+                                          <li key={playerId}>{playerName}</li>
+                                        );
+                                      }
+                                    )}
+                                  </ul>
+                                </div>
+                              )}
+                            </>
+                          )}
+
+                          {tx.type === "trade" && (
+                            <>
+                              {tx.adds && (
+                                <div className="mt-2 text-sm text-green-700">
+                                  <p className="font-semibold">+:</p>
+                                  <ul className="list-disc list-inside">
+                                    {Object.entries(tx.adds)
+                                      .filter(([playerId, rosterId]) => {
+                                        const roster =
+                                          tx.league_data?.roster_data?.[
+                                            rosterId - 1
+                                          ];
+                                        return (
+                                          roster?.owner_id === user?.sleeper_id
+                                        );
+                                      })
+                                      .map(([playerId, rosterId]) => {
+                                        const playerObj = Array.isArray(
+                                          fetchedPlayers
+                                        )
+                                          ? fetchedPlayers.find(
+                                              (p) => p.playerId === playerId
+                                            )
+                                          : null;
+
+                                        const playerName = playerObj
+                                          ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
+                                          : "Loading...";
+
+                                        return (
+                                          <li key={playerId}>{playerName}</li>
+                                        );
+                                      })}
+                                  </ul>
+                                </div>
+                              )}
+
+                              {tx.drops && (
+                                <div className="mt-2 text-sm text-red-700">
+                                  <p className="font-semibold">-</p>
+                                  <ul className="list-disc list-inside">
+                                    {Object.entries(tx.drops)
+                                      .filter(([playerId, rosterId]) => {
+                                        const roster =
+                                          tx.league_data?.roster_data?.[
+                                            rosterId - 1
+                                          ];
+                                        return (
+                                          roster?.owner_id === user.sleeper_id
+                                        );
+                                      })
+                                      .map(([playerId, rosterId]) => {
+                                        const playerObj = Array.isArray(
+                                          fetchedPlayers
+                                        )
+                                          ? fetchedPlayers.find(
+                                              (p) => p.playerId === playerId
+                                            )
+                                          : null;
+
+                                        const playerName = playerObj
+                                          ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
+                                          : "Loading...";
+
+                                        return (
+                                          <li key={playerId}>{playerName}</li>
+                                        );
+                                      })}
+                                  </ul>
+                                </div>
+                              )}
+
+                              <ul>
+                                {tx.draft_picks.map((pick, index) => {
+                                  const acquired =
+                                    pick.owner_id === user.sleeper_id;
+                                  const gaveUp =
+                                    pick.previous_owner_id === user.sleeper_id;
+
+                                  if (acquired) {
+                                    return (
+                                      <li key={index}>
+                                        <b>Acquired</b> Pick: Round {pick.round}
+                                        , {pick.season}
+                                      </li>
+                                    );
+                                  }
+                                  if (gaveUp) {
+                                    return (
+                                      <li key={index}>
+                                        <b>Gave Up</b> Pick: Round {pick.round},{" "}
+                                        {pick.season}
+                                      </li>
+                                    );
+                                  }
+                                })}
+                              </ul>
+                            </>
+                          )}
+
+                          <p>Status: {tx.status}</p>
+
+                          <p className="text-sm text-slate-500">
+                            League: <strong>{tx.league_data.name}</strong>
+                          </p>
+                          <p className="text-sm text-gray-700 mt-1">
+                            <span className="font-semibold">Updated:</span>{" "}
+                            {tx.status_updated
+                              ? new Date(tx.status_updated).toLocaleString()
+                              : "Unknown"}
+                          </p>
                         </div>
                       ))}
                     </div>

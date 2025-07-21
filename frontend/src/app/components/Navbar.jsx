@@ -24,7 +24,7 @@ export default function Navbar() {
 
   const navItems = [
     { name: "Home", href: "/" },
-    { name: "Trade Generator", href: "#" },
+    { name: "Trade Generator", href: "/trade" },
     { name: "Start/Sit", href: "#" },
     { name: "Waiver Wire", href: "#" },
     { name: "My Leagues", href: "/profile/leagues" },

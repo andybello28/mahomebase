@@ -13,6 +13,7 @@ const linkSleeper = async (googleId, inputUsername) => {
       }),
     });
     const data = await res.json();
+    console.log(data);
     return data;
   } catch (error) {
     console.error("Error linking sleeper username:", error);

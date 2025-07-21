@@ -5,9 +5,10 @@ const validateSleeper = require("../validators/sleeperValidator");
 const {
   linkSleeperId,
   unlinkSleeperId,
-  createLeague,
+  upsertLeague,
   deleteLeagues,
   getLeague,
+  getUserByGoogleId,
 } = require("../db/queries");
 
 router.post("/:googleid/link", validateSleeper, async (req, res) => {
@@ -38,14 +39,11 @@ router.post("/:googleid/link", validateSleeper, async (req, res) => {
 
     const sleeperId = sleeperData.user_id;
 
-    const connectSleeper = await linkSleeperId(
-      googleId,
-      sleeperUsername,
-      sleeperId
-    );
-    return res.status(200).json({
-      sleeper_username: connectSleeper,
-    });
+    await linkSleeperId(googleId, sleeperUsername, sleeperId);
+
+    const updatedUser = await getUserByGoogleId(googleId);
+
+    return res.status(200).json(updatedUser);
   } catch (error) {
     console.error("Error in POST /link:", error);
     res.status(500).json({ error: "Internal server error" });
@@ -107,11 +105,7 @@ router.post("/:googleid/leagues", async (req, res) => {
     );
     const leagues = await response.json();
     for (const league of leagues) {
-      if (league_ids.includes(league.league_id)) {
-        continue;
-      } else {
-        await createLeague(google_id, league);
-      }
+      await upsertLeague(google_id, league);
     }
     return res.status(200).json({ message: "Leagues updated successfully" });
   } catch (error) {
@@ -122,22 +116,32 @@ router.post("/:googleid/leagues", async (req, res) => {
 
 router.get("/:googleid/leagues/transactions", async (req, res) => {
   try {
-    const { league_ids: league_ids } = req.user;
-    const currentYear = new Date().getFullYear().toString();
+    const { sleeper_id: sleeper_id, league_ids: league_ids } = req.user;
     const leagues = await Promise.all(league_ids.map((id) => getLeague(id)));
-    const filteredLeagues = leagues.filter(
-      (league) => league.season === currentYear
-    );
     const response1 = await fetch("https://api.sleeper.app/v1/state/nfl");
     const state = await response1.json();
     const round = state.week === 0 ? 1 : state.week;
     let transactions = [];
-    for (const filteredLeague of filteredLeagues) {
+    for (const league of leagues) {
       const response2 = await fetch(
-        `https://api.sleeper.app/v1/league/${filteredLeague.league_id}/transactions/${round}`
+        `https://api.sleeper.app/v1/league/${league.league_id}/transactions/${round}`
       );
-      const leagueTransaction = await response2.json();
-      transactions.push(...leagueTransaction);
+      let leagueTransactions = await response2.json();
+
+      const userTransactions = leagueTransactions.filter(
+        (tx) => tx.creator === sleeper_id
+      );
+
+      if (userTransactions.length === 0) {
+        continue;
+      }
+
+      const enrichedTransactions = userTransactions.map((tx) => ({
+        ...tx,
+        league_data: league,
+      }));
+
+      transactions.push(...enrichedTransactions);
     }
     res.json(transactions);
   } catch (error) {
