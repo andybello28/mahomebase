@@ -94,6 +94,14 @@ async function upsertLeague(googleId, leagueData) {
 
     const roster_data = await response.json();
 
+    const round_response = await fetch("https://api.sleeper.app/v1/state/nfl");
+    const state = await round_response.json();
+    const round = state.week === 0 ? 1 : state.week;
+    const tx_response = await fetch(
+      `https://api.sleeper.app/v1/league/${leagueData.league_id}/transactions/${round}`
+    );
+    const leagueTransactions = await tx_response.json();
+
     if (!currentLeagueIds.includes(leagueData.league_id)) {
       await prisma.user.update({
         where: { google_id: googleId },
@@ -114,6 +122,10 @@ async function upsertLeague(googleId, leagueData) {
         roster_positions: leagueData.roster_positions,
         scoring_settings: leagueData.scoring_settings,
         roster_data: roster_data,
+        transactions: leagueTransactions,
+        total_linked: {
+          increment: 1,
+        },
       },
       create: {
         league_id: leagueData.league_id,
@@ -123,6 +135,7 @@ async function upsertLeague(googleId, leagueData) {
         roster_positions: leagueData.roster_positions,
         scoring_settings: leagueData.scoring_settings,
         roster_data: roster_data,
+        transactions: leagueTransactions,
         total_linked: 1,
       },
     });
@@ -237,6 +250,21 @@ async function getPlayer(player_id) {
   return player;
 }
 
+async function getLeagueTransactions(league_id) {
+  try {
+    const league = await prisma.league.findUnique({
+      where: {
+        league_id: league_id,
+      },
+    });
+    console.log("league tx: ", league.transactions);
+    return league.transactions;
+  } catch (error) {
+    console.error("Error getting league transactions:", error);
+    throw error;
+  }
+}
+
 module.exports = {
   findOrCreate,
   linkSleeperId,
@@ -247,4 +275,5 @@ module.exports = {
   createPlayers,
   getPlayer,
   getUserByGoogleId,
+  getLeagueTransactions,
 };

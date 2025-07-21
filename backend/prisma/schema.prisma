@@ -34,6 +34,7 @@ model League {
   roster_positions  Json
   scoring_settings  Json
   roster_data       Json
+  transactions      Json
   createdAt         DateTime @default(now())
   total_linked     Int      @default(0)
 }

@@ -9,6 +9,7 @@ const {
   deleteLeagues,
   getLeague,
   getUserByGoogleId,
+  getLeagueTransactions,
 } = require("../db/queries");
 
 router.post("/:googleid/link", validateSleeper, async (req, res) => {
@@ -117,24 +118,15 @@ router.post("/:googleid/leagues", async (req, res) => {
 router.get("/:googleid/leagues/transactions", async (req, res) => {
   try {
     const { sleeper_id: sleeper_id, league_ids: league_ids } = req.user;
-    const leagues = await Promise.all(league_ids.map((id) => getLeague(id)));
-    const response1 = await fetch("https://api.sleeper.app/v1/state/nfl");
-    const state = await response1.json();
-    const round = state.week === 0 ? 1 : state.week;
     let transactions = [];
-    for (const league of leagues) {
-      const response2 = await fetch(
-        `https://api.sleeper.app/v1/league/${league.league_id}/transactions/${round}`
-      );
-      let leagueTransactions = await response2.json();
+    for (const league_id of league_ids) {
+      const league = await getLeague(league_id);
+      console.log(league);
+      let leagueTransactions = await getLeagueTransactions(league.league_id);
 
       const userTransactions = leagueTransactions.filter(
         (tx) => tx.creator === sleeper_id
       );
-
-      if (userTransactions.length === 0) {
-        continue;
-      }
 
       const enrichedTransactions = userTransactions.map((tx) => ({
         ...tx,
@@ -145,7 +137,7 @@ router.get("/:googleid/leagues/transactions", async (req, res) => {
     }
     res.json(transactions);
   } catch (error) {
-    console.error("Error getting recent activity");
+    console.error("Error getting recent activity: ", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
