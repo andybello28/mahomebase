@@ -257,7 +257,6 @@ async function getLeagueTransactions(league_id) {
         league_id: league_id,
       },
     });
-    console.log("league tx: ", league.transactions);
     return league.transactions;
   } catch (error) {
     console.error("Error getting league transactions:", error);

@@ -121,7 +121,6 @@ router.get("/:googleid/leagues/transactions", async (req, res) => {
     let transactions = [];
     for (const league_id of league_ids) {
       const league = await getLeague(league_id);
-      console.log(league);
       let leagueTransactions = await getLeagueTransactions(league.league_id);
 
       const userTransactions = leagueTransactions.filter(
@@ -137,7 +136,32 @@ router.get("/:googleid/leagues/transactions", async (req, res) => {
     }
     res.json(transactions);
   } catch (error) {
-    console.error("Error getting recent activity: ", error);
+    console.error("Error getting all recent activity: ", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
+
+router.get("/:googleid/leagues/:leagueid/transactions", async (req, res) => {
+  try {
+    const { sleeper_id: sleeper_id } = req.user;
+    const { leagueid } = req.params;
+    const league = await getLeague(leagueid);
+    let transactions = [];
+    let leagueTransactions = await getLeagueTransactions(league.league_id);
+
+    const userTransactions = leagueTransactions.filter(
+      (tx) => tx.creator === sleeper_id
+    );
+
+    const enrichedTransactions = userTransactions.map((tx) => ({
+      ...tx,
+      league_data: league,
+    }));
+
+    transactions.push(...enrichedTransactions);
+    res.json(transactions);
+  } catch (error) {
+    console.error("Error getting league recent activity: ", error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
