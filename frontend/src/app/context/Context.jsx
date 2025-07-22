@@ -61,7 +61,6 @@ export function LeaguesProvider({ children }) {
         if (!user) return;
         setIsLoadingLeagues(true);
         const googleId = user?.google_id;
-        await updateLeagues(googleId);
         const response = await fetchAllLeagues(googleId);
         if (response?.leagues) {
           setAllLeagues(response.leagues);
@@ -214,7 +213,7 @@ export function LeagueProvider({ children, leagueid }) {
   useEffect(() => {
     const fetchRosterPlayers = async () => {
       if (!league?.roster_data) return;
-
+      await updateLeagues();
       const enrichedRosters = await Promise.all(
         league.roster_data.map(async (roster) => {
           let username = "Unknown";

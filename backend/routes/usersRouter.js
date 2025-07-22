@@ -97,15 +97,26 @@ router.post("/:googleid/leagues", async (req, res) => {
   const { google_id: google_id, league_ids: league_ids } = req.user;
   const sleeperId = req.user.sleeper_id;
   if (!sleeperId) {
-    return;
+    return res.status(400).json({ error: "User not linked to Sleeper" });
   }
+  const MAX_LEAGUES = 10;
   const currentYear = new Date().getFullYear().toString();
   try {
     const response = await fetch(
       `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${currentYear}`
     );
     const leagues = await response.json();
-    for (const league of leagues) {
+    const availableSlots = MAX_LEAGUES - (league_ids?.length || 0);
+    if (availableSlots <= 0) {
+      return res.status(400).json({
+        error: `League limit reached. Remove some leagues before adding new ones.`,
+      });
+    }
+    const leaguesToAdd = leagues
+      .filter((league) => !league_ids.includes(league.league_id))
+      .slice(0, availableSlots);
+
+    for (const league of leaguesToAdd) {
       await upsertLeague(google_id, league);
     }
     return res.status(200).json({ message: "Leagues updated successfully" });

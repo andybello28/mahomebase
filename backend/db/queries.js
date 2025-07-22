@@ -1,4 +1,5 @@
 const prisma = require("./prisma");
+const client = require("../redis/client");
 
 async function findOrCreate(googleId, email, name) {
   try {
@@ -29,11 +30,21 @@ async function findOrCreate(googleId, email, name) {
 
 async function getUserByGoogleId(googleId) {
   try {
+    const cacheKey = `user:${googleId}`;
+    const cached = await client.get(cacheKey);
+    if (cached) {
+      return JSON.parse(cached);
+    }
     const user = await prisma.user.findUnique({
       where: {
         google_id: googleId,
       },
     });
+    if (user) {
+      await client.set(cacheKey, JSON.stringify(user), {
+        EX: 60 * (5 + Math.floor(Math.random() * 3)),
+      });
+    }
     return user;
   } catch (error) {
     console.error("Error fetching user by googleId:", error);
@@ -50,6 +61,7 @@ async function linkSleeperId(googleId, sleeperUsername, sleeperId) {
         sleeper_id: sleeperId,
       },
     });
+    await client.del(`user:${googleId}`);
     return updatedUser.sleeper_username;
   } catch (error) {
     console.error("Error linking sleeperId: ", error);
@@ -66,6 +78,7 @@ async function unlinkSleeperId(googleId) {
         sleeper_id: null,
       },
     });
+    await client.del(`user:${googleId}`);
     return updatedUser.sleeper_username;
   } catch (error) {
     console.error("Error unlinking sleeper account:", error);
@@ -75,7 +88,6 @@ async function unlinkSleeperId(googleId) {
 
 async function upsertLeague(googleId, leagueData) {
   try {
-    // Get the user's current league_ids
     const currentUser = await prisma.user.findUnique({
       where: { google_id: googleId },
       select: { league_ids: true },
@@ -113,6 +125,7 @@ async function upsertLeague(googleId, leagueData) {
       });
     }
 
+    console.log(`Upserting league ${leagueData.league_id}`);
     const league = await prisma.league.upsert({
       where: { league_id: leagueData.league_id },
       update: {
@@ -139,6 +152,9 @@ async function upsertLeague(googleId, leagueData) {
         total_linked: 1,
       },
     });
+    await client.set(`league:${leagueData.league_id}`, JSON.stringify(league), {
+      EX: 60 * (5 + Math.floor(Math.random() * 3)),
+    });
 
     return league;
   } catch (error) {
@@ -164,14 +180,18 @@ async function deleteLeagues(googleId, league_ids) {
         await prisma.league.delete({
           where: { league_id: id },
         });
+        await client.del(`league:${id}`);
       } else {
-        await prisma.league.update({
+        const updatedLeague = await prisma.league.update({
           where: { league_id: id },
           data: {
             total_linked: {
               decrement: 1,
             },
           },
+        });
+        await client.set(`league:${id}`, JSON.stringify(updatedLeague), {
+          EX: 60 * (5 + Math.floor(Math.random() * 3)),
         });
       }
     }
@@ -184,12 +204,24 @@ async function deleteLeagues(googleId, league_ids) {
 
 async function getLeague(league_id) {
   try {
+    const cacheKey = `league:${league_id}`;
+
+    const cached = await client.get(cacheKey);
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
     const leagueData = await prisma.league.findUnique({
-      where: { league_id: league_id },
+      where: { league_id },
     });
+
     if (!leagueData) {
       return null;
     }
+
+    await client.set(cacheKey, JSON.stringify(leagueData), {
+      EX: 60 * (5 + Math.floor(Math.random() * 3)),
+    });
     return leagueData;
   } catch (error) {
     console.error("Error getting league:", error);
