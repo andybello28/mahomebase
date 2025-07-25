@@ -2,10 +2,12 @@ const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
 const validateSleeper = require("../validators/sleeperValidator");
+// const leagueValidator = require("../validators/leagueValidator");
 const {
   linkSleeperId,
   unlinkSleeperId,
   upsertLeague,
+  updateLeague,
   deleteLeagues,
   getLeague,
   getUserByGoogleId,
@@ -69,21 +71,16 @@ router.post("/:googleid/unlink", async (req, res) => {
 router.get("/:googleid/leagues", async (req, res) => {
   const { sleeper_id: sleeper_id, league_ids: league_ids } = req.user;
   if (!sleeper_id) {
-    return;
+    return res.status(400).json({ error: "User not linked to Sleeper" });
   }
 
   try {
-    let allLeaguesData = [];
-    for (const id of league_ids) {
-      const leagueData = await getLeague(id);
+    const leagueDataList = await Promise.all(
+      league_ids.map((id) => getLeague(id))
+    );
+    //Remove nulls
+    const allLeaguesData = leagueDataList.filter((data) => data);
 
-      if (!leagueData) {
-        console.error("API request failed");
-        continue;
-      }
-
-      allLeaguesData.push(leagueData);
-    }
     return res.status(200).json({
       leagues: allLeaguesData,
     });
@@ -102,6 +99,16 @@ router.post("/:googleid/leagues", async (req, res) => {
   const MAX_LEAGUES = 10;
   const currentYear = new Date().getFullYear().toString();
   try {
+    if (league_ids && league_ids.length > 0) {
+      const leaguePromises = league_ids.map(async (league_id) => {
+        const response = await fetch(
+          `https://api.sleeper.app/v1/league/${league_id}`
+        );
+        const leagueData = await response.json();
+        return updateLeague(leagueData);
+      });
+      await Promise.all(leaguePromises);
+    }
     const response = await fetch(
       `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${currentYear}`
     );
@@ -116,9 +123,9 @@ router.post("/:googleid/leagues", async (req, res) => {
       .filter((league) => !league_ids.includes(league.league_id))
       .slice(0, availableSlots);
 
-    for (const league of leaguesToAdd) {
-      await upsertLeague(google_id, league);
-    }
+    await Promise.all(
+      leaguesToAdd.map((league) => upsertLeague(google_id, league))
+    );
     return res.status(200).json({ message: "Leagues updated successfully" });
   } catch (error) {
     console.error("Error in POST /users/:googleid/leagues", error);
@@ -129,22 +136,23 @@ router.post("/:googleid/leagues", async (req, res) => {
 router.get("/:googleid/leagues/transactions", async (req, res) => {
   try {
     const { sleeper_id: sleeper_id, league_ids: league_ids } = req.user;
-    let transactions = [];
-    for (const league_id of league_ids) {
-      const league = await getLeague(league_id);
-      let leagueTransactions = await getLeagueTransactions(league.league_id);
-
-      const userTransactions = leagueTransactions.filter(
-        (tx) => tx.creator === sleeper_id
-      );
-
-      const enrichedTransactions = userTransactions.map((tx) => ({
-        ...tx,
-        league_data: league,
-      }));
-
-      transactions.push(...enrichedTransactions);
-    }
+    const transactionsPerLeague = await Promise.all(
+      league_ids.map(async (league_id) => {
+        const league = await getLeague(league_id);
+        if (!league) return [];
+        const leagueTransactions = await getLeagueTransactions(
+          league.league_id
+        );
+        const userTransactions = leagueTransactions.filter(
+          (tx) => tx.creator === sleeper_id
+        );
+        return userTransactions.map((tx) => ({
+          ...tx,
+          league_data: league,
+        }));
+      })
+    );
+    const transactions = transactionsPerLeague.flat();
     res.json(transactions);
   } catch (error) {
     console.error("Error getting all recent activity: ", error);
@@ -189,5 +197,35 @@ router.get("/:googleid/leagues/:leagueid", async (req, res) => {
     return res.status(500).json({ error: "Internal server error" });
   }
 });
+
+// router.post(
+//   "/:googleid/leagues/:leagueid",
+//   leagueValidator,
+//   async (req, res) => {
+//     try {
+//       const errors = validationResult(req);
+//       if (!errors.isEmpty()) {
+//         return res.status(400).json({ errors: errors.array() });
+//       }
+//       const { leagueid } = req.params;
+//       if (!req.user) {
+//         return res.status(401).json({ error: "Unauthorized" });
+//       }
+//       const { google_id, league_ids } = req.user;
+//       if (league_ids.includes(leagueid)) {
+//         return res.status(200).json({ message: "League already exists" });
+//       }
+//       const leagueData = await getLeague(leagueid);
+//       if (!leagueData) {
+//         return res.status(404).json({ error: "League not found" });
+//       }
+//       await upsertLeague(google_id, leagueData);
+//       return res.status(200).json({ message: "Leagues updated successfully" });
+//     } catch (error) {
+//       console.error("Error in POST /:googleid/leagues/:leagueid:", error);
+//       return res.status(500).json({ error: "Internal server error" });
+//     }
+//   }
+// );
 
 module.exports = router;

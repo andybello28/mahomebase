@@ -163,6 +163,44 @@ async function upsertLeague(googleId, leagueData) {
   }
 }
 
+async function updateLeague(leagueData) {
+  try {
+    // Always fetch fresh roster data from Sleeper
+    const response = await fetch(
+      `https://api.sleeper.app/v1/league/${leagueData.league_id}/rosters`
+    );
+
+    if (!response.ok) {
+      throw new Error(`Failed to fetch roster data: ${response.status}`);
+    }
+
+    const roster_data = await response.json();
+
+    const round_response = await fetch("https://api.sleeper.app/v1/state/nfl");
+    const state = await round_response.json();
+    const round = state.week === 0 ? 1 : state.week;
+    const tx_response = await fetch(
+      `https://api.sleeper.app/v1/league/${leagueData.league_id}/transactions/${round}`
+    );
+    const leagueTransactions = await tx_response.json();
+    await prisma.league.update({
+      where: { league_id: leagueData.league_id },
+      data: {
+        name: leagueData.name,
+        season: leagueData.season,
+        rosters: leagueData.total_rosters,
+        roster_positions: leagueData.roster_positions,
+        scoring_settings: leagueData.scoring_settings,
+        roster_data: roster_data,
+        transactions: leagueTransactions,
+      },
+    });
+  } catch (error) {
+    console.error("Error in updateLeague:", error);
+    throw error;
+  }
+}
+
 async function deleteLeagues(googleId, league_ids) {
   try {
     const updatedUser = await prisma.user.update({
@@ -301,6 +339,7 @@ module.exports = {
   linkSleeperId,
   unlinkSleeperId,
   upsertLeague,
+  updateLeague,
   deleteLeagues,
   getLeague,
   createPlayers,
