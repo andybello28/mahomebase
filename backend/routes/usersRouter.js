@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { validationResult } = require("express-validator");
 const validateSleeper = require("../validators/sleeperValidator");
-// const leagueValidator = require("../validators/leagueValidator");
+const leagueValidator = require("../validators/leagueValidator");
 const {
   linkSleeperId,
   unlinkSleeperId,
@@ -96,7 +96,7 @@ router.post("/:googleid/leagues", async (req, res) => {
   if (!sleeperId) {
     return res.status(400).json({ error: "User not linked to Sleeper" });
   }
-  const MAX_LEAGUES = 10;
+  const MAX_LEAGUES = 20;
   const currentYear = new Date().getFullYear().toString();
   try {
     if (league_ids && league_ids.length > 0) {
@@ -105,7 +105,9 @@ router.post("/:googleid/leagues", async (req, res) => {
           `https://api.sleeper.app/v1/league/${league_id}`
         );
         const leagueData = await response.json();
-        return updateLeague(leagueData);
+        if (leagueData) {
+          return updateLeague(leagueData);
+        }
       });
       await Promise.all(leaguePromises);
     }
@@ -116,7 +118,7 @@ router.post("/:googleid/leagues", async (req, res) => {
     const availableSlots = MAX_LEAGUES - (league_ids?.length || 0);
     if (availableSlots <= 0) {
       return res.status(400).json({
-        error: `League limit reached. Remove some leagues before adding new ones.`,
+        error: `League limit reached.`,
       });
     }
     const leaguesToAdd = leagues
@@ -128,7 +130,7 @@ router.post("/:googleid/leagues", async (req, res) => {
     );
     return res.status(200).json({ message: "Leagues updated successfully" });
   } catch (error) {
-    console.error("Error in POST /users/:googleid/leagues", error);
+    console.error(`Error in POST /users/:googleid/leagues for `, error);
     return res.status(500).json({ error: "Internal server error" });
   }
 });
@@ -198,34 +200,53 @@ router.get("/:googleid/leagues/:leagueid", async (req, res) => {
   }
 });
 
-// router.post(
-//   "/:googleid/leagues/:leagueid",
-//   leagueValidator,
-//   async (req, res) => {
-//     try {
-//       const errors = validationResult(req);
-//       if (!errors.isEmpty()) {
-//         return res.status(400).json({ errors: errors.array() });
-//       }
-//       const { leagueid } = req.params;
-//       if (!req.user) {
-//         return res.status(401).json({ error: "Unauthorized" });
-//       }
-//       const { google_id, league_ids } = req.user;
-//       if (league_ids.includes(leagueid)) {
-//         return res.status(200).json({ message: "League already exists" });
-//       }
-//       const leagueData = await getLeague(leagueid);
-//       if (!leagueData) {
-//         return res.status(404).json({ error: "League not found" });
-//       }
-//       await upsertLeague(google_id, leagueData);
-//       return res.status(200).json({ message: "Leagues updated successfully" });
-//     } catch (error) {
-//       console.error("Error in POST /:googleid/leagues/:leagueid:", error);
-//       return res.status(500).json({ error: "Internal server error" });
-//     }
-//   }
-// );
+router.post(
+  "/:googleid/leagues/:leagueid",
+  leagueValidator,
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res
+          .status(400)
+          .json({ error: errors.array()[0]?.msg || "Validation error" });
+      }
+      const { leagueid } = req.params;
+      if (!req.user) {
+        return res.status(401).json({ error: "Unauthorized" });
+      }
+      const { google_id, league_ids } = req.user;
+      if (league_ids.length >= 30) {
+        return res.status(200).json({ error: "Capped out leagues" });
+      }
+      if (league_ids.includes(leagueid)) {
+        return res.status(200).json({ error: "League already exists" });
+      }
+      const response = await fetch(
+        `https://api.sleeper.app/v1/league/${leagueid}`
+      );
+      const leagueData = await response.json();
+      if (!leagueData) {
+        return res.status(404).json({ error: "League not found" });
+      }
+      const responseUsers = await fetch(
+        `https://api.sleeper.app/v1/league/${leagueid}/users`
+      );
+      const leagueUsers = await responseUsers.json();
+      console.log(leagueUsers);
+      const userInLeague = leagueUsers.some(
+        (sleeperUser) => req.user.sleeper_id === sleeperUser.user_id
+      );
+      if (!userInLeague) {
+        return res.status(404).json({ error: `You are not in this league!` });
+      }
+      await upsertLeague(google_id, leagueData);
+      return res.status(200).json({ message: "Leagues updated successfully" });
+    } catch (error) {
+      console.error("Error in POST /:googleid/leagues/:leagueid:", error);
+      return res.status(500).json({ error: "Internal server error" });
+    }
+  }
+);
 
 module.exports = router;

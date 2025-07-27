@@ -125,7 +125,6 @@ async function upsertLeague(googleId, leagueData) {
       });
     }
 
-    console.log(`Upserting league ${leagueData.league_id}`);
     const league = await prisma.league.upsert({
       where: { league_id: leagueData.league_id },
       update: {

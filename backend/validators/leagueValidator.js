@@ -1,11 +1,11 @@
-// const { body } = require("express-validator");
+const { param } = require("express-validator");
 
-// const leagueValidator = [
-//   body("league_id")
-//     .isNumeric()
-//     .withMessage("Sleeper league ID's must contain strictly digits")
-//     .trim()
-//     .escape(),
-// ];
+const leagueValidator = [
+  param("leagueid")
+    .isNumeric()
+    .withMessage("Sleeper league ID's must contain strictly digits")
+    .trim()
+    .escape(),
+];
 
-// module.exports = leagueValidator;
+module.exports = leagueValidator;

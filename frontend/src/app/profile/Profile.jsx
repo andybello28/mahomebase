@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { linkSleeper, unlinkSleeper } from "../utils/sleeperUsername";
 import { toast } from "react-toastify";
-import { GoLink, GoUnlink } from "react-icons/go";
 import { useSearchParams } from "next/navigation";
 
 import {
@@ -24,6 +23,7 @@ import { getPlayer } from "../utils/players";
 
 import { fetchAllLeagues } from "../utils/leagues";
 import { fetchTransactions } from "../utils/transactions";
+import { MdAddLink, MdLinkOff } from "react-icons/md";
 
 export default function Profile() {
   const searchParams = useSearchParams();
@@ -222,7 +222,7 @@ export default function Profile() {
                           type="submit"
                           className="flex items-center justify-center flex-1 py-2 rounded-md bg-[var(--foreground)] text-[var(--background)] font-semibold shadow-sm transition-transform duration-200 hover:scale-105 hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[var(--foreground)] focus:ring-offset-2"
                         >
-                          <GoLink className="text-lg" />
+                          <MdAddLink />
                         </button>
                         <button
                           type="button"
@@ -256,7 +256,7 @@ export default function Profile() {
                     className="flex items-center justify-center p-2 text-[var(--foreground)] hover:text-red-500 hover:scale-105 transition-all duration-300 rounded-lg border border-[var(--foreground)] hover:border-red-500"
                     aria-label="Delete sleeper username"
                   >
-                    <GoUnlink className="w-4 h-4" />
+                    <MdLinkOff />
                   </button>
                 </div>
               )}

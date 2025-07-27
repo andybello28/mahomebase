@@ -4,14 +4,21 @@ import Footer from "../../components/Footer";
 import { useEffect, useState } from "react";
 import Navbar from "../../components/Navbar";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 
 import { useLeagues, useUser } from "../../context/Context.jsx";
+import { IoMdAddCircleOutline } from "react-icons/io";
+
+import { addLeague, fetchAllLeagues, updateLeagues } from "@/app/utils/leagues";
 
 export default function Leagues() {
   const { user } = useUser();
-  const { allLeagues } = useLeagues();
+  const { allLeagues, setAllLeagues } = useLeagues();
   const [selectedLeagues, setSelectedLeagues] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+
+  const [inputLeague, setInputLeague] = useState("");
+  const [showLeagueForm, setShowLeagueForm] = useState(false);
 
   const router = useRouter();
 
@@ -20,15 +27,74 @@ export default function Leagues() {
   };
 
   useEffect(() => {
+    if (!user?.google_id) return;
+
+    const loadLeagues = async () => {
+      const leagues = await fetchAllLeagues(user.google_id);
+      setAllLeagues(leagues);
+    };
+
+    loadLeagues();
+  }, [user]);
+
+  useEffect(() => {
+    if (!allLeagues) {
+      console.log("Empty all leagues");
+    }
     setSelectedLeagues(allLeagues);
   }, [allLeagues]);
 
   useEffect(() => {
+    if (!Array.isArray(allLeagues)) {
+      setSelectedLeagues([]);
+      return;
+    }
+
     const filtered = allLeagues.filter((league) =>
       league.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setSelectedLeagues(filtered);
   }, [searchTerm, allLeagues]);
+
+  useEffect(() => {
+    console.log("selected leagues:", selectedLeagues);
+  }, [selectedLeagues]);
+
+  useEffect(() => {
+    console.log("all leagues:", allLeagues);
+  }, [allLeagues]);
+
+  const handleAddLeague = async (googleId, leagueId) => {
+    try {
+      const response = await addLeague(googleId, leagueId);
+
+      if (response.error) {
+        toast.error(response.error);
+      } else if (response.message) {
+        toast.success(response.message);
+        const updatedLeagues = await fetchAllLeagues(user.google_id);
+        setAllLeagues(updatedLeagues.leagues);
+      } else {
+        toast.info("Unexpected response");
+      }
+    } catch (error) {
+      toast.error("Failed to add league. Please try again.");
+    }
+    setInputLeague("");
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    if (!inputLeague.trim()) {
+      toast.warn("Please enter a league ID");
+      return;
+    }
+    if (!user?.google_id) {
+      toast.error("User not logged in");
+      return;
+    }
+    await handleAddLeague(user.google_id, inputLeague.trim());
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -47,17 +113,42 @@ export default function Leagues() {
             </h2>
           )}
         </div>
-
-        <input
-          type="text"
-          placeholder="Search leagues..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-        />
-
+        <div className="flex flex-row gap-20">
+          {" "}
+          <input
+            type="text"
+            placeholder="Search leagues..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+          />
+          {allLeagues?.length >= 20 && (
+            <div className="flex items-center">
+              {showLeagueForm && (
+                <form onSubmit={onSubmit} className="flex gap-2">
+                  <input
+                    type="text"
+                    value={inputLeague}
+                    onChange={(e) => setInputLeague(e.target.value)}
+                    placeholder="Enter league ID"
+                    className="px-3 py-1 border border-slate-300 rounded"
+                  />
+                  <button
+                    type="submit"
+                    className="px-3 py-1 bg-blue-500 text-white rounded"
+                  >
+                    Submit
+                  </button>
+                </form>
+              )}
+              <button onClick={() => setShowLeagueForm((prev) => !prev)}>
+                <IoMdAddCircleOutline />
+              </button>
+            </div>
+          )}
+        </div>
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-          {selectedLeagues.map((league, index) => (
+          {selectedLeagues?.map((league, index) => (
             <div
               key={league.league_id}
               className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow duration-200"

@@ -52,4 +52,24 @@ const getLeague = async (googleId, leagueId) => {
   }
 };
 
-export { fetchAllLeagues, updateLeagues, getLeague };
+const addLeague = async (googleId, leagueId) => {
+  try {
+    const res = await fetch(
+      `${backend_url}/users/${googleId}/leagues/${leagueId}`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+    const message = await res.json();
+    return message;
+  } catch (error) {
+    console.error("Error adding league:", error);
+    throw error;
+  }
+};
+
+export { fetchAllLeagues, updateLeagues, getLeague, addLeague };

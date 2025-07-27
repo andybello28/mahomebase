@@ -124,7 +124,7 @@ export function TransactionsProvider({ children }) {
   const [isLoadingTransactions, setIsLoadingTransactions] = useState(false);
   useEffect(() => {
     const handleFetchTransactions = async () => {
-      if (!user?.google_id || allLeagues.length === 0) return;
+      if (!user?.google_id || allLeagues?.length === 0) return;
 
       setIsLoadingTransactions(true);
       try {
