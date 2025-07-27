@@ -20,7 +20,7 @@ const fetchAllLeagues = async (googleId) => {
 const updateLeagues = async (googleId) => {
   try {
     const res = await fetch(`${backend_url}/users/${googleId}/leagues`, {
-      method: "POST",
+      method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
@@ -57,7 +57,7 @@ const addLeague = async (googleId, leagueId) => {
     const res = await fetch(
       `${backend_url}/users/${googleId}/leagues/${leagueId}`,
       {
-        method: "POST",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },

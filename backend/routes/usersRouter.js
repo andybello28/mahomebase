@@ -14,7 +14,7 @@ const {
   getLeagueTransactions,
 } = require("../db/queries");
 
-router.post("/:googleid/link", validateSleeper, async (req, res) => {
+router.put("/:googleid/sleeper", validateSleeper, async (req, res) => {
   try {
     const errors = validationResult(req);
     //message will be an array of messages saying why the requested league failed to be pushed.
@@ -53,7 +53,7 @@ router.post("/:googleid/link", validateSleeper, async (req, res) => {
   }
 });
 
-router.post("/:googleid/unlink", async (req, res) => {
+router.delete("/:googleid/sleeper", async (req, res) => {
   try {
     const { google_id: googleId, league_ids: leagueIds } = req.user;
 
@@ -90,7 +90,7 @@ router.get("/:googleid/leagues", async (req, res) => {
   }
 });
 
-router.post("/:googleid/leagues", async (req, res) => {
+router.put("/:googleid/leagues", async (req, res) => {
   const { google_id: google_id, league_ids: league_ids } = req.user;
   const sleeperId = req.user.sleeper_id;
   if (!sleeperId) {
@@ -200,7 +200,7 @@ router.get("/:googleid/leagues/:leagueid", async (req, res) => {
   }
 });
 
-router.post(
+router.put(
   "/:googleid/leagues/:leagueid",
   leagueValidator,
   async (req, res) => {
@@ -217,10 +217,10 @@ router.post(
       }
       const { google_id, league_ids } = req.user;
       if (league_ids.length >= 30) {
-        return res.status(200).json({ error: "Capped out leagues" });
+        return res.status(403).json({ error: "League cap reached" });
       }
       if (league_ids.includes(leagueid)) {
-        return res.status(200).json({ error: "League already exists" });
+        return res.status(409).json({ error: "League already exists" });
       }
       const response = await fetch(
         `https://api.sleeper.app/v1/league/${leagueid}`
