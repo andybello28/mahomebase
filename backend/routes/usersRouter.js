@@ -96,7 +96,7 @@ router.put("/:googleid/leagues", async (req, res) => {
   if (!sleeperId) {
     return res.status(400).json({ error: "User not linked to Sleeper" });
   }
-  const MAX_LEAGUES = 20;
+  const MAX_LEAGUES = 10;
   const currentYear = new Date().getFullYear().toString();
   try {
     if (league_ids && league_ids.length > 0) {
@@ -128,7 +128,7 @@ router.put("/:googleid/leagues", async (req, res) => {
     await Promise.all(
       leaguesToAdd.map((league) => upsertLeague(google_id, league))
     );
-    return res.status(200).json({ message: "Leagues updated successfully" });
+    return res.status(200).json({ message: "League successfully linked" });
   } catch (error) {
     console.error(`Error in POST /users/:googleid/leagues for `, error);
     return res.status(500).json({ error: "Internal server error" });
@@ -216,8 +216,8 @@ router.put(
         return res.status(401).json({ error: "Unauthorized" });
       }
       const { google_id, league_ids } = req.user;
-      if (league_ids.length >= 30) {
-        return res.status(403).json({ error: "League cap reached" });
+      if (league_ids.length >= 20) {
+        return res.status(403).json({ error: "20 league cap reached" });
       }
       if (league_ids.includes(leagueid)) {
         return res.status(409).json({ error: "League already exists" });
@@ -248,5 +248,7 @@ router.put(
     }
   }
 );
+
+router.delete("/:googleid/leagues/:leagueid", async (req, res) => {});
 
 module.exports = router;

@@ -31,17 +31,14 @@ export default function Leagues() {
 
     const loadLeagues = async () => {
       const leagues = await fetchAllLeagues(user.google_id);
-      setAllLeagues(leagues);
+      setAllLeagues(leagues.leagues);
     };
 
     loadLeagues();
   }, [user]);
 
   useEffect(() => {
-    if (!allLeagues) {
-      console.log("Empty all leagues");
-    }
-    setSelectedLeagues(allLeagues);
+    setSelectedLeagues(allLeagues.leagues);
   }, [allLeagues]);
 
   useEffect(() => {
@@ -55,14 +52,6 @@ export default function Leagues() {
     );
     setSelectedLeagues(filtered);
   }, [searchTerm, allLeagues]);
-
-  useEffect(() => {
-    console.log("selected leagues:", selectedLeagues);
-  }, [selectedLeagues]);
-
-  useEffect(() => {
-    console.log("all leagues:", allLeagues);
-  }, [allLeagues]);
 
   const handleAddLeague = async (googleId, leagueId) => {
     try {
@@ -122,7 +111,7 @@ export default function Leagues() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
-          {allLeagues?.length >= 20 && (
+          {allLeagues?.length >= 10 && (
             <div className="flex items-center">
               {showLeagueForm && (
                 <form onSubmit={onSubmit} className="flex gap-2">

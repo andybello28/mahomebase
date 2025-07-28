@@ -337,9 +337,7 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* Bottom row with two equal boxes */}
           <div className="flex flex-row gap-6 h-1/3">
-            {/* Left side - Trending Players */}
             <div className="flex flex-col items-center justify-around bg-white/90 backdrop-blur-sm border border-slate-200/60 rounded-2xl p-6 flex-1 shadow-lg hover:shadow-xl transition-all duration-300">
               <span className="text-2xl font-bold text-slate-800 bg-gradient-to-r mb-2 from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Trending Waiver Wire Adds On Sleeper
@@ -358,82 +356,86 @@ export default function Profile() {
 
                   {!isLoadingTrendingPlayers && trendingPlayers.length > 0 && (
                     <div className="w-full space-y-4 max-h-96 overflow-y-auto custom-scrollbar">
-                      {trendingPlayers.map((player, index) => (
-                        <div
-                          key={player.id || index}
-                          className="p-5 rounded-xl bg-gradient-to-r from-white to-slate-50 border border-slate-200/80 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200 cursor-pointer"
-                        >
-                          <div className="flex items-center justify-between mb-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                {player.first_name[0]}
-                                {player.last_name[0]}
+                      {trendingPlayers
+                        .filter(
+                          (player) => player?.first_name && player?.last_name
+                        )
+                        .map((player, index) => (
+                          <div
+                            key={player.id || index}
+                            className="p-5 rounded-xl bg-gradient-to-r from-white to-slate-50 border border-slate-200/80 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200 cursor-pointer"
+                          >
+                            <div className="flex items-center justify-between mb-3">
+                              <div className="flex items-center gap-3">
+                                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
+                                  {player.first_name[0]}
+                                  {player.last_name[0]}
+                                </div>
+                                <div>
+                                  <h3 className="font-semibold text-gray-900 text-lg">
+                                    {player.first_name} {player.last_name}
+                                  </h3>
+                                  <p className="text-sm text-gray-500">
+                                    {player.college}
+                                  </p>
+                                </div>
                               </div>
-                              <div>
-                                <h3 className="font-semibold text-gray-900 text-lg">
-                                  {player.first_name} {player.last_name}
-                                </h3>
-                                <p className="text-sm text-gray-500">
-                                  {player.college}
-                                </p>
-                              </div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
-                                {player.team}
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-4">
-                              <div className="flex items-center gap-1">
-                                <span className="text-xs text-gray-500">
-                                  Position:
-                                </span>
-                                <span className="text-sm font-medium text-gray-700 bg-blue-100 px-2 py-1 rounded-full">
-                                  {player.position}
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-1">
-                                <span className="text-xs text-gray-500">
-                                  Age:
-                                </span>
-                                <span className="text-sm font-medium text-gray-700">
-                                  {player.age}
-                                </span>
+                              <div className="text-right">
+                                <div className="text-xs font-medium text-gray-600 bg-gray-100 px-2 py-1 rounded-full">
+                                  {player.team}
+                                </div>
                               </div>
                             </div>
 
-                            <div className="flex items-center gap-2">
-                              <div className="text-xs text-gray-500">
-                                {player.years_exp === 0
-                                  ? "Rookie"
-                                  : `${player.years_exp} yr${
-                                      player.years_exp > 1 ? "s" : ""
-                                    }`}
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-4">
+                                <div className="flex items-center gap-1">
+                                  <span className="text-xs text-gray-500">
+                                    Position:
+                                  </span>
+                                  <span className="text-sm font-medium text-gray-700 bg-blue-100 px-2 py-1 rounded-full">
+                                    {player.position}
+                                  </span>
+                                </div>
+                                <div className="flex items-center gap-1">
+                                  <span className="text-xs text-gray-500">
+                                    Age:
+                                  </span>
+                                  <span className="text-sm font-medium text-gray-700">
+                                    {player.age}
+                                  </span>
+                                </div>
                               </div>
-                              <div
-                                className={`w-2 h-2 rounded-full ${
-                                  player.status === "Active"
-                                    ? "bg-green-500"
-                                    : "bg-red-500"
-                                }`}
-                              ></div>
-                            </div>
-                          </div>
 
-                          <div className="mt-3 pt-3 border-t border-slate-200/60">
-                            <div className="flex items-center justify-between text-xs text-gray-500">
-                              <span>{index + 1}</span>
-                              <span>
-                                Fantasy Eligible:{" "}
-                                {player.fantasy_positions.join(", ")}
-                              </span>
+                              <div className="flex items-center gap-2">
+                                <div className="text-xs text-gray-500">
+                                  {player.years_exp === 0
+                                    ? "Rookie"
+                                    : `${player.years_exp} yr${
+                                        player.years_exp > 1 ? "s" : ""
+                                      }`}
+                                </div>
+                                <div
+                                  className={`w-2 h-2 rounded-full ${
+                                    player.status === "Active"
+                                      ? "bg-green-500"
+                                      : "bg-red-500"
+                                  }`}
+                                ></div>
+                              </div>
+                            </div>
+
+                            <div className="mt-3 pt-3 border-t border-slate-200/60">
+                              <div className="flex items-center justify-between text-xs text-gray-500">
+                                <span>{index + 1}</span>
+                                <span>
+                                  Fantasy Eligible:{" "}
+                                  {player.fantasy_positions.join(", ")}
+                                </span>
+                              </div>
                             </div>
                           </div>
-                        </div>
-                      ))}
+                        ))}
                     </div>
                   )}
 

@@ -128,7 +128,6 @@ export function TransactionsProvider({ children }) {
 
       setIsLoadingTransactions(true);
       try {
-        console.log("Transactions context");
         const transactions = await fetchTransactions(user.google_id);
         setTransactions(transactions);
       } catch (err) {

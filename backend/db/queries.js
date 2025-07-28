@@ -200,6 +200,22 @@ async function updateLeague(leagueData) {
   }
 }
 
+async function deleteLeague(league_id) {
+  const { google_id, league_ids } = req.user;
+  try {
+    if (!league_ids.includes(league_id)) {
+      return res.status(404).json({ error: "League not found for user" });
+    }
+    const updated_league_ids = league_ids.filter((id) => {
+      id !== league_id;
+    });
+    await prisma.user.update({
+      where: { google_id },
+      data: { league_ids: updated_league_ids },
+    });
+  } catch (error) {}
+}
+
 async function deleteLeagues(googleId, league_ids) {
   try {
     const updatedUser = await prisma.user.update({
@@ -339,6 +355,7 @@ module.exports = {
   unlinkSleeperId,
   upsertLeague,
   updateLeague,
+  deleteLeague,
   deleteLeagues,
   getLeague,
   createPlayers,
