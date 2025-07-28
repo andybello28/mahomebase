@@ -34,6 +34,7 @@ const updateLeagues = async (googleId) => {
 
 const getLeague = async (googleId, leagueId) => {
   try {
+    console.log("Running get league");
     const res = await fetch(
       `${backend_url}/users/${googleId}/leagues/${leagueId}`,
       {
@@ -54,6 +55,7 @@ const getLeague = async (googleId, leagueId) => {
 
 const addLeague = async (googleId, leagueId) => {
   try {
+    console.log("Running add league");
     const res = await fetch(
       `${backend_url}/users/${googleId}/leagues/${leagueId}`,
       {
@@ -72,4 +74,29 @@ const addLeague = async (googleId, leagueId) => {
   }
 };
 
-export { fetchAllLeagues, updateLeagues, getLeague, addLeague };
+const deleteLeague = async (googleId, leagueId) => {
+  try {
+    console.log("running delete league");
+    const res = await fetch(
+      `${backend_url}/users/${googleId}/leagues/${leagueId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        credentials: "include",
+      }
+    );
+    if (!res.ok) {
+      const errorData = await res.json();
+      throw new Error(errorData.error || "Failed to delete league");
+    }
+    const result = await res.json();
+    return result;
+  } catch (error) {
+    console.error("Error deleting league:", error);
+    throw error;
+  }
+};
+
+export { fetchAllLeagues, updateLeagues, getLeague, addLeague, deleteLeague };

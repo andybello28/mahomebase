@@ -21,7 +21,8 @@ model User {
   name         String
   sleeper_username   String?
   sleeper_id         String?
-  league_ids       String[] // Just store Sleeper league IDs
+  league_ids       String[]
+  excluded_league_ids String[]
   createdAt    DateTime @default(now())
 }
 

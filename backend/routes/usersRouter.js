@@ -8,6 +8,7 @@ const {
   unlinkSleeperId,
   upsertLeague,
   updateLeague,
+  deleteLeague,
   deleteLeagues,
   getLeague,
   getUserByGoogleId,
@@ -78,6 +79,7 @@ router.get("/:googleid/leagues", async (req, res) => {
     const leagueDataList = await Promise.all(
       league_ids.map((id) => getLeague(id))
     );
+    console.log(leagueDataList.length);
     //Remove nulls
     const allLeaguesData = leagueDataList.filter((data) => data);
 
@@ -91,12 +93,21 @@ router.get("/:googleid/leagues", async (req, res) => {
 });
 
 router.put("/:googleid/leagues", async (req, res) => {
-  const { google_id: google_id, league_ids: league_ids } = req.user;
+  const {
+    google_id: google_id,
+    league_ids: league_ids,
+    excluded_league_ids,
+  } = req.user;
   const sleeperId = req.user.sleeper_id;
   if (!sleeperId) {
     return res.status(400).json({ error: "User not linked to Sleeper" });
   }
-  const MAX_LEAGUES = 10;
+  let MAX_LEAGUES;
+  if (league_ids.length === 0) {
+    MAX_LEAGUES = 10;
+  } else {
+    MAX_LEAGUES = league_ids.length;
+  }
   const currentYear = new Date().getFullYear().toString();
   try {
     if (league_ids && league_ids.length > 0) {
@@ -122,7 +133,11 @@ router.put("/:googleid/leagues", async (req, res) => {
       });
     }
     const leaguesToAdd = leagues
-      .filter((league) => !league_ids.includes(league.league_id))
+      .filter(
+        (league) =>
+          !league_ids.includes(league.league_id) &&
+          !excluded_league_ids.includes(league.league_id)
+      )
       .slice(0, availableSlots);
 
     await Promise.all(
@@ -233,7 +248,6 @@ router.put(
         `https://api.sleeper.app/v1/league/${leagueid}/users`
       );
       const leagueUsers = await responseUsers.json();
-      console.log(leagueUsers);
       const userInLeague = leagueUsers.some(
         (sleeperUser) => req.user.sleeper_id === sleeperUser.user_id
       );
@@ -249,6 +263,24 @@ router.put(
   }
 );
 
-router.delete("/:googleid/leagues/:leagueid", async (req, res) => {});
+router.delete("/:googleid/leagues/:leagueid", async (req, res) => {
+  const { league_ids, google_id, excluded_league_ids } = req.user;
+  const { leagueid } = req.params;
+  try {
+    await deleteLeague(google_id, league_ids, leagueid, excluded_league_ids);
+    return res.status(200).json({ message: "League deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting league:", error);
+
+    if (
+      error.message === "League not found for user" ||
+      error.message === "League does not exist"
+    ) {
+      return res.status(404).json({ error: error.message });
+    }
+
+    return res.status(500).json({ error: "Internal server error" });
+  }
+});
 
 module.exports = router;

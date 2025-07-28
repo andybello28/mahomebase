@@ -7,12 +7,12 @@ import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 
 import { useLeagues, useUser } from "../../context/Context.jsx";
-import { IoMdAddCircleOutline } from "react-icons/io";
+import { IoMdAddCircleOutline, IoMdRemoveCircleOutline } from "react-icons/io";
 
-import { addLeague, fetchAllLeagues, updateLeagues } from "@/app/utils/leagues";
+import { addLeague, fetchAllLeagues, deleteLeague } from "../../utils/leagues";
 
 export default function Leagues() {
-  const { user } = useUser();
+  const { user, setUser } = useUser();
   const { allLeagues, setAllLeagues } = useLeagues();
   const [selectedLeagues, setSelectedLeagues] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -27,6 +27,10 @@ export default function Leagues() {
   };
 
   useEffect(() => {
+    console.log(allLeagues);
+  }, [allLeagues]);
+
+  useEffect(() => {
     if (!user?.google_id) return;
 
     const loadLeagues = async () => {
@@ -36,6 +40,20 @@ export default function Leagues() {
 
     loadLeagues();
   }, [user]);
+
+  const handleDeleteLeague = async (leagueId) => {
+    try {
+      // Delete league in backend
+      await deleteLeague(user.google_id, leagueId);
+
+      // Re-fetch updated league list
+      const updatedLeagues = await fetchAllLeagues(user.google_id);
+      setAllLeagues(updatedLeagues.leagues);
+    } catch (error) {
+      toast.error("Failed to delete league. Please try again.");
+      console.error("Delete league error:", error);
+    }
+  };
 
   useEffect(() => {
     setSelectedLeagues(allLeagues.leagues);
@@ -111,30 +129,28 @@ export default function Leagues() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
           />
-          {allLeagues?.length >= 10 && (
-            <div className="flex items-center">
-              {showLeagueForm && (
-                <form onSubmit={onSubmit} className="flex gap-2">
-                  <input
-                    type="text"
-                    value={inputLeague}
-                    onChange={(e) => setInputLeague(e.target.value)}
-                    placeholder="Enter league ID"
-                    className="px-3 py-1 border border-slate-300 rounded"
-                  />
-                  <button
-                    type="submit"
-                    className="px-3 py-1 bg-blue-500 text-white rounded"
-                  >
-                    Submit
-                  </button>
-                </form>
-              )}
-              <button onClick={() => setShowLeagueForm((prev) => !prev)}>
-                <IoMdAddCircleOutline />
-              </button>
-            </div>
-          )}
+          <div className="flex items-center">
+            {showLeagueForm && (
+              <form onSubmit={onSubmit} className="flex gap-2">
+                <input
+                  type="text"
+                  value={inputLeague}
+                  onChange={(e) => setInputLeague(e.target.value)}
+                  placeholder="Enter league ID"
+                  className="px-3 py-1 border border-slate-300 rounded"
+                />
+                <button
+                  type="submit"
+                  className="px-3 py-1 bg-blue-500 text-white rounded"
+                >
+                  Submit
+                </button>
+              </form>
+            )}
+            <button onClick={() => setShowLeagueForm((prev) => !prev)}>
+              <IoMdAddCircleOutline />
+            </button>
+          </div>
         </div>
         <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
           {selectedLeagues?.map((league, index) => (
@@ -149,10 +165,18 @@ export default function Leagues() {
                 {league.rosters || 0} teams
                 <span className="ml-2 text-slate-500">| {league.season}</span>
               </div>
-              <div className="relative z-10 mt-6 text-right">
+              <div className="flex flex-row items-center justify-start gap-40 relative z-10 mt-6 text-right">
+                <button
+                  onClick={() => {
+                    handleDeleteLeague(league.league_id);
+                  }}
+                  className="text-red-500 hover:scale-110"
+                >
+                  <IoMdRemoveCircleOutline />
+                </button>
                 <button
                   onClick={() => handleSelectLeague(league.league_id)}
-                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl hover:brightness-110 transition"
+                  className="self-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl hover:brightness-110 transition"
                 >
                   More...
                 </button>

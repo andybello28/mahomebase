@@ -76,6 +76,9 @@ async function unlinkSleeperId(googleId) {
       data: {
         sleeper_username: null,
         sleeper_id: null,
+        excluded_league_ids: {
+          set: [],
+        },
       },
     });
     await client.del(`user:${googleId}`);
@@ -200,20 +203,63 @@ async function updateLeague(leagueData) {
   }
 }
 
-async function deleteLeague(league_id) {
-  const { google_id, league_ids } = req.user;
+async function deleteLeague(
+  google_id,
+  league_ids,
+  league_id,
+  excluded_league_ids
+) {
   try {
     if (!league_ids.includes(league_id)) {
-      return res.status(404).json({ error: "League not found for user" });
+      throw new Error("League not found for user");
     }
-    const updated_league_ids = league_ids.filter((id) => {
-      id !== league_id;
+    const updated_league_ids = league_ids.filter((id) => id !== league_id);
+    if (!excluded_league_ids.includes(league_id)) {
+      await prisma.user.update({
+        where: { google_id },
+        data: {
+          league_ids: updated_league_ids,
+          excluded_league_ids: {
+            push: league_id,
+          },
+        },
+      });
+    } else {
+      await prisma.user.update({
+        where: { google_id },
+        data: {
+          league_ids: updated_league_ids,
+        },
+      });
+    }
+    let league = await prisma.league.findUnique({
+      where: { league_id },
     });
-    await prisma.user.update({
-      where: { google_id },
-      data: { league_ids: updated_league_ids },
-    });
-  } catch (error) {}
+    if (!league) {
+      throw new Error("League does not exist");
+    }
+    if (league.total_linked === 1) {
+      await prisma.league.delete({
+        where: { league_id },
+      });
+      await client.del(`league:${league_id}`);
+    } else {
+      const updatedLeague = await prisma.league.update({
+        where: { league_id },
+        data: {
+          total_linked: {
+            decrement: 1,
+          },
+        },
+      });
+      await client.set(`league:${league_id}`, JSON.stringify(updatedLeague), {
+        EX: 60 * (5 + Math.floor(Math.random() * 3)),
+      });
+    }
+  } catch (error) {
+    console.error(`Error deleting league ${league_id}:`, error);
+    throw error;
+  }
 }
 
 async function deleteLeagues(googleId, league_ids) {
