@@ -79,7 +79,6 @@ router.get("/:googleid/leagues", async (req, res) => {
     const leagueDataList = await Promise.all(
       league_ids.map((id) => getLeague(id))
     );
-    console.log(leagueDataList.length);
     //Remove nulls
     const allLeaguesData = leagueDataList.filter((data) => data);
 

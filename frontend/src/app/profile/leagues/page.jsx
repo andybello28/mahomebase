@@ -27,10 +27,6 @@ export default function Leagues() {
   };
 
   useEffect(() => {
-    console.log(allLeagues);
-  }, [allLeagues]);
-
-  useEffect(() => {
     if (!user?.google_id) return;
 
     const loadLeagues = async () => {
