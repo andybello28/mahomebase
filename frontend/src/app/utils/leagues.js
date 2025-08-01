@@ -34,7 +34,6 @@ const updateLeagues = async (googleId) => {
 
 const getLeague = async (googleId, leagueId) => {
   try {
-    console.log("Running get league");
     const res = await fetch(
       `${backend_url}/users/${googleId}/leagues/${leagueId}`,
       {
@@ -55,7 +54,6 @@ const getLeague = async (googleId, leagueId) => {
 
 const addLeague = async (googleId, leagueId) => {
   try {
-    console.log("Running add league");
     const res = await fetch(
       `${backend_url}/users/${googleId}/leagues/${leagueId}`,
       {
@@ -76,7 +74,6 @@ const addLeague = async (googleId, leagueId) => {
 
 const deleteLeague = async (googleId, leagueId) => {
   try {
-    console.log("running delete league");
     const res = await fetch(
       `${backend_url}/users/${googleId}/leagues/${leagueId}`,
       {

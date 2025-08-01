@@ -102,7 +102,14 @@ export function SeasonProvider({ children }) {
     const fetchRound = async () => {
       const roundData = await getRound();
       setSeason(roundData.season);
-      setWeek(roundData.week);
+
+      const today = new Date();
+      const cutoff = new Date("2025-09-04T00:00:00");
+      if (today < cutoff) {
+        setWeek(0);
+      } else {
+        setWeek(roundData.week);
+      }
     };
     fetchRound();
   }, []);

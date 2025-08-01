@@ -22,6 +22,53 @@ export default function LeaguePage() {
     ([key]) => key.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  useEffect(() => {
+    let user_roster_obj;
+    let league_rosters = [];
+    if (leagueRosters) {
+      for (const roster of leagueRosters) {
+        let team_obj = {
+          owner_name: roster.username,
+          players: [],
+        };
+        if (roster.owner_id === user.sleeper_id) {
+          let user_roster = [];
+          for (const player of roster.players) {
+            let player_obj = {
+              name: player.data.first_name + " " + player.data.last_name,
+              positions: player.data.fantasy_positions,
+              team: player.data.team,
+            };
+            user_roster.push(player_obj);
+          }
+          team_obj.players = user_roster;
+          user_roster_obj = team_obj;
+        } else {
+          let intermediate = [];
+          for (const player of roster.players) {
+            let player_obj = {
+              name: player.data.first_name + " " + player.data.last_name,
+              positions: player.data.fantasy_positions,
+              team: player.data.team,
+            };
+            intermediate.push(player_obj);
+          }
+          team_obj.players = intermediate;
+          league_rosters.push(team_obj);
+        }
+      }
+      console.log(user_roster_obj);
+      console.log(league_rosters);
+    }
+  }, [leagueRosters]);
+
+  useEffect(() => {
+    if (league) {
+      console.log(league.scoring_settings.rec);
+      console.log(league.roster_positions);
+    }
+  }, [league]);
+
   return (
     <>
       <Navbar />

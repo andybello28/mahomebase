@@ -10,6 +10,7 @@ const app = express();
 const authRouter = require("./routes/authRouter");
 const usersRouter = require("./routes/usersRouter");
 const nflRouter = require("./routes/nflRouter");
+const tradeRouter = require("./routes/tradeRouter");
 
 const startPlayerScheduler = require("./schedulers/playerScheduler");
 
@@ -45,6 +46,7 @@ app.use(passport.session());
 app.use("/auth", authRouter);
 app.use("/users", usersRouter);
 app.use("/nfl", nflRouter);
+app.use("/trade", tradeRouter);
 
 startPlayerScheduler();
 

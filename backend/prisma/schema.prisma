@@ -53,6 +53,17 @@ model Player {
   college            String?
   years_exp          Int?
   updatedAt          DateTime @updatedAt
+
+  fantasy_ppg_2024 Float?
+  carries_2024                Int?
+  receptions_2024           Int?
+  target_share_2024           Float?
+  headshot_url           String?
+
+  @@index([team, position])
+  @@index([position])
+  @@index([search_full_name])
+  @@index([status])
 }
 
 

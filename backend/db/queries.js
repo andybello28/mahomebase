@@ -1,6 +1,8 @@
 const prisma = require("./prisma");
 const client = require("../redis/client");
 
+const parseCSVToMap = require("../assets/mapcsv");
+
 async function findOrCreate(googleId, email, name) {
   try {
     let user = await prisma.user.findUnique({
@@ -331,44 +333,72 @@ async function getLeague(league_id) {
 async function createPlayers() {
   try {
     const response = await fetch("https://api.sleeper.app/v1/players/nfl");
-    if (!response.ok) {
+    if (!response.ok)
       throw new Error(`Failed to fetch players: ${response.status}`);
-    }
     const players = await response.json();
-    for (const [id, playerData] of Object.entries(players)) {
+
+    const csvPath =
+      "/Users/andybello/Documents/GitHub/mahomebase/backend/assets/player_stats2024.csv";
+    const statMap = await parseCSVToMap(csvPath);
+
+    const upsertPromises = Object.entries(players).map(async ([id, player]) => {
+      const key = `${
+        player.first_name.toLowerCase() + " " + player.last_name.toLowerCase()
+      }|${player.position}`;
+      const statRow = statMap.get(key);
+
+      const baseData = {
+        first_name: player.first_name,
+        last_name: player.last_name,
+        search_full_name: player.search_full_name,
+        team: player.team,
+        position: player.position,
+        fantasy_positions: player.fantasy_positions ?? [],
+        age: player.age,
+        status: player.status,
+        college: player.college,
+        years_exp: player.years_exp,
+      };
+
+      if (statRow) {
+        const games = parseFloat(statRow.games || 0);
+        const fantasyPoints = parseFloat(statRow.fantasy_points_ppr || 0);
+        const carries = parseInt(statRow.carries || 0);
+        const receptions = parseInt(statRow.receptions || 0);
+        const targetShare = parseFloat(statRow.target_share || 0);
+
+        baseData.fantasy_ppg_2024 = games > 0 ? fantasyPoints / games : 0;
+        baseData.carries_2024 = carries;
+        baseData.receptions_2024 = receptions;
+        baseData.target_share_2024 = targetShare;
+        baseData.headshot_url = statRow.headshot_url;
+      }
+      if (statRow) {
+        const games = parseFloat(statRow.games || 0);
+        const fantasyPointsPpr = parseFloat(statRow.fantasy_points_ppr || 0);
+        const carries = parseInt(statRow.carries || 0);
+        const receptions = parseInt(statRow.receptions || 0);
+        const targetShare = parseFloat(statRow.target_share || 0);
+
+        baseData.fantasy_ppg_2024 = games > 0 ? fantasyPointsPpr / games : 0;
+        baseData.carries_2024 = carries;
+        baseData.receptions_2024 = receptions;
+        baseData.target_share_2024 = targetShare;
+        baseData.headshot_url = statRow.headshot_url;
+      }
+
       await prisma.player.upsert({
         where: { id },
-        update: {
-          first_name: playerData.first_name,
-          last_name: playerData.last_name,
-          search_full_name: playerData.search_full_name,
-          team: playerData.team,
-          position: playerData.position,
-          fantasy_positions: playerData.fantasy_positions ?? [],
-          age: playerData.age,
-          status: playerData.status,
-          college: playerData.college,
-          years_exp: playerData.years_exp,
-        },
-        create: {
-          id,
-          first_name: playerData.first_name,
-          last_name: playerData.last_name,
-          search_full_name: playerData.search_full_name,
-          team: playerData.team,
-          position: playerData.position,
-          fantasy_positions: playerData.fantasy_positions ?? [],
-          age: playerData.age,
-          status: playerData.status,
-          college: playerData.college,
-          years_exp: playerData.years_exp,
-        },
+        update: baseData,
+        create: { id, ...baseData },
       });
-    }
+    });
+
+    await Promise.all(upsertPromises);
     return players;
-  } catch (error) {
-    console.error("Error getting players:", error);
-    throw error;
+  } catch (err) {
+    console.error("Failed to create players:", err);
+    throw err;
   }
 }
 
