@@ -53,6 +53,10 @@ export default function Profile() {
   }, [user?.google_id]);
 
   useEffect(() => {
+    console.log(fetchedPlayers);
+  }, [fetchedPlayers]);
+
+  useEffect(() => {
     const filtered = allLeagues.filter((league) =>
       league.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -553,8 +557,28 @@ export default function Profile() {
                                           ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
                                           : "Loading...";
 
+                                        const headshot_url = playerObj
+                                          ? playerObj.playerData.headshot
+                                          : null;
+
                                         return (
-                                          <li key={playerId}>{playerName}</li>
+                                          <li
+                                            key={playerId}
+                                            className="flex items-center gap-3 p-2"
+                                          >
+                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                                              {headshot_url ? (
+                                                <img
+                                                  src={headshot_url}
+                                                  alt={playerName}
+                                                  className="w-full h-full rounded-full object-cover"
+                                                />
+                                              ) : (
+                                                <span>?</span>
+                                              )}
+                                            </div>
+                                            <span>{playerName}</span>
+                                          </li>
                                         );
                                       }
                                     )}
@@ -580,8 +604,28 @@ export default function Profile() {
                                           ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
                                           : "Loading...";
 
+                                        const headshot_url = playerObj
+                                          ? playerObj.playerData.headshot
+                                          : null;
+
                                         return (
-                                          <li key={playerId}>{playerName}</li>
+                                          <li
+                                            key={playerId}
+                                            className="flex items-center gap-3 p-2"
+                                          >
+                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                                              {headshot_url ? (
+                                                <img
+                                                  src={headshot_url}
+                                                  alt={playerName}
+                                                  className="w-full h-full rounded-full object-cover"
+                                                />
+                                              ) : (
+                                                <span>?</span>
+                                              )}
+                                            </div>
+                                            <span>{playerName}</span>
+                                          </li>
                                         );
                                       }
                                     )}
@@ -620,8 +664,28 @@ export default function Profile() {
                                           ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
                                           : "Loading...";
 
+                                        const headshot_url = playerObj
+                                          ? playerObj.playerData.headshot
+                                          : null;
+
                                         return (
-                                          <li key={playerId}>{playerName}</li>
+                                          <li
+                                            key={playerId}
+                                            className="flex items-center gap-3 p-2"
+                                          >
+                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                                              {headshot_url ? (
+                                                <img
+                                                  src={headshot_url}
+                                                  alt={playerName}
+                                                  className="w-full h-full rounded-full object-cover"
+                                                />
+                                              ) : (
+                                                <span>?</span>
+                                              )}
+                                            </div>
+                                            <span>{playerName}</span>
+                                          </li>
                                         );
                                       })}
                                   </ul>
@@ -655,8 +719,28 @@ export default function Profile() {
                                           ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
                                           : "Loading...";
 
+                                        const headshot_url = playerObj
+                                          ? playerObj.playerData.headshot
+                                          : null;
+
                                         return (
-                                          <li key={playerId}>{playerName}</li>
+                                          <li
+                                            key={playerId}
+                                            className="flex items-center gap-3 p-2"
+                                          >
+                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
+                                              {headshot_url ? (
+                                                <img
+                                                  src={headshot_url}
+                                                  alt={playerName}
+                                                  className="w-full h-full rounded-full object-cover"
+                                                />
+                                              ) : (
+                                                <span>?</span>
+                                              )}
+                                            </div>
+                                            <span>{playerName}</span>
+                                          </li>
                                         );
                                       })}
                                   </ul>
