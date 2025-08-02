@@ -12,7 +12,10 @@ const usersRouter = require("./routes/usersRouter");
 const nflRouter = require("./routes/nflRouter");
 const tradeRouter = require("./routes/tradeRouter");
 
-const startPlayerScheduler = require("./schedulers/playerScheduler");
+const {
+  startPlayerScheduler,
+  startWeeklyPlayerUpdate,
+} = require("./schedulers/playerScheduler");
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -49,6 +52,7 @@ app.use("/nfl", nflRouter);
 app.use("/trade", tradeRouter);
 
 startPlayerScheduler();
+startWeeklyPlayerUpdate();
 
 port = process.env.PORT || 5000;
 app.listen(port, () => {

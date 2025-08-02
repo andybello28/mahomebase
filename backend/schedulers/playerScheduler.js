@@ -1,5 +1,5 @@
 const cron = require("node-cron");
-const { createPlayers } = require("../db/queries");
+const { createPlayers, updatePlayersESPN } = require("../db/queries");
 
 function startPlayerScheduler() {
   // Every day at 3 am
@@ -16,4 +16,19 @@ function startPlayerScheduler() {
   });
 }
 
-module.exports = startPlayerScheduler;
+function startWeeklyPlayerUpdate() {
+  // Every tuesday at 4 am
+  const cronExpression = "0 4 * * tue";
+
+  cron.schedule(cronExpression, async () => {
+    try {
+      console.log("Running weekly players detailed update...");
+      await updatePlayersESPN();
+      console.log("Weekly detailed update complete.");
+    } catch (error) {
+      console.error("Error during scheduled weekly update:", error);
+    }
+  });
+}
+
+module.exports = { startPlayerScheduler, startWeeklyPlayerUpdate };

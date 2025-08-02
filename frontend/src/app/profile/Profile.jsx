@@ -368,8 +368,15 @@ export default function Profile() {
                             <div className="flex items-center justify-between mb-3">
                               <div className="flex items-center gap-3">
                                 <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm">
-                                  {player.first_name[0]}
-                                  {player.last_name[0]}
+                                  {player.headshot ? (
+                                    <img
+                                      src={player.headshot}
+                                      alt={`${player.first_name} ${player.last_name}`}
+                                      className="w-full h-full rounded-full object-cover"
+                                    />
+                                  ) : (
+                                    `${player.first_name[0]}${player.last_name[0]}`
+                                  )}
                                 </div>
                                 <div>
                                   <h3 className="font-semibold text-gray-900 text-lg">
