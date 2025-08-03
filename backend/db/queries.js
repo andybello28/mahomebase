@@ -410,10 +410,7 @@ async function updatePlayersESPN() {
             `https://site.web.api.espn.com/apis/common/v3/sports/football/nfl/athletes/${athlete.id}/overview`
           );
           const playerData = await response2.json();
-          const projection =
-            playerData.fantasy?.projection ??
-            playerData.rotowire?.headline ??
-            null;
+          const projection = playerData.fantasy?.projection ?? null;
           let stats = {};
           playerData.statistics?.displayNames?.forEach((label, index) => {
             const split = playerData.statistics.splits?.find(

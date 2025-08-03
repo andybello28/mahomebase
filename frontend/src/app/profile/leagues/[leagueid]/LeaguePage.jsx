@@ -57,17 +57,8 @@ export default function LeaguePage() {
           league_rosters.push(team_obj);
         }
       }
-      console.log(user_roster_obj);
-      console.log(league_rosters);
     }
   }, [leagueRosters]);
-
-  useEffect(() => {
-    if (league) {
-      console.log(league.scoring_settings.rec);
-      console.log(league.roster_positions);
-    }
-  }, [league]);
 
   return (
     <>
