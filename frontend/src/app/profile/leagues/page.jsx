@@ -12,7 +12,7 @@ import { IoMdAddCircleOutline, IoMdRemoveCircleOutline } from "react-icons/io";
 import { addLeague, fetchAllLeagues, deleteLeague } from "../../utils/leagues";
 
 export default function Leagues() {
-  const { user, setUser } = useUser();
+  const { user } = useUser();
   const { allLeagues, setAllLeagues } = useLeagues();
   const [selectedLeagues, setSelectedLeagues] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,6 +24,14 @@ export default function Leagues() {
 
   const handleSelectLeague = (leagueId) => {
     router.push(`/profile/leagues/${leagueId}`);
+  };
+
+  const handleSelectTrade = (leagueId) => {
+    router.push(`/profile/leagues/${leagueId}/trades`);
+  };
+
+  const handleSelectStartSit = (leagueId) => {
+    router.push(`/profile/leagues/${leagueId}/start-sit`);
   };
 
   useEffect(() => {
@@ -154,27 +162,50 @@ export default function Leagues() {
               key={league.league_id}
               className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow duration-200"
             >
-              <div className="text-lg font-semibold text-slate-800">
-                {league.name || `League ${index + 1}`}
-              </div>
-              <div className="text-sm text-slate-600 mt-1">
-                {league.rosters || 0} teams
-                <span className="ml-2 text-slate-500">| {league.season}</span>
-              </div>
-              <div className="flex flex-row items-center justify-start gap-40 relative z-10 mt-6 text-right">
+              <div className="flex flex-row items-start justify-between">
+                <div className="flex flex-col ">
+                  <div className="text-lg font-semibold text-slate-800">
+                    {league.name || `League ${index + 1}`}
+                  </div>
+                  <div className="text-sm text-slate-600 mt-1">
+                    {league.rosters || 0} teams
+                    <span className="ml-2 text-slate-500">
+                      | {league.season}
+                    </span>
+                  </div>
+                </div>
                 <button
                   onClick={() => {
                     handleDeleteLeague(league.league_id);
                   }}
-                  className="text-red-500 hover:scale-110"
+                  className="self-start text-red-500 hover:scale-110"
                 >
                   <IoMdRemoveCircleOutline />
                 </button>
+              </div>
+              <div className="flex flex-row items-center justify-center gap-3 relative z-10 mt-8">
                 <button
                   onClick={() => handleSelectLeague(league.league_id)}
-                  className="self-center px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-cyan-500 to-purple-500 rounded-xl hover:brightness-110 transition"
+                  className="group relative w-32 h-12 flex items-center justify-center text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 overflow-hidden"
                 >
-                  More...
+                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                  <span className="relative z-10">League</span>
+                </button>
+
+                <button
+                  onClick={() => handleSelectTrade(league.league_id)}
+                  className="group relative w-32 h-12 flex items-center justify-center text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                  <span className="relative z-10">Trade Advice</span>
+                </button>
+
+                <button
+                  onClick={() => handleSelectStartSit(league.league_id)}
+                  className="group relative w-32 h-12 flex items-center justify-center text-sm font-semibold text-white bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 overflow-hidden"
+                >
+                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-rose-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
+                  <span className="relative z-10">Start-Sit</span>
                 </button>
               </div>
             </div>

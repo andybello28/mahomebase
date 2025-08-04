@@ -13,6 +13,7 @@ export function UserProvider({ children }) {
   const [user, setUser] = useState(null);
   const [sleeperUsername, setSleeperUsername] = useState("");
   const [sleeperId, setSleeperId] = useState("");
+  const [isLoadingUser, setIsLoadingUser] = useState(true);
   useEffect(() => {
     const getUser = async () => {
       const currentUser = await fetchCurrentUser();
@@ -28,6 +29,7 @@ export function UserProvider({ children }) {
       if (currentUser?.sleeper_id) {
         setSleeperId(currentUser.sleeper_id);
       }
+      setIsLoadingUser(false);
     };
     getUser();
   }, []);
@@ -40,6 +42,8 @@ export function UserProvider({ children }) {
         setSleeperUsername,
         sleeperId,
         setSleeperId,
+        isLoadingUser,
+        setIsLoadingUser,
       }}
     >
       {children}

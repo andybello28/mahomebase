@@ -1,8 +1,8 @@
 "use client";
 
 import { useParams } from "next/navigation";
-import { LeagueProvider, useUser } from "../../../context/Context";
-import LeaguePage from "./LeaguePage";
+import { LeagueProvider, useUser } from "../../../../context/Context";
+import TradePage from "./TradePage";
 
 export default function LeaguePageWrapper() {
   const { leagueid } = useParams();
@@ -10,7 +10,7 @@ export default function LeaguePageWrapper() {
   if (!isLoadingUser && user?.league_ids.includes(leagueid)) {
     return (
       <LeagueProvider leagueid={leagueid}>
-        <LeaguePage />
+        <TradePage />
       </LeagueProvider>
     );
   } else if (!isLoadingUser) {
