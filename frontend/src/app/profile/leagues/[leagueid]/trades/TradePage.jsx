@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../../../../components/Footer";
 import Navbar from "../../../../components/Navbar";
+import Rosters from "../../../../components/Rosters";
 import { useRouter } from "next/navigation";
 import { useLeague, useUser } from "../../../../context/Context.jsx";
 
@@ -12,6 +13,11 @@ export default function Trades() {
   // const [showScoring, setShowScoring] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const router = useRouter();
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedRoster, setSelectedRoster] = useState(null);
+  const [userRoster, setUserRoster] = useState(null);
+  const [otherRosters, setOtherRosters] = useState([]);
+  const [isLoadingRosters, setIsLoadingRosters] = useState(true);
 
   const starters =
     league?.roster_positions?.filter((pos) => pos !== "BN") || [];
@@ -22,51 +28,57 @@ export default function Trades() {
     ([key]) => key.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
+  const handleRosterSelect = (roster) => {
+    setSelectedRoster(roster);
+    setIsDropdownOpen(false);
+    console.log("Selected roster:", roster);
+  };
+
   useEffect(() => {
-    let user_roster_obj;
+    let user_roster;
     let league_rosters = [];
     if (leagueRosters) {
       for (const roster of leagueRosters) {
-        let team_obj = {
-          owner_name: roster.username,
-          players: [],
-        };
-        if (roster.owner_id === user.sleeper_id) {
-          let user_roster = [];
-          for (const player of roster.players) {
-            let player_obj = {
-              name: player.data.first_name + " " + player.data.last_name,
-              positions: player.data.fantasy_positions,
-              team: player.data.team,
-            };
-            user_roster.push(player_obj);
-          }
-          team_obj.players = user_roster;
-          user_roster_obj = team_obj;
+        if (roster.owner_id === user?.sleeper_id) {
+          user_roster = roster;
         } else {
-          let intermediate = [];
-          for (const player of roster.players) {
-            let player_obj = {
-              name: player.data.first_name + " " + player.data.last_name,
-              positions: player.data.fantasy_positions,
-              team: player.data.team,
-            };
-            intermediate.push(player_obj);
+          if (roster.owner_id) {
+            league_rosters.push(roster);
           }
-          team_obj.players = intermediate;
-          league_rosters.push(team_obj);
         }
       }
+      console.log(league_rosters);
+      console.log(user_roster);
+      setSelectedRoster(league_rosters[0]);
+      setOtherRosters(league_rosters);
+      setUserRoster(user_roster);
+      setIsLoadingRosters(false);
     }
   }, [leagueRosters]);
 
-  useEffect(() => {
-    console.log(leagueRosters);
-  }, [leagueRosters]);
   return (
     <>
       <Navbar />
-      <span>Trades</span>
+      <button
+        onClick={() => router.push("/profile/leagues")}
+        className="mb-6 px-4 py-2 text-sm font-medium text-white bg-slate-700 rounded-xl hover:bg-slate-800 transition"
+      >
+        <div>← Back to Leagues</div>
+      </button>
+
+      {isLoadingRosters && <span>Loading...</span>}
+
+      {!isLoadingRosters && (
+        <Rosters
+          userRoster={userRoster}
+          selectedRoster={selectedRoster}
+          otherRosters={otherRosters}
+          isDropdownOpen={isDropdownOpen}
+          setIsDropdownOpen={setIsDropdownOpen}
+          handleRosterSelect={handleRosterSelect}
+          starters={starters}
+        />
+      )}
       <Footer />
     </>
   );
