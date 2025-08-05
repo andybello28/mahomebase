@@ -1,4 +1,4 @@
-export default function PlayerCard({ player, index }) {
+export default function PlayerCard({ player }) {
   return (
     <div className="p-5 rounded-xl bg-gradient-to-r from-white to-slate-50 border border-slate-200/80 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200 cursor-pointer">
       <div className="flex items-center justify-between mb-3">
@@ -36,23 +36,28 @@ export default function PlayerCard({ player, index }) {
               {player.position}
             </span>
           </div>
-          <div className="flex items-center gap-1">
-            <span className="text-xs text-gray-500">Age:</span>
-            <span className="text-sm font-medium text-gray-700">
-              {player.age}
-            </span>
-          </div>
+          {player.age && (
+            <div className="flex items-center gap-1">
+              <span className="text-xs text-gray-500">Age:</span>
+              <span className="text-sm font-medium text-gray-700">
+                {player.age}
+              </span>
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2">
           <div className="text-xs text-gray-500">
-            {player.years_exp === 0
+            {player.years_exp == null
+              ? ""
+              : player.years_exp === 0
               ? "Rookie"
               : `${player.years_exp} yr${player.years_exp > 1 ? "s" : ""}`}
           </div>
+
           <div
             className={`w-2 h-2 rounded-full ${
-              player.status === "Active" ? "bg-green-500" : "bg-red-500"
+              player.status === "Active" ? "bg-green-500" : ""
             }`}
           ></div>
         </div>
@@ -60,7 +65,6 @@ export default function PlayerCard({ player, index }) {
 
       <div className="mt-3 pt-3 border-t border-slate-200/60">
         <div className="flex items-center justify-between text-xs text-gray-500">
-          <span>{index + 1}</span>
           <span>Fantasy Eligible: {player.fantasy_positions.join(", ")}</span>
         </div>
       </div>

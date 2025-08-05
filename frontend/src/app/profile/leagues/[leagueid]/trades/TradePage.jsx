@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../../../../components/Footer";
 import Navbar from "../../../../components/Navbar";
-import Rosters from "../../../../components/Rosters";
+import Rosters from "../../../../components/RostersTrade";
 import { useRouter } from "next/navigation";
 import { useLeague, useUser } from "../../../../context/Context.jsx";
 

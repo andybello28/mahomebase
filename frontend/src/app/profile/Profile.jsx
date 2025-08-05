@@ -18,6 +18,7 @@ import Footer from "../components/Footer";
 import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
 import PlayerCard from "../components/PlayerCard";
+import Roster from "../components/Roster";
 
 import { useRouter } from "next/navigation";
 import { getPlayer } from "../utils/players";
@@ -46,12 +47,21 @@ export default function Profile() {
   const [leagues, setLeagues] = useState([]);
   const [inputSleeperUsername, setInputSleeperUsername] = useState("");
   const [fetchedPlayers, setFetchedPlayers] = useState({});
+  const [isLoadingFetchPlayers, setIsLoadingFetchPlayers] = useState(true);
 
   useEffect(() => {
     if (user && searchParams.get("login") == "success") {
       toast.success("Login Successful");
     }
   }, [user?.google_id]);
+
+  useEffect(() => {
+    console.log(trendingPlayers);
+  }, [trendingPlayers]);
+
+  useEffect(() => {
+    console.log(fetchedPlayers);
+  }, [fetchedPlayers]);
 
   useEffect(() => {
     const filtered = allLeagues.filter((league) =>
@@ -94,6 +104,7 @@ export default function Profile() {
       });
       const playerResults = await Promise.all(playerPromises);
       setFetchedPlayers(playerResults);
+      setIsLoadingFetchPlayers(false);
     };
 
     if (transactions.length > 0) {
@@ -365,7 +376,6 @@ export default function Profile() {
                           <PlayerCard
                             key={player.id || index}
                             player={player}
-                            index={index}
                           />
                         ))}
                     </div>
@@ -433,284 +443,252 @@ export default function Profile() {
                     </div>
                   )}
 
-                  {!isLoadingTransactions && transactions.length > 0 && (
-                    <div className="w-full space-y-4 max-h-96 overflow-y-auto custom-scrollbar px-4 py-2">
-                      {transactions.map((tx) => (
-                        <div
-                          key={tx.transaction_id}
-                          className="p-5 rounded-xl bg-white border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-300"
-                        >
-                          <p className="text-sm text-gray-600 font-semibold">
-                            Type:{" "}
-                            <span
-                              className={`ml-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${
-                                tx.type === "free_agent"
-                                  ? "bg-blue-100 text-blue-800"
-                                  : tx.type === "waiver"
-                                  ? "bg-yellow-100 text-yellow-800"
-                                  : "bg-gray-100 text-gray-800"
-                              }`}
-                            >
-                              {tx.type === "free_agent"
-                                ? "free agent"
-                                : tx.type}
-                            </span>
-                          </p>
+                  {!isLoadingTransactions &&
+                    !isLoadingFetchPlayers &&
+                    transactions.length > 0 && (
+                      <div className="w-full space-y-4 max-h-96 overflow-y-auto custom-scrollbar px-4 py-2">
+                        {transactions.map((tx) => (
+                          <div
+                            key={tx.transaction_id}
+                            className="p-5 rounded-xl bg-white border border-gray-200 shadow-md hover:shadow-lg transition-shadow duration-300"
+                          >
+                            <p className="text-sm text-gray-600 font-semibold">
+                              Type:{" "}
+                              <span
+                                className={`ml-1 inline-block px-2 py-1 rounded-full text-xs font-medium ${
+                                  tx.type === "free_agent"
+                                    ? "bg-blue-100 text-blue-800"
+                                    : tx.type === "waiver"
+                                    ? "bg-yellow-100 text-yellow-800"
+                                    : "bg-gray-100 text-gray-800"
+                                }`}
+                              >
+                                {tx.type === "free_agent"
+                                  ? "free agent"
+                                  : tx.type}
+                              </span>
+                            </p>
 
-                          {(tx.type === "free_agent" ||
-                            tx.type === "waiver") && (
-                            <>
-                              {tx.adds && (
-                                <div className="mt-2 text-sm text-green-700">
-                                  <p className="font-semibold">+:</p>
-                                  <ul className="list-disc list-inside">
-                                    {Object.entries(tx.adds).map(
-                                      ([playerId]) => {
-                                        const playerObj = Array.isArray(
-                                          fetchedPlayers
-                                        )
-                                          ? fetchedPlayers.find(
-                                              (p) => p.playerId === playerId
-                                            )
-                                          : null;
+                            {(tx.type === "free_agent" ||
+                              tx.type === "waiver") && (
+                              <>
+                                {tx.adds && (
+                                  <div className="mt-2 text-sm text-green-700">
+                                    <p className="font-semibold">+:</p>
+                                    <ul className="list-disc list-inside">
+                                      {Object.entries(tx.adds).map(
+                                        ([playerId], index) => {
+                                          const playerObj = Array.isArray(
+                                            fetchedPlayers
+                                          )
+                                            ? fetchedPlayers.find(
+                                                (p) => p.playerId === playerId
+                                              )
+                                            : null;
 
-                                        const playerName = playerObj
-                                          ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
-                                          : "Loading...";
+                                          const playerName = playerObj
+                                            ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
+                                            : "Loading...";
 
-                                        const headshot_url = playerObj
-                                          ? playerObj.playerData.headshot
-                                          : null;
+                                          const headshot_url = playerObj
+                                            ? playerObj.playerData.headshot
+                                            : null;
 
-                                        return (
-                                          <li
-                                            key={playerId}
-                                            className="flex items-center gap-3 p-2"
-                                          >
-                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
-                                              {headshot_url ? (
-                                                <img
-                                                  src={headshot_url}
-                                                  alt={playerName}
-                                                  className="w-full h-full rounded-full object-cover"
-                                                />
-                                              ) : (
-                                                <span>?</span>
-                                              )}
-                                            </div>
-                                            <span>{playerName}</span>
-                                          </li>
-                                        );
-                                      }
-                                    )}
-                                  </ul>
-                                </div>
-                              )}
+                                          return (
+                                            <li
+                                              key={playerId}
+                                              className="flex items-center gap-3 p-2"
+                                            >
+                                              <PlayerCard
+                                                player={playerObj.playerData}
+                                              />
+                                            </li>
+                                          );
+                                        }
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
 
-                              {tx.drops && (
-                                <div className="mt-2 text-sm text-red-700">
-                                  <p className="font-semibold">-</p>
-                                  <ul className="list-disc list-inside">
-                                    {Object.entries(tx.drops).map(
-                                      ([playerId]) => {
-                                        const playerObj = Array.isArray(
-                                          fetchedPlayers
-                                        )
-                                          ? fetchedPlayers.find(
-                                              (p) => p.playerId === playerId
-                                            )
-                                          : null;
+                                {tx.drops && (
+                                  <div className="mt-2 text-sm text-red-700">
+                                    <p className="font-semibold">-</p>
+                                    <ul className="list-disc list-inside">
+                                      {Object.entries(tx.drops).map(
+                                        ([playerId]) => {
+                                          const playerObj = Array.isArray(
+                                            fetchedPlayers
+                                          )
+                                            ? fetchedPlayers.find(
+                                                (p) => p.playerId === playerId
+                                              )
+                                            : null;
 
-                                        const playerName = playerObj
-                                          ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
-                                          : "Loading...";
+                                          const playerName = playerObj
+                                            ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
+                                            : "Loading...";
 
-                                        const headshot_url = playerObj
-                                          ? playerObj.playerData.headshot
-                                          : null;
+                                          const headshot_url = playerObj
+                                            ? playerObj.playerData.headshot
+                                            : null;
 
-                                        return (
-                                          <li
-                                            key={playerId}
-                                            className="flex items-center gap-3 p-2"
-                                          >
-                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
-                                              {headshot_url ? (
-                                                <img
-                                                  src={headshot_url}
-                                                  alt={playerName}
-                                                  className="w-full h-full rounded-full object-cover"
-                                                />
-                                              ) : (
-                                                <span>?</span>
-                                              )}
-                                            </div>
-                                            <span>{playerName}</span>
-                                          </li>
-                                        );
-                                      }
-                                    )}
-                                  </ul>
-                                </div>
-                              )}
-                            </>
-                          )}
+                                          return (
+                                            <li
+                                              key={playerId}
+                                              className="flex items-center gap-3 p-2"
+                                            >
+                                              <PlayerCard
+                                                player={playerObj.playerData}
+                                              />
+                                            </li>
+                                          );
+                                        }
+                                      )}
+                                    </ul>
+                                  </div>
+                                )}
+                              </>
+                            )}
 
-                          {tx.type === "trade" && (
-                            <>
-                              {tx.adds && (
-                                <div className="mt-2 text-sm text-green-700">
-                                  <p className="font-semibold">+:</p>
-                                  <ul className="list-disc list-inside">
-                                    {Object.entries(tx.adds)
-                                      .filter(([playerId, rosterId]) => {
-                                        const roster =
-                                          tx.league_data?.roster_data?.[
-                                            rosterId - 1
-                                          ];
-                                        return (
-                                          roster?.owner_id === user?.sleeper_id
-                                        );
-                                      })
-                                      .map(([playerId, rosterId]) => {
-                                        const playerObj = Array.isArray(
-                                          fetchedPlayers
-                                        )
-                                          ? fetchedPlayers.find(
-                                              (p) => p.playerId === playerId
-                                            )
-                                          : null;
+                            {tx.type === "trade" && (
+                              <>
+                                {tx.adds && (
+                                  <div className="mt-2 text-sm text-green-700">
+                                    <p className="font-semibold">+:</p>
+                                    <ul className="list-disc list-inside">
+                                      {Object.entries(tx.adds)
+                                        .filter(([playerId, rosterId]) => {
+                                          const roster =
+                                            tx.league_data?.roster_data?.[
+                                              rosterId - 1
+                                            ];
+                                          return (
+                                            roster?.owner_id ===
+                                            user?.sleeper_id
+                                          );
+                                        })
+                                        .map(([playerId, rosterId]) => {
+                                          const playerObj = Array.isArray(
+                                            fetchedPlayers
+                                          )
+                                            ? fetchedPlayers.find(
+                                                (p) => p.playerId === playerId
+                                              )
+                                            : null;
 
-                                        const playerName = playerObj
-                                          ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
-                                          : "Loading...";
+                                          const playerName = playerObj
+                                            ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
+                                            : "Loading...";
 
-                                        const headshot_url = playerObj
-                                          ? playerObj.playerData.headshot
-                                          : null;
+                                          const headshot_url = playerObj
+                                            ? playerObj.playerData.headshot
+                                            : null;
 
-                                        return (
-                                          <li
-                                            key={playerId}
-                                            className="flex items-center gap-3 p-2"
-                                          >
-                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
-                                              {headshot_url ? (
-                                                <img
-                                                  src={headshot_url}
-                                                  alt={playerName}
-                                                  className="w-full h-full rounded-full object-cover"
-                                                />
-                                              ) : (
-                                                <span>?</span>
-                                              )}
-                                            </div>
-                                            <span>{playerName}</span>
-                                          </li>
-                                        );
-                                      })}
-                                  </ul>
-                                </div>
-                              )}
+                                          return (
+                                            <li
+                                              key={playerId}
+                                              className="flex items-center gap-3 p-2"
+                                            >
+                                              <PlayerCard
+                                                player={playerObj.playerData}
+                                              />
+                                            </li>
+                                          );
+                                        })}
+                                    </ul>
+                                  </div>
+                                )}
 
-                              {tx.drops && (
-                                <div className="mt-2 text-sm text-red-700">
-                                  <p className="font-semibold">-</p>
-                                  <ul className="list-disc list-inside">
-                                    {Object.entries(tx.drops)
-                                      .filter(([playerId, rosterId]) => {
-                                        const roster =
-                                          tx.league_data?.roster_data?.[
-                                            rosterId - 1
-                                          ];
-                                        return (
-                                          roster?.owner_id === user.sleeper_id
-                                        );
-                                      })
-                                      .map(([playerId, rosterId]) => {
-                                        const playerObj = Array.isArray(
-                                          fetchedPlayers
-                                        )
-                                          ? fetchedPlayers.find(
-                                              (p) => p.playerId === playerId
-                                            )
-                                          : null;
+                                {tx.drops && (
+                                  <div className="mt-2 text-sm text-red-700">
+                                    <p className="font-semibold">-</p>
+                                    <ul className="list-disc list-inside">
+                                      {Object.entries(tx.drops)
+                                        .filter(([playerId, rosterId]) => {
+                                          const roster =
+                                            tx.league_data?.roster_data?.[
+                                              rosterId - 1
+                                            ];
+                                          return (
+                                            roster?.owner_id === user.sleeper_id
+                                          );
+                                        })
+                                        .map(([playerId, rosterId]) => {
+                                          const playerObj = Array.isArray(
+                                            fetchedPlayers
+                                          )
+                                            ? fetchedPlayers.find(
+                                                (p) => p.playerId === playerId
+                                              )
+                                            : null;
 
-                                        const playerName = playerObj
-                                          ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
-                                          : "Loading...";
+                                          const playerName = playerObj
+                                            ? `${playerObj.playerData.first_name} ${playerObj.playerData.last_name}`
+                                            : "Loading...";
 
-                                        const headshot_url = playerObj
-                                          ? playerObj.playerData.headshot
-                                          : null;
+                                          const headshot_url = playerObj
+                                            ? playerObj.playerData.headshot
+                                            : null;
 
-                                        return (
-                                          <li
-                                            key={playerId}
-                                            className="flex items-center gap-3 p-2"
-                                          >
-                                            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-sm overflow-hidden">
-                                              {headshot_url ? (
-                                                <img
-                                                  src={headshot_url}
-                                                  alt={playerName}
-                                                  className="w-full h-full rounded-full object-cover"
-                                                />
-                                              ) : (
-                                                <span>?</span>
-                                              )}
-                                            </div>
-                                            <span>{playerName}</span>
-                                          </li>
-                                        );
-                                      })}
-                                  </ul>
-                                </div>
-                              )}
+                                          return (
+                                            <li
+                                              key={playerId}
+                                              className="flex items-center gap-3 p-2"
+                                            >
+                                              <PlayerCard
+                                                player={playerObj.playerData}
+                                              />
+                                            </li>
+                                          );
+                                        })}
+                                    </ul>
+                                  </div>
+                                )}
 
-                              <ul>
-                                {tx.draft_picks.map((pick, index) => {
-                                  const acquired =
-                                    pick.owner_id === user.sleeper_id;
-                                  const gaveUp =
-                                    pick.previous_owner_id === user.sleeper_id;
+                                <ul>
+                                  {tx.draft_picks.map((pick, index) => {
+                                    const acquired =
+                                      pick.owner_id === user.sleeper_id;
+                                    const gaveUp =
+                                      pick.previous_owner_id ===
+                                      user.sleeper_id;
 
-                                  if (acquired) {
-                                    return (
-                                      <li key={index}>
-                                        <b>Acquired</b> Pick: Round {pick.round}
-                                        , {pick.season}
-                                      </li>
-                                    );
-                                  }
-                                  if (gaveUp) {
-                                    return (
-                                      <li key={index}>
-                                        <b>Gave Up</b> Pick: Round {pick.round},{" "}
-                                        {pick.season}
-                                      </li>
-                                    );
-                                  }
-                                })}
-                              </ul>
-                            </>
-                          )}
+                                    if (acquired) {
+                                      return (
+                                        <li key={index}>
+                                          <b>Acquired</b> Pick: Round{" "}
+                                          {pick.round}, {pick.season}
+                                        </li>
+                                      );
+                                    }
+                                    if (gaveUp) {
+                                      return (
+                                        <li key={index}>
+                                          <b>Gave Up</b> Pick: Round{" "}
+                                          {pick.round}, {pick.season}
+                                        </li>
+                                      );
+                                    }
+                                  })}
+                                </ul>
+                              </>
+                            )}
 
-                          <p>Status: {tx.status}</p>
+                            <p>Status: {tx.status}</p>
 
-                          <p className="text-sm text-slate-500">
-                            League: <strong>{tx.league_data.name}</strong>
-                          </p>
-                          <p className="text-sm text-gray-700 mt-1">
-                            <span className="font-semibold">Updated:</span>{" "}
-                            {tx.status_updated
-                              ? new Date(tx.status_updated).toLocaleString()
-                              : "Unknown"}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  )}
+                            <p className="text-sm text-slate-500">
+                              League: <strong>{tx.league_data.name}</strong>
+                            </p>
+                            <p className="text-sm text-gray-700 mt-1">
+                              <span className="font-semibold">Updated:</span>{" "}
+                              {tx.status_updated
+                                ? new Date(tx.status_updated).toLocaleString()
+                                : "Unknown"}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    )}
 
                   {!isLoadingTransactions &&
                     !isLoadingLeagues &&

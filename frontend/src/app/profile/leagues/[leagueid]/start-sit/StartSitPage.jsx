@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Footer from "../../../../components/Footer";
 import Navbar from "../../../../components/Navbar";
-import Rosters from "../../../../components/Rosters";
+import Rosters from "../../../../components/RostersSS";
 import { useRouter } from "next/navigation";
 import { useLeague, useUser } from "../../../../context/Context.jsx";
 
@@ -69,15 +69,7 @@ export default function Trades() {
       {isLoadingRosters && <span>Loading...</span>}
 
       {!isLoadingRosters && (
-        <Rosters
-          userRoster={userRoster}
-          selectedRoster={selectedRoster}
-          otherRosters={otherRosters}
-          isDropdownOpen={isDropdownOpen}
-          setIsDropdownOpen={setIsDropdownOpen}
-          handleRosterSelect={handleRosterSelect}
-          starters={starters}
-        />
+        <Rosters userRoster={userRoster} starters={starters} />
       )}
       <Footer />
     </>
