@@ -180,6 +180,7 @@ export default function Profile() {
         setTransactions([]);
         setSleeperId("");
         setSleeperUsername("");
+        setIsLoadingFetchPlayers(true);
         toast.success("Sleeper account unlinked from Mahomebase");
       }
     } catch (error) {
