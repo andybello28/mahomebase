@@ -17,8 +17,6 @@ export default function Rosters({
     <div className="flex flex-row">
       <Roster roster={userRoster} starters={starters} />
 
-      <button>Generate Trades</button>
-
       <div
         key={selectedRoster?.roster_id}
         className="border border-gray-300 rounded-xl p-4 shadow-sm hover:shadow-md transition"

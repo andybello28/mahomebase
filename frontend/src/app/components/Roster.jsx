@@ -3,6 +3,9 @@
 import PlayerCard from "../components/PlayerCard";
 
 export default function Rosters({ roster, starters }) {
+  if (!roster) {
+    return;
+  }
   return (
     <>
       <div

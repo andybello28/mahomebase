@@ -56,14 +56,6 @@ export default function Profile() {
   }, [user?.google_id]);
 
   useEffect(() => {
-    console.log(trendingPlayers);
-  }, [trendingPlayers]);
-
-  useEffect(() => {
-    console.log(fetchedPlayers);
-  }, [fetchedPlayers]);
-
-  useEffect(() => {
     const filtered = allLeagues.filter((league) =>
       league.name?.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -133,18 +125,14 @@ export default function Profile() {
           sleeper_id: result.sleeper_id,
         }));
 
-        // Fetch leagues and transactions
-        const leaguesData = await fetchAllLeagues(googleId);
-        const transactionsData = await fetchTransactions(googleId);
+        const [leaguesData, transactionsData] = await Promise.all([
+          fetchAllLeagues(googleId),
+          fetchTransactions(googleId),
+        ]);
 
-        // Set leagues first
         setLeagues(leaguesData.leagues || []);
 
-        // Set transactions - this will trigger the player fetching effect
         setTransactions(transactionsData);
-
-        // Give the transactions state update time to trigger the player fetch effect
-        // The useEffect that fetches players will handle the player data
 
         toast.success("Sleeper Account Linked");
       } else {
@@ -301,13 +289,21 @@ export default function Profile() {
 
                   {!isLoadingLeagues && allLeagues.length > 0 && (
                     <div className="w-full max-h-40 overflow-y-auto">
-                      <input
-                        type="text"
-                        placeholder="Search leagues..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
-                      />
+                      <div className="flex flex-row gap-30">
+                        <input
+                          type="text"
+                          placeholder="Search leagues..."
+                          value={searchTerm}
+                          onChange={(e) => setSearchTerm(e.target.value)}
+                          className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+                        />
+                        <button
+                          onClick={() => router.push("/profile/leagues")}
+                          className="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700 transition-colors duration-200"
+                        >
+                          View All
+                        </button>
+                      </div>
                       {leagues.map((league, index) => (
                         <div
                           key={index}
@@ -320,16 +316,6 @@ export default function Profile() {
                             {league.rosters || 0} teams
                             <span> | {league.season}</span>
                           </div>
-                          <button
-                            onClick={() => {
-                              router.push(
-                                `/profile/leagues/${league.league_id}`
-                              );
-                            }}
-                            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-indigo-500 to-purple-500 rounded-xl shadow hover:brightness-110 transition-all"
-                          >
-                            More
-                          </button>
                         </div>
                       ))}
                     </div>

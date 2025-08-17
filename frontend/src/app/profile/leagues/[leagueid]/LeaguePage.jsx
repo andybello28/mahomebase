@@ -31,7 +31,6 @@ export default function LeaguePage() {
   const handleRosterSelect = (roster) => {
     setSelectedRoster(roster);
     setIsDropdownOpen(false);
-    console.log("Selected roster:", roster);
   };
 
   useEffect(() => {
@@ -47,8 +46,6 @@ export default function LeaguePage() {
           }
         }
       }
-      console.log(league_rosters);
-      console.log(user_roster);
       setSelectedRoster(league_rosters[0]);
       setOtherRosters(league_rosters);
       setUserRoster(user_roster);

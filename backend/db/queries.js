@@ -111,7 +111,14 @@ async function upsertLeague(googleId, leagueData) {
 
     const round_response = await fetch("https://api.sleeper.app/v1/state/nfl");
     const state = await round_response.json();
-    const round = state.week === 0 ? 1 : state.week;
+    const today = new Date();
+    const cutoff = new Date("2025-09-04T00:00:00");
+    let round;
+    if (today < cutoff) {
+      round = 1;
+    } else {
+      round = state.week === 0 ? 1 : state.week;
+    }
     const tx_response = await fetch(
       `https://api.sleeper.app/v1/league/${leagueData.league_id}/transactions/${round}`
     );
@@ -180,7 +187,14 @@ async function updateLeague(leagueData) {
 
     const round_response = await fetch("https://api.sleeper.app/v1/state/nfl");
     const state = await round_response.json();
-    const round = state.week === 0 ? 1 : state.week;
+    let round;
+    const today = new Date();
+    const cutoff = new Date("2025-09-04T00:00:00");
+    if (today < cutoff) {
+      round = 1;
+    } else {
+      round = state.week === 0 ? 1 : state.week;
+    }
     const tx_response = await fetch(
       `https://api.sleeper.app/v1/league/${leagueData.league_id}/transactions/${round}`
     );
