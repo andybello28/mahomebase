@@ -9,6 +9,7 @@ import { useLeague, useUser } from "../../../../context/Context.jsx";
 import { startSit } from "../../../../utils/start";
 import { getPlayer } from "@/app/utils/players";
 import PlayerCard from "../../../../components/PlayerCard";
+import DynamicLoadingText from "../../../../components/DynamicLoading";
 
 export default function Trades() {
   const { user } = useUser();
@@ -102,9 +103,13 @@ export default function Trades() {
           <button
             onClick={handleGetAdvice}
             disabled={isGeneratingAdvice}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition disabled:opacity-70"
           >
-            {isGeneratingAdvice ? "Analyzing..." : "Get start-sit advice"}
+            {isGeneratingAdvice ? (
+              <DynamicLoadingText />
+            ) : (
+              "Get start-sit advice"
+            )}
           </button>
           {adviceResult && (
             <div className="optimizer-output bg-white rounded-lg shadow-sm border border-gray-200 p-4 mt-4">

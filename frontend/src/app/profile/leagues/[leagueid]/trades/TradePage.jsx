@@ -9,6 +9,7 @@ import { useLeague, useUser } from "../../../../context/Context.jsx";
 import { generateTrade } from "../../../../utils/trade.js";
 import { getPlayer } from "@/app/utils/players";
 import PlayerCard from "../../../../components/PlayerCard";
+import DynamicLoadingText from "../../../../components/DynamicLoading";
 
 export default function Trades() {
   const { user } = useUser();
@@ -106,7 +107,11 @@ export default function Trades() {
             disabled={isGeneratingTrade || !selectedRoster}
             className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
           >
-            {isGeneratingTrade ? "Generating Trade..." : "Generate Trade"}
+            {isGeneratingTrade ? (
+              <DynamicLoadingText />
+            ) : (
+              "Get start-sit advice"
+            )}
           </button>
 
           {tradeResult && (
