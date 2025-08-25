@@ -11,12 +11,10 @@ export default function Home() {
   console.log("user: ", user);
 
   return (
-    <div className="flex flex-col min-h-[100vh]">
-      <div className="sticky top-0 z-50">
-        <Navbar />
-      </div>
+    <div className="flex flex-col justify-center items-center min-h-[100vh]">
+      <Navbar />
       <div className="flex-grow flex flex-col items-center justify-start">
-        <span className="text-[5vw] font-extrabold bg-gradient-to-r from-red-500 to-yellow-400 bg-clip-text text-transparent mb-[5vh] mt-[4vh] transition-transform duration-300 cursor-default inline-block max-w-full">
+        <span className="text-[5vw] font-extrabold bg-gradient-to-r from-red-500 to-yellow-400 bg-clip-text text-transparent mb-[5vh] transition-transform duration-300 cursor-default inline-block max-w-full">
           Mahomebase
         </span>
         <div className="text-[var(--foreground)] mb-[5vh] text-[1.5vw] font-semibold max-w-[70vw] text-center leading-relaxed">

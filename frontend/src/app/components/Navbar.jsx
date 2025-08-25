@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { CgProfile } from "react-icons/cg";
-import { fetchCurrentUser } from "../utils/auth";
+import { useState } from "react";
+import Image from "next/image";
 import { toast } from "react-toastify";
-
 import { useUser } from "../context/Context.jsx";
 
 const backend_url = process.env.NEXT_PUBLIC_API_URL;
@@ -14,9 +12,7 @@ export default function Navbar() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleGoogleLogin = () => {
-    toast("Redirecting for sign in...", {
-      autoClose: 500,
-    });
+    toast("Redirecting for sign in...", { autoClose: 500 });
     setTimeout(() => {
       window.location.href = `${backend_url}/auth/google`;
     }, 1000);
@@ -24,79 +20,76 @@ export default function Navbar() {
 
   const navItems = [
     { name: "Home", href: "/" },
-    { name: "My Leagues", href: "/profile/leagues" },
+    { name: "Leagues", href: "/profile/leagues" },
   ];
 
   return (
-    <nav className="w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50">
-      <div className="w-full px-4 sm:px-6 lg:px-8 py-2">
-        <div className="flex items-center h-16 lg:h-20">
-          {/* Logo */}
-          <div className="flex-shrink-0">
-            <img
-              src="/assets/Mahomebase_light.png"
-              alt="Mahomebase logo"
-              className="w-[10vw] block dark:hidden"
-            />
-            <img
-              src="/assets/Mahomebase_dark.png"
-              alt="Mahomebase logo"
-              className="w-[10vw] hidden dark:block"
-            />
-          </div>
+    <>
+      <nav className="absolute top-4 left-1/2 -translate-x-1/2 w-[65vw] z-50">
+        <div className="relative bg-transparent rounded-full px-10 py-6 min-h-[90px]">
+          <div className="hidden md:flex items-center justify-between">
+            <div className="flex items-center space-x-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -ml-40">
+              {navItems
+                .filter((item) => item.name !== "Home")
+                .map((item) => (
+                  <a
+                    key={item.name}
+                    href={item.href}
+                    className="mt-3 text-white font-bold text-large relative group"
+                  >
+                    {item.name}
+                    <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
+                  </a>
+                ))}
+            </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex flex-1 justify-end">
-            <div className="flex items-baseline space-x-8">
-              {navItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="text-[var(--foreground)] font-semibold text-[1.2vw] transition-transform duration-300 hover:scale-110
-                           hover:bg-gradient-to-r hover:from-red-500 hover:to-yellow-400 hover:bg-clip-text hover:text-transparent px-3 py-2"
-                >
-                  {item.name}
-                </a>
-              ))}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
+              <a
+                href="/"
+                className="flex items-center justify-center space-x-3 transition-transform hover:scale-105"
+              >
+                <Image
+                  src="/favicon.ico"
+                  alt="Mahomebase Logo"
+                  width={64}
+                  height={64}
+                  className="rounded-xl"
+                />
+              </a>
+            </div>
+
+            <div className="flex items-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ml-40">
               {user ? (
                 <a
                   href="/profile"
-                  className="flex flex-row gap-2 justify-center items-center font-semibold transition-transform duration-300 hover:scale-120 px-3 py-2"
+                  className="mt-3 text-white font-bold text-large relative group"
                 >
-                  <span className="text-[var(--foreground)] text-[2vw]">
-                    <CgProfile className="inline-block" />
-                  </span>
+                  Profile
+                  <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
                 </a>
               ) : (
                 <button
                   onClick={handleGoogleLogin}
-                  className="flex flex-row gap-2 justify-center items-center font-semibold transition-transform duration-300 hover:scale-120 px-3 py-2"
+                  className="mt-3 text-white font-bold text-large relative group"
                 >
-                  <span className="text-[var(--foreground)] text-[2vw]">
-                    <CgProfile className="inline-block" />
-                  </span>
+                  Profile
+                  <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
                 </button>
               )}
             </div>
           </div>
 
-          {/* Mobile menu button */}
-          <div className="md:hidden ml-auto">
+          <div className="md:hidden flex items-center justify-center">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-700 dark:text-gray-200 
-                       hover:bg-gray-100 dark:hover:bg-gray-700 
-                       transition-colors duration-200 cursor-pointer"
-              aria-expanded="false"
-              aria-label="Toggle navigation menu"
+              className="absolute left-4 flex items-center justify-center w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 transition"
             >
               {isMobileMenuOpen ? (
                 <svg
-                  className="block h-6 w-6"
+                  className="w-5 h-5 text-white"
                   fill="none"
-                  viewBox="0 0 24 24"
                   stroke="currentColor"
-                  aria-hidden="true"
+                  viewBox="0 0 24 24"
                 >
                   <path
                     strokeLinecap="round"
@@ -107,11 +100,10 @@ export default function Navbar() {
                 </svg>
               ) : (
                 <svg
-                  className="block h-6 w-6"
+                  className="w-5 h-5 text-white"
                   fill="none"
-                  viewBox="0 0 24 24"
                   stroke="currentColor"
-                  aria-hidden="true"
+                  viewBox="0 0 24 24"
                 >
                   <path
                     strokeLinecap="round"
@@ -122,46 +114,61 @@ export default function Navbar() {
                 </svg>
               )}
             </button>
+
+            <div className="flex items-center space-x-3">
+              <Image
+                src="/favicon.ico"
+                alt="Mahomebase Logo"
+                width={45}
+                height={45}
+                className="rounded-xl"
+              />
+              <span className="text-white font-bold text-xl tracking-tight">
+                Mahomebase
+              </span>
+            </div>
           </div>
         </div>
-      </div>
+      </nav>
 
-      {/* Mobile Navigation Menu */}
-      <div
-        className={`md:hidden transition-all duration-300 ease-in-out ${
-          isMobileMenuOpen
-            ? "max-h-96 opacity-100"
-            : "max-h-0 opacity-0 overflow-hidden"
-        }`}
-      >
-        <div className="px-2 pt-2 pb-3 space-y-1 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md border-t border-gray-200 dark:border-gray-700">
-          {navItems.map((item) => (
-            <a
-              key={item.name}
-              href={item.href}
-              className="block px-3 py-2 text-[2vw] font-semibold text-[var(--foreground)] transition-transform duration-300 rounded-md"
-              onClick={() => setIsMobileMenuOpen(false)}
-            >
-              {item.name}
-            </a>
-          ))}
-          {user ? (
-            <a
-              href="/profile"
-              className="block px-3 py-2 text-[2vw] font-semibold text-[var(--foreground)] transition-transform duration-300 rounded-md cursor-pointer"
-            >
-              Profile
-            </a>
-          ) : (
-            <button
-              onClick={handleGoogleLogin}
-              className="block px-3 py-2 text-[2vw] font-semibold text-[var(--foreground)] transition-transform duration-300 rounded-md cursor-pointer"
-            >
-              Profile
-            </button>
-          )}
+      {isMobileMenuOpen && (
+        <div className="md:hidden mt-[90px] w-[75vw] mx-auto bg-transparent rounded-2xl shadow-lg">
+          <div className="flex flex-col space-y-4 p-6">
+            {navItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className="text-white hover:opacity-80 font-bold transition"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                {item.name}
+              </a>
+            ))}
+            {user ? (
+              <a
+                href="/profile"
+                className="text-white hover:opacity-80 font-bold transition"
+                onClick={() => setIsMobileMenuOpen(false)}
+              >
+                Profile
+              </a>
+            ) : (
+              <button
+                onClick={() => {
+                  handleGoogleLogin();
+                  setIsMobileMenuOpen(false);
+                }}
+                className="text-left text-white hover:opacity-80 font-bold transition"
+              >
+                Profile
+              </button>
+            )}
+          </div>
         </div>
-      </div>
-    </nav>
+      )}
+
+      <div className="hidden md:block h-24" />
+      {!isMobileMenuOpen && <div className="md:hidden h-24" />}
+    </>
   );
 }

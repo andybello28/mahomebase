@@ -110,7 +110,6 @@ export default function Leagues() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-
       <div className="flex-grow flex flex-col p-4 space-y-4">
         <div className="flex flex-row gap-2">
           <img
