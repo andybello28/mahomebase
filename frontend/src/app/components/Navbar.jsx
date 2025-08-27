@@ -25,28 +25,30 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="absolute top-4 left-1/2 -translate-x-1/2 w-[65vw] z-50">
-        <div className="relative bg-transparent rounded-full px-10 py-6 min-h-[90px]">
-          <div className="hidden md:flex items-center justify-between">
-            <div className="flex items-center space-x-8 absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -ml-40">
+      <nav className="absolute top-4 left-1/2 -translate-x-1/2 w-[100vw] z-50">
+        <div className="relative bg-transparent rounded-full px-0 py-6 min-h-[90px]">
+          <div className="hidden md:flex items-center justify-center relative">
+            {/* Left side navigation */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -ml-48 flex justify-end w-32">
               {navItems
                 .filter((item) => item.name !== "Home")
                 .map((item) => (
                   <a
                     key={item.name}
                     href={item.href}
-                    className="mt-3 text-white font-bold text-large relative group"
+                    className="mt-3 text-gray-900 hover:text-red-600 font-bold text-large relative group transition-colors duration-300"
                   >
                     {item.name}
-                    <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
+                    <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                   </a>
                 ))}
             </div>
 
+            {/* Center logo */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <a
                 href="/"
-                className="flex items-center justify-center space-x-3 transition-transform hover:scale-105"
+                className="flex items-center justify-center space-x-3 transition-transform hover:scale-105 duration-300"
               >
                 <Image
                   src="/favicon.ico"
@@ -58,22 +60,23 @@ export default function Navbar() {
               </a>
             </div>
 
-            <div className="flex items-center absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ml-40">
+            {/* Right side navigation */}
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ml-48 flex justify-start w-32">
               {user ? (
                 <a
                   href="/profile"
-                  className="mt-3 text-white font-bold text-large relative group"
+                  className="mt-3 text-gray-900 hover:text-red-600 font-bold text-large relative group transition-colors duration-300"
                 >
                   Profile
-                  <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
+                  <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                 </a>
               ) : (
                 <button
                   onClick={handleGoogleLogin}
-                  className="mt-3 text-white font-bold text-large relative group"
+                  className="mt-3 text-gray-900 hover:text-red-600 font-bold text-large relative group transition-colors duration-300"
                 >
                   Profile
-                  <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-white scale-x-0 group-hover:scale-x-100 transition-transform duration-200"></span>
+                  <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                 </button>
               )}
             </div>
@@ -82,11 +85,11 @@ export default function Navbar() {
           <div className="md:hidden flex items-center justify-center">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="absolute left-4 flex items-center justify-center w-10 h-10 rounded-full bg-white/20 hover:bg-white/30 transition"
+              className="absolute left-4 flex items-center justify-center w-10 h-10 rounded-full bg-red-100 hover:bg-red-200 transition-colors duration-300"
             >
               {isMobileMenuOpen ? (
                 <svg
-                  className="w-5 h-5 text-white"
+                  className="w-5 h-5 text-red-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -100,7 +103,7 @@ export default function Navbar() {
                 </svg>
               ) : (
                 <svg
-                  className="w-5 h-5 text-white"
+                  className="w-5 h-5 text-red-600"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -123,7 +126,7 @@ export default function Navbar() {
                 height={45}
                 className="rounded-xl"
               />
-              <span className="text-white font-bold text-xl tracking-tight">
+              <span className="text-gray-900 font-bold text-xl tracking-tight">
                 Mahomebase
               </span>
             </div>
@@ -132,13 +135,13 @@ export default function Navbar() {
       </nav>
 
       {isMobileMenuOpen && (
-        <div className="md:hidden mt-[90px] w-[75vw] mx-auto bg-transparent rounded-2xl shadow-lg">
+        <div className="md:hidden mt-[90px] w-[100vw] mx-auto bg-transparent rounded-2xl">
           <div className="flex flex-col space-y-4 p-6">
             {navItems.map((item) => (
               <a
                 key={item.name}
                 href={item.href}
-                className="text-white hover:opacity-80 font-bold transition"
+                className="text-gray-900 hover:text-red-600 font-bold transition-colors duration-300"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 {item.name}
@@ -147,7 +150,7 @@ export default function Navbar() {
             {user ? (
               <a
                 href="/profile"
-                className="text-white hover:opacity-80 font-bold transition"
+                className="text-gray-900 hover:text-red-600 font-bold transition-colors duration-300"
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 Profile
@@ -158,7 +161,7 @@ export default function Navbar() {
                   handleGoogleLogin();
                   setIsMobileMenuOpen(false);
                 }}
-                className="text-left text-white hover:opacity-80 font-bold transition"
+                className="text-left text-gray-900 hover:text-red-600 font-bold transition-colors duration-300"
               >
                 Profile
               </button>

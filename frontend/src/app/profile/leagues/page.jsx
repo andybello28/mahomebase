@@ -211,6 +211,7 @@ export default function Leagues() {
           ))}
         </div>
       </div>
+      <Footer />
     </div>
   );
 }

@@ -136,6 +136,7 @@ export default function LeaguePage() {
           starters={starters}
         />
       )}
+      <Footer />
     </>
   );
 }

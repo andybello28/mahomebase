@@ -728,6 +728,7 @@ export default function Profile() {
           <Login />
         </>
       )}
+      <Footer />
     </div>
   );
 }
