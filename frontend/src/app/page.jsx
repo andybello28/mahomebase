@@ -47,8 +47,8 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen px-4 pb-24">
-        <div className="text-center w-full flex flex-col items-center">
+      <div className="flex items-center justify-center min-h-screen px-4">
+        <div className="text-center w-full max-w-7xl mx-auto pb-5">
           <h1
             className={`hidden md:block text-5xl md:text-7xl font-bold text-gray-900 mb-6 transition-all duration-1000 ease-out ${
               heroVisible
@@ -79,127 +79,26 @@ export default function Home() {
           </h2>
 
           <p
-            className={`text-lg md:text-xl text-gray-800 font-normal leading-relaxed mb-12 max-w-2xl transition-all duration-1000 ease-out delay-500 ${
+            className={`text-lg md:text-xl text-gray-800 font-normal leading-relaxed mb-8 max-w-2xl mx-auto transition-all duration-1000 ease-out delay-500 ${
               heroVisible
                 ? "opacity-100 transform translate-y-0"
                 : "opacity-0 transform translate-y-8"
             }`}
           >
-            AI-driven real-time insights and championship-winning strategies
+            Updated <span className="font-bold">AI-driven insights </span>
+            and{" "}
+            <span className="font-bold">
+              championship-winning strategies{" "}
+            </span>{" "}
             connected right to your <span className="font-bold">sleeper</span>{" "}
-            account. In just a few clicks, you're one step closer to that ring.
+            account. Here's to getting that ring.
           </p>
 
-          <div className="w-full pb-12 flex justify-center">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-12">
-              {/* Sleeper (Available) */}
-              <div className="flex flex-col items-center w-24 md:w-32 text-center">
-                <Image
-                  src="/assets/sleeper.png"
-                  alt="Sleeper Logo"
-                  width={48}
-                  height={48}
-                  className="md:w-16 md:h-16 rounded-lg"
-                />
-                <span className="text-gray-900 mt-2 font-medium text-sm md:text-base">
-                  Available
-                </span>
-              </div>
-
-              {/* ESPN (Coming Soon) — centered exactly in the screen on desktop */}
-              <div className="flex flex-col items-center w-24 md:w-32 text-center">
-                <Image
-                  src="/assets/espn.png"
-                  alt="ESPN Logo"
-                  width={48}
-                  height={48}
-                  className="md:w-16 md:h-16 rounded-lg"
-                />
-                <span className="text-gray-500 mt-2 text-xs md:text-sm italic">
-                  Coming Soon...
-                </span>
-              </div>
-
-              {/* NFL (Coming Soon) */}
-              <div className="flex flex-col items-center w-24 md:w-32 text-center">
-                <Image
-                  src="/assets/nfl.png"
-                  alt="NFL Logo"
-                  width={48}
-                  height={48}
-                  className="md:w-16 md:h-16 rounded-lg"
-                />
-                <span className="text-gray-500 mt-2 text-xs md:text-sm italic">
-                  Coming Soon...
-                </span>
-              </div>
-            </div>
-          </div>
-
           <div
-            className={`animate-bounce transition-all duration-1000 ease-out delay-1000 ${
-              heroVisible ? "opacity-100" : "opacity-0"
-            }`}
-          >
-            <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center mx-auto">
-              <div className="w-1 h-3 bg-gray-400 rounded-full mt-2"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div
-        className={`px-4 transition-all duration-1000 ease-out ${
-          isContentVisible
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-12"
-        }`}
-      >
-        <div className="w-full space-y-12 pt-20 flex flex-col items-center">
-          <div
-            className={`text-gray-900 text-2xl md:text-3xl font-semibold text-center leading-relaxed transition-all duration-1000 ease-out delay-100 ${
-              isContentVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8"
-            }`}
-          >
-            Welcome to the future of fantasy football.
-          </div>
-
-          <div
-            className={`text-gray-800 text-lg md:text-xl font-normal text-center leading-relaxed max-w-4xl transition-all duration-1000 ease-out delay-200 ${
-              isContentVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8"
-            }`}
-          >
-            Fantasy football is <span className="font-bold">hard</span>. Us
-            managers find ourselves teetering back and forth when making
-            decisions on the waiver wire, bench, or in trades. We were tired of
-            generic advice, gut-based trades, and spending hours deciding who
-            you should start — so we built the tool we always wished we had.
-          </div>
-
-          <div
-            className={`text-gray-800 text-lg md:text-xl font-normal text-center leading-relaxed transition-all max-w-4xl duration-1000 ease-out delay-400 ${
-              isContentVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8"
-            }`}
-          >
-            But at Mahomebase, we're building more than just a tool — we're
-            creating an intelligent platform that transforms raw data into
-            actionable insights for all your leagues, centralized in one place.
-            Whether you're chasing your first championship or adding another
-            ring to your collection, Mahomebase is designed to be your
-            competitive edge.
-          </div>
-
-          <div
-            className={`grid md:grid-cols-3 gap-8 mt-16 max-w-6xl transition-all duration-1000 ease-out delay-500 ${
-              isContentVisible
-                ? "opacity-100 translate-y-0"
-                : "opacity-0 translate-y-8"
+            className={`grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 max-w-6xl mx-auto transition-all duration-1000 ease-out delay-700 ${
+              heroVisible
+                ? "opacity-100 transform translate-y-0"
+                : "opacity-0 transform translate-y-8"
             }`}
           >
             <div className="text-center p-6 group hover:scale-105 transition-transform duration-300">
@@ -279,7 +178,119 @@ export default function Home() {
           </div>
 
           <div
-            className={`text-gray-900 text-2xl md:text-3xl font-semibold text-center leading-relaxed mt-16 transition-all duration-1000 ease-out delay-600 ${
+            className={`mt-16 animate-bounce transition-all duration-1000 ease-out delay-1000 ${
+              heroVisible ? "opacity-100" : "opacity-0"
+            }`}
+          >
+            <div className="w-6 h-10 border-2 border-gray-400 rounded-full flex justify-center mx-auto">
+              <div className="w-1 h-3 bg-gray-400 rounded-full mt-2"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div
+        className={`px-4 transition-all duration-1000 ease-out ${
+          isContentVisible
+            ? "opacity-100 translate-y-0"
+            : "opacity-0 translate-y-12"
+        }`}
+      >
+        <div className="w-full max-w-6xl mx-auto space-y-16 pb-0">
+          <div
+            className={`text-gray-900 text-2xl md:text-3xl font-semibold text-center leading-relaxed transition-all duration-1000 ease-out delay-100 ${
+              isContentVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
+          >
+            Welcome to the future of fantasy football.
+          </div>
+
+          <div
+            className={`text-gray-800 text-lg md:text-xl font-normal text-center leading-relaxed max-w-4xl mx-auto transition-all duration-1000 ease-out delay-200 ${
+              isContentVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
+          >
+            Fantasy football is <span className="font-bold">hard</span>. Us
+            managers find ourselves teetering back and forth when making
+            decisions on the waiver wire, bench, or in trades. We were tired of{" "}
+            <span className="font-bold">
+              generic advice, gut-based trades, and spending hours
+            </span>{" "}
+            deciding who you should start — so we built what we always wished we
+            had.
+          </div>
+
+          <div
+            className={`text-gray-800 text-lg md:text-xl font-normal text-center leading-relaxed max-w-4xl mx-auto transition-all duration-1000 ease-out delay-400 ${
+              isContentVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
+          >
+            But this is more than just a tool - we're creating an{" "}
+            <span className="font-bold">intelligent</span> platform that
+            transforms raw data into actionable insights for{" "}
+            <span className="font-bold">all</span> your leagues,{" "}
+            <span className="font-bold">centralized</span> in one place. Whether
+            you're chasing your first championship or adding another ring to
+            your collection, Mahomebase is designed to be your competitive edge.
+          </div>
+
+          <div
+            className={`flex justify-center transition-all duration-1000 ease-out delay-600 ${
+              isContentVisible
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 translate-y-8"
+            }`}
+          >
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center max-w-md md:max-w-none">
+              <div className="flex flex-col items-center">
+                <Image
+                  src="/assets/sleeper.png"
+                  alt="Sleeper Logo"
+                  width={64}
+                  height={64}
+                  className="w-16 h-16 rounded-lg"
+                />
+                <span className="text-gray-900 mt-2 font-medium text-sm md:text-base">
+                  Available
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <Image
+                  src="/assets/espn.png"
+                  alt="ESPN Logo"
+                  width={64}
+                  height={64}
+                  className="w-16 h-16 rounded-lg"
+                />
+                <span className="text-gray-500 mt-2 text-xs md:text-sm italic">
+                  Coming Soon...
+                </span>
+              </div>
+
+              <div className="flex flex-col items-center">
+                <Image
+                  src="/assets/nfl.png"
+                  alt="NFL Logo"
+                  width={64}
+                  height={64}
+                  className="w-16 h-16 rounded-lg"
+                />
+                <span className="text-gray-500 mt-2 text-xs md:text-sm italic">
+                  Coming Soon...
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <div
+            className={`text-gray-900 text-2xl md:text-3xl font-semibold text-center leading-relaxed transition-all duration-1000 ease-out delay-700 ${
               isContentVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-8"
@@ -289,7 +300,7 @@ export default function Home() {
           </div>
 
           <div
-            className={`flex justify-center mt-8 transition-all duration-1000 ease-out delay-700 ${
+            className={`flex justify-center transition-all duration-1000 ease-out delay-800 ${
               isContentVisible
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 translate-y-8"
@@ -304,8 +315,8 @@ export default function Home() {
               </button>
             )}
           </div>
-          <Footer />
         </div>
+        <Footer />
       </div>
     </div>
   );

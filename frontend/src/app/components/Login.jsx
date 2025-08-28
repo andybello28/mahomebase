@@ -17,7 +17,7 @@ export default function AuthToggle() {
     <div className="flex flex-col items-center mt-[5vh] pb-[3vh]">
       <button
         onClick={handleGoogleLogin}
-        className="text-[1.5vw] px-[3vw] py-[1.5vh] bg-gradient-to-r from-red-500 to-yellow-400 text-white font-semibold rounded-lg shadow-lg hover:scale-105 hover:from-red-600 hover:to-yellow-500 transition-transform duration-300"
+        className="text-[1.5vw] px-[3vw] py-[1.5vh] bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
       >
         Get Started
       </button>

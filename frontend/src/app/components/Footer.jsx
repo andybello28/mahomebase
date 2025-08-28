@@ -4,7 +4,6 @@ import Image from "next/image";
 export default function Footer() {
   return (
     <footer className="py-10 flex flex-col items-center justify-center space-y-6">
-      {/* Logo */}
       <a href="/" className="transition-transform hover:scale-110 duration-300">
         <Image
           src="/favicon.ico"
@@ -15,7 +14,6 @@ export default function Footer() {
         />
       </a>
 
-      {/* Text */}
       <div className="max-w-6xl mx-auto px-4 text-center">
         <p className="text-gray-500 text-base md:text-lg font-medium">
           © 2025 <span className="font-semibold">Mahomebase</span>. Built for

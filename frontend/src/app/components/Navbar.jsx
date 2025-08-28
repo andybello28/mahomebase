@@ -25,10 +25,9 @@ export default function Navbar() {
 
   return (
     <>
-      <nav className="absolute top-4 left-1/2 -translate-x-1/2 w-[100vw] z-50">
-        <div className="relative bg-transparent rounded-full px-0 py-6 min-h-[90px]">
+      <nav className="absolute top-4 left-1/2 -translate-x-1/2 w-[100vw] z-50 pr-3">
+        <div className="relative bg-transparent rounded-full px-0 pt-10 min-h-[90px]">
           <div className="hidden md:flex items-center justify-center relative">
-            {/* Left side navigation */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 -ml-48 flex justify-end w-32">
               {navItems
                 .filter((item) => item.name !== "Home")
@@ -44,7 +43,6 @@ export default function Navbar() {
                 ))}
             </div>
 
-            {/* Center logo */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2">
               <a
                 href="/"
@@ -60,7 +58,6 @@ export default function Navbar() {
               </a>
             </div>
 
-            {/* Right side navigation */}
             <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 ml-48 flex justify-start w-32">
               {user ? (
                 <a
@@ -170,8 +167,7 @@ export default function Navbar() {
         </div>
       )}
 
-      <div className="hidden md:block h-24" />
-      {!isMobileMenuOpen && <div className="md:hidden h-24" />}
+      {!isMobileMenuOpen && <div className="h-32" />}
     </>
   );
 }
