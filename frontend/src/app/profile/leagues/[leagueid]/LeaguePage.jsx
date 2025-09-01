@@ -135,7 +135,14 @@ export default function LeaguePage() {
           </div>
         </div>
       )}
-
+      {isLoadingRosters && (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-3 border-red-600 border-t-transparent"></div>
+          <span className="ml-3 text-sm text-gray-600 font-medium">
+            Loading league rosters...
+          </span>
+        </div>
+      )}
       {!isLoadingRosters && (
         <Rosters
           userRoster={userRoster}
@@ -147,7 +154,7 @@ export default function LeaguePage() {
           starters={starters}
         />
       )}
-      <Footer />
+      {!isLoadingRosters && <Footer />}
     </div>
   );
 }

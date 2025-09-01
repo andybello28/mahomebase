@@ -123,7 +123,14 @@ export default function Trades() {
         </div>
       </div>
 
-      {isLoadingRosters && <span>Loading...</span>}
+      {isLoadingRosters && (
+        <div className="flex items-center justify-center py-12">
+          <div className="animate-spin rounded-full h-8 w-8 border-3 border-red-600 border-t-transparent"></div>
+          <span className="ml-3 text-sm text-gray-600 font-medium">
+            Loading your roster...
+          </span>
+        </div>
+      )}
 
       {!isLoadingRosters && (
         <div className="flex flex-col gap-6">
@@ -318,7 +325,7 @@ export default function Trades() {
           />
         </div>
       )}
-      <Footer />
+      {!isLoadingRosters && <Footer />}
     </div>
   );
 }

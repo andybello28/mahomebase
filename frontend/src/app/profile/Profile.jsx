@@ -16,12 +16,12 @@ import {
 import { IoIosAddCircleOutline } from "react-icons/io";
 import { IoIosCloseCircle } from "react-icons/io";
 
-import Login from "../components/Login";
 import Footer from "../components/Footer";
 import Logout from "../components/Logout";
 import Navbar from "../components/Navbar";
 import PlayerCard from "../components/PlayerCard";
 import Roster from "../components/Roster";
+import LoginPage from "../components/LoginPage";
 
 import { useRouter } from "next/navigation";
 import { getPlayer } from "../utils/players";
@@ -34,8 +34,15 @@ export default function Profile() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const { user, setUser, setSleeperUsername, sleeperId, setSleeperId } =
-    useUser();
+  const {
+    user,
+    setUser,
+    setSleeperUsername,
+    sleeperId,
+    setSleeperId,
+    isLoadingUser,
+  } = useUser();
+
   const { allLeagues, isLoadingLeagues } = useLeagues();
   const { season, week } = useSeason();
   const { transactions, setTransactions, isLoadingTransactions } =
@@ -57,6 +64,10 @@ export default function Profile() {
       toast.success("Login Successful");
     }
   }, [user?.google_id]);
+
+  useEffect(() => {
+    console.log(isLoadingUser, user);
+  }, [user]);
 
   useEffect(() => {
     const filtered = allLeagues.filter((league) =>
@@ -184,7 +195,7 @@ export default function Profile() {
     <div className="min-h-screen">
       <Navbar />
       <div className="px-4">
-        {user && (
+        {user && !isLoadingUser && (
           <div className="max-w-7xl mx-auto space-y-8">
             <div className="flex flex-col gap-8">
               <div className="bg-[#ffffff] rounded-2xl p-8 transition-all duration-300">
@@ -198,7 +209,7 @@ export default function Profile() {
                       {!showSleeperForm && (
                         <button
                           onClick={() => setShowSleeperForm(true)}
-                          className="flex items-center gap-3 py-3 px-6 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold transition-transform duration-300 hover:scale-105 max-w-xs mx-auto justify-center"
+                          className="flex items-center gap-3 py-3 px-6 rounded-xl bg-red-600 hover:bg-red-500 text-white font-semibold transition-transform duration-300 hover:scale-105 max-w-xs mx-auto justify-center"
                         >
                           <img
                             src="/assets/sleeper.png"
@@ -447,7 +458,7 @@ export default function Profile() {
                         )}
                       </h3>
 
-                      {isLoadingTransactions && (
+                      {isLoadingLeagues && (
                         <div className="flex items-center justify-center py-12">
                           <div className="animate-spin rounded-full h-8 w-8 border-3 border-red-600 border-t-transparent"></div>
                           <span className="ml-3 text-sm text-gray-600 font-medium">
@@ -762,14 +773,11 @@ export default function Profile() {
           </div>
         )}
 
-        {!user && (
-          <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-6">
-            <h2 className="text-2xl font-bold text-gray-900">Please Log In</h2>
-            <Login />
-          </div>
-        )}
+        {!user && isLoadingUser}
+
+        {!user && !isLoadingUser && <LoginPage />}
       </div>
-      <Footer />
+      {!isLoadingUser && <Footer />}
     </div>
   );
 }

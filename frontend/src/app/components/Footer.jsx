@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export default function Footer() {
   return (
-    <footer className="py-10 flex flex-col items-center justify-center space-y-6">
+    <footer className="py-10 pb-0 flex flex-col items-center justify-center space-y-6">
       <a href="/" className="transition-transform hover:scale-110 duration-300">
         <Image
           src="/favicon.ico"

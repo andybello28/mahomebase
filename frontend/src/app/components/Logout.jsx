@@ -17,7 +17,7 @@ export default function AuthToggle() {
     <div className="flex flex-col items-center mt-12 pb-8">
       <button
         onClick={handleGoogleLogout}
-        className="bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
+        className="bg-red-500 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-lg text-lg transition-all duration-300 transform hover:scale-105 hover:shadow-lg"
       >
         Logout
       </button>

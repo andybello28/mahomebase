@@ -14,10 +14,10 @@ export default function AuthToggle() {
   };
 
   return (
-    <div className="flex flex-col items-center mt-[5vh] pb-[3vh]">
+    <div className="flex flex-col items-center mt-12 pb-8 px-6 sm:mt-16 sm:pb-12">
       <button
         onClick={handleGoogleLogin}
-        className="text-[1.5vw] px-[3vw] py-[1.5vh] bg-red-600 hover:bg-red-700 text-white font-semibold rounded-lg shadow-lg hover:scale-105 transition-all duration-300"
+        className="text-m sm:text-xl lg:text-2xl px-8 py-4 sm:px-10 sm:py-5 lg:px-12 lg:py-6 bg-red-500 hover:bg-red-700 text-white font-semibold rounded-xl shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 w-full max-w-xs sm:max-w-sm lg:max-w-md"
       >
         Get Started
       </button>
