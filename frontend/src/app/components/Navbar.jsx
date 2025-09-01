@@ -64,7 +64,7 @@ export default function Navbar() {
                   href="/profile"
                   className="mt-3 text-gray-900 hover:text-red-600 font-bold text-large relative group transition-colors duration-300"
                 >
-                  Profile
+                  My Profile
                   <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                 </a>
               ) : (
@@ -72,7 +72,7 @@ export default function Navbar() {
                   onClick={handleGoogleLogin}
                   className="mt-3 text-gray-900 hover:text-red-600 font-bold text-large relative group transition-colors duration-300"
                 >
-                  Profile
+                  My Profile
                   <span className="absolute inset-x-0 -bottom-1 h-0.5 bg-red-600 scale-x-0 group-hover:scale-x-100 transition-transform duration-300"></span>
                 </button>
               )}
