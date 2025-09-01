@@ -91,104 +91,138 @@ export default function Trades() {
   return (
     <>
       <Navbar />
-      <button
-        onClick={() => router.push("/profile/leagues")}
-        className="mb-6 px-4 py-2 text-sm font-medium text-white bg-slate-700 rounded-xl hover:bg-slate-800 transition"
-      >
-        <div>← Back to Leagues</div>
-      </button>
+      <div className="flex flex-col justify-center items-center gap-6">
+        {league && (
+          <div className="text-lg font-semibold text-gray-900">
+            {league.name}
+          </div>
+        )}
+        <div className="flex justify-center">
+          <div className="flex flex-row gap-4">
+            <button
+              onClick={() => router.push("/profile/leagues")}
+              className="mb-6 px-6 py-3 text-sm font-semibold text-black bg-white rounded-xl transition-all duration-300 hover:bg-red-50 hover:border-red-300 hover:text-red-700 shadow-sm hover:shadow-md"
+            >
+              <div className="flex items-center gap-2">
+                <span>←</span>
+                <span>Back to Leagues</span>
+              </div>
+            </button>
+            <div className="flex w-[full] justify-center">
+              <button
+                onClick={handleGenerateTrade}
+                disabled={isGeneratingTrade || !selectedRoster}
+                className="mb-6 px-8 py-3 text-sm font-semibold text-black bg-white rounded-xl transition-all duration-300 hover:bg-red-50 hover:border-red-300 hover:text-red-700 shadow-sm hover:shadow-md"
+              >
+                {isGeneratingTrade ? (
+                  <DynamicLoadingText />
+                ) : (
+                  "Get trade advice"
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {isLoadingRosters && <span>Loading...</span>}
 
       {!isLoadingRosters && (
         <>
-          <button
-            onClick={handleGenerateTrade}
-            disabled={isGeneratingTrade || !selectedRoster}
-            className="mt-4 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-          >
-            {isGeneratingTrade ? (
-              <DynamicLoadingText />
-            ) : (
-              "Get start-sit advice"
-            )}
-          </button>
-
           {tradeResult && (
-            <div className="trade-output bg-white rounded-lg shadow-sm border border-gray-200 p-4 mt-4">
-              <div className="flex items-center gap-2 mb-4">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Trade Proposal
-                </h3>
-              </div>
+            <div className="px-6">
+              <div className="bg-[#ffffff] rounded-2xl p-8 transition-all duration-300 w-full">
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
+                  <h3 className="text-2xl font-bold bg-black bg-clip-text text-transparent">
+                    Trade Proposal
+                  </h3>
+                </div>
 
-              {/* Two-column layout */}
-              <div className="grid grid-cols-2 gap-6">
-                {/* Players Received Column */}
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="flex items-center justify-center w-5 h-5 bg-green-500 rounded-full">
-                      <span className="text-white font-bold text-xs">+</span>
+                {/* Two-column layout */}
+                <div className="grid grid-cols-2 gap-8 mb-8">
+                  {/* Players Received Column */}
+                  <div>
+                    <div className="border-b border-gray-200 pb-2 mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-8 h-8 bg-green-500 rounded-full">
+                          <span className="text-white font-bold text-sm">
+                            ↑
+                          </span>
+                        </div>
+                        <h4 className="text-lg font-semibold text-gray-900">
+                          You Receive
+                        </h4>
+                      </div>
                     </div>
-                    <h4 className="text-sm font-medium text-green-700 uppercase tracking-wide">
-                      You Receive
-                    </h4>
+
+                    <div className="space-y-3">
+                      {receivedPlayers.map((player, index) => (
+                        <div
+                          key={index}
+                          className="rounded-xl bg-green-50 border border-green-200 p-4 transition-all duration-300"
+                        >
+                          <PlayerCard player={player} />
+                        </div>
+                      ))}
+                    </div>
                   </div>
 
-                  <div className="space-y-2">
-                    {receivedPlayers.map((player, index) => (
-                      <div
-                        key={index}
-                        className="rounded-lg bg-green-50/30 p-2"
-                      >
-                        <PlayerCard player={player} />
+                  {/* Players Traded Column */}
+                  <div>
+                    <div className="border-b border-gray-200 pb-2 mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex items-center justify-center w-8 h-8 bg-red-500 rounded-full">
+                          <span className="text-white font-bold text-sm">
+                            ↓
+                          </span>
+                        </div>
+                        <h4 className="text-lg font-semibold text-gray-900">
+                          You Give Up
+                        </h4>
                       </div>
-                    ))}
+                    </div>
+
+                    <div className="space-y-3">
+                      {tradedPlayers.map((player, index) => (
+                        <div
+                          key={index}
+                          className="rounded-xl bg-red-50 border border-red-200 p-4 transition-all duration-300"
+                        >
+                          <PlayerCard player={player} />
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
 
-                {/* Players Traded Column */}
-                <div>
-                  <div className="flex items-center gap-2 mb-3">
-                    <div className="flex items-center justify-center w-5 h-5 bg-red-500 rounded-full">
-                      <span className="text-white font-bold text-xs">−</span>
-                    </div>
-                    <h4 className="text-sm font-medium text-red-700 uppercase tracking-wide">
-                      You Give Up
-                    </h4>
-                  </div>
+                {/* Separator Line */}
+                <hr className="border-gray-200 mb-6" />
 
-                  <div className="space-y-2">
-                    {tradedPlayers.map((player, index) => (
-                      <div key={index} className="rounded-lg bg-red-50/30 p-2">
-                        <PlayerCard player={player} />
+                {/* Analysis Section */}
+                <div className="mb-6">
+                  <div className="border-b border-gray-200 pb-2 mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center">
+                        <svg
+                          className="w-4 h-4 text-blue-600"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
                       </div>
-                    ))}
+                      <h5 className="text-lg font-semibold text-gray-900">
+                        Analysis
+                      </h5>
+                    </div>
                   </div>
-                </div>
-              </div>
-
-              <div className="mt-6 pt-4 border-t border-gray-200">
-                <div className="flex items-start gap-3">
-                  <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg
-                      className="w-3 h-3 text-blue-600"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  </div>
-                  <div className="flex-1">
-                    <h5 className="text-sm font-medium text-gray-900 mb-1">
-                      Analysis
-                    </h5>
-                    <p className="text-sm text-gray-600 leading-relaxed">
+                  <div className="rounded-xl bg-gray-50 p-6 transition-all duration-300">
+                    <p className="text-sm text-gray-700 leading-relaxed">
                       {tradeResult.output.explanation}
                     </p>
                   </div>
@@ -196,15 +230,17 @@ export default function Trades() {
               </div>
             </div>
           )}
-          <Rosters
-            userRoster={userRoster}
-            selectedRoster={selectedRoster}
-            otherRosters={otherRosters}
-            isDropdownOpen={isDropdownOpen}
-            setIsDropdownOpen={setIsDropdownOpen}
-            handleRosterSelect={handleRosterSelect}
-            starters={starters}
-          />
+          <div className="flex justify-center mt-3 w-full">
+            <Rosters
+              userRoster={userRoster}
+              selectedRoster={selectedRoster}
+              otherRosters={otherRosters}
+              isDropdownOpen={isDropdownOpen}
+              setIsDropdownOpen={setIsDropdownOpen}
+              handleRosterSelect={handleRosterSelect}
+              starters={starters}
+            />
+          </div>
         </>
       )}
       <Footer />

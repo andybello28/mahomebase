@@ -6,11 +6,8 @@ import Roster from "../components/Roster";
 
 export default function Rosters({ userRoster, starters }) {
   return (
-    <>
-      <div className="flex flex-grow">
-        <Roster roster={userRoster} starters={starters} />
-        <button>Generate Advice</button>
-      </div>
-    </>
+    <div className="flex justify-center">
+      <Roster roster={userRoster} starters={starters} />
+    </div>
   );
 }

@@ -47,7 +47,7 @@ export default function Home() {
   return (
     <div className="min-h-screen">
       <Navbar />
-      <div className="flex items-center justify-center min-h-screen px-4">
+      <div className="flex items-start justify-center mt-6 min-h-screen px-4">
         <div className="text-center w-full max-w-7xl mx-auto pb-5">
           <h1
             className={`hidden md:block text-5xl md:text-7xl font-bold text-gray-900 mb-6 transition-all duration-1000 ease-out ${
@@ -95,14 +95,14 @@ export default function Home() {
           </p>
 
           <div
-            className={`grid grid-cols-1 md:grid-cols-3 gap-8 mt-8 max-w-6xl mx-auto transition-all duration-1000 ease-out delay-700 ${
+            className={`grid grid-cols-1 md:grid-cols-3 gap-4 mt-8 max-w-6xl mx-auto transition-all duration-1000 ease-out delay-700 ${
               heroVisible
                 ? "opacity-100 transform translate-y-0"
                 : "opacity-0 transform translate-y-8"
             }`}
           >
-            <div className="text-center p-6 group hover:scale-105 transition-transform duration-300">
-              <div className="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-6 group-hover:bg-red-200 transition-colors duration-300">
+            <div className="text-center p-6 group  transition-transform duration-300">
+              <div className="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
                 <svg
                   className="w-8 h-8 text-red-600"
                   fill="none"
@@ -126,8 +126,8 @@ export default function Home() {
               </p>
             </div>
 
-            <div className="text-center p-6 group hover:scale-105 transition-transform duration-300">
-              <div className="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-6 group-hover:bg-red-200 transition-colors duration-300">
+            <div className="text-center p-6 group transition-transform duration-300">
+              <div className="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
                 <svg
                   className="w-8 h-8 text-red-600"
                   fill="none"
@@ -143,16 +143,16 @@ export default function Home() {
                 </svg>
               </div>
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Real-Time Insights
+                Up to Date Insights
               </h3>
               <p className="text-gray-800">
                 Up to date on all your sleeper settings, league info, NFL data,
-                and player newsx.
+                and player news.
               </p>
             </div>
 
-            <div className="text-center p-6 group hover:scale-105 transition-transform duration-300">
-              <div className="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-6 group-hover:bg-red-200 transition-colors duration-300">
+            <div className="text-center p-6 group transition-transform duration-300">
+              <div className="w-16 h-16 bg-red-100 rounded-lg flex items-center justify-center mx-auto mb-6 transition-colors duration-300">
                 <svg
                   className="w-8 h-8 text-red-600"
                   fill="none"
@@ -214,14 +214,13 @@ export default function Home() {
                 : "opacity-0 translate-y-8"
             }`}
           >
-            Fantasy football is <span className="font-bold">hard</span>. Us
-            managers find ourselves teetering back and forth when making
-            decisions on the waiver wire, bench, or in trades. We were tired of{" "}
+            Fantasy football is <span className="font-bold">hard</span>. We find
+            ourselves teetering back and forth between players on the waiver
+            wire, bench, or in trades. Tired of{" "}
             <span className="font-bold">
-              generic advice, gut-based trades, and spending hours
+              generic advice, gut-based trades, and hours
             </span>{" "}
-            deciding who you should start — so we built what we always wished we
-            had.
+            deciding who to start, we created what we always wished we had.
           </div>
 
           <div
@@ -231,7 +230,7 @@ export default function Home() {
                 : "opacity-0 translate-y-8"
             }`}
           >
-            But this is more than just a tool - we're creating an{" "}
+            More than just a tool, Mahomebase is creating an{" "}
             <span className="font-bold">intelligent</span> platform that
             transforms raw data into actionable insights for{" "}
             <span className="font-bold">all</span> your leagues,{" "}

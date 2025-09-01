@@ -1,6 +1,6 @@
 export default function PlayerCard({ player }) {
   return (
-    <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer">
+    <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer height-auto">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold text-sm overflow-hidden">
@@ -59,12 +59,6 @@ export default function PlayerCard({ player }) {
               player.status === "Active" ? "bg-green-500" : "bg-gray-400"
             }`}
           ></div>
-        </div>
-      </div>
-
-      <div className="mt-4 pt-3">
-        <div className="flex items-center justify-between text-xs text-gray-600">
-          <span>Fantasy Eligible: {player.fantasy_positions.join(", ")}</span>
         </div>
       </div>
     </div>

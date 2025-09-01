@@ -110,7 +110,7 @@ export default function Leagues() {
   return (
     <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="flex-grow flex flex-col p-4 space-y-4">
+      <div className="flex-grow flex flex-col p-6 space-y-6">
         <div className="flex flex-row gap-2">
           <img
             src="/assets/sleeper.png"
@@ -118,93 +118,102 @@ export default function Leagues() {
             className="w-6 h-6 object-contain"
           />
           {user?.sleeper_username && (
-            <h2 className="text-xl font-bold text-slate-400">
+            <h2 className="text-xl font-bold text-gray-900">
               {user.sleeper_username}
             </h2>
           )}
         </div>
-        <div className="flex flex-row gap-20">
-          {" "}
+        <div className="flex flex-col gap-4">
           <input
             type="text"
             placeholder="Search leagues..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full max-w-md px-4 py-2 border border-slate-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-purple-500"
+            className="w-full max-w-md px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-black placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300"
           />
           <div className="flex items-center">
             {showLeagueForm && (
-              <form onSubmit={onSubmit} className="flex gap-2">
+              <div className="flex gap-3">
                 <input
                   type="text"
                   value={inputLeague}
                   onChange={(e) => setInputLeague(e.target.value)}
                   placeholder="Enter league ID"
-                  className="px-3 py-1 border border-slate-300 rounded"
+                  className="px-4 py-3 bg-gray-50 text-black border border-gray-200 rounded-xl placeholder-gray-400 focus:outline-none focus:ring-1 focus:ring-gray-300"
                 />
                 <button
                   type="submit"
-                  className="px-3 py-1 bg-blue-500 text-white rounded"
+                  onClick={onSubmit}
+                  className="px-6 py-3 bg-white text-black rounded-xl hover:bg-gray-700 transition-colors duration-200 font-medium hover:bg-red-50 hover:border-red-300 hover:text-red-700 border border-gray-300"
                 >
                   Submit
                 </button>
-              </form>
+                <button
+                  onClick={() => setShowLeagueForm((prev) => !prev)}
+                  className="px-6 py-3 bg-white text-black rounded-xl hover:bg-gray-700 transition-colors duration-200 font-medium hover:bg-red-50 hover:border-red-300 hover:text-red-700 border border-gray-300"
+                >
+                  Close
+                </button>
+              </div>
             )}
-            <button onClick={() => setShowLeagueForm((prev) => !prev)}>
-              <IoMdAddCircleOutline />
-            </button>
+            {!showLeagueForm && (
+              <button
+                onClick={() => setShowLeagueForm((prev) => !prev)}
+                className="px-6 py-3 bg-white text-black rounded-xl hover:bg-gray-700 transition-colors duration-200 font-medium hover:bg-red-50 hover:border-red-300 hover:text-red-700 border border-gray-300"
+              >
+                Add League
+              </button>
+            )}
           </div>
         </div>
-        <div className="grid gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+        <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
           {selectedLeagues?.map((league, index) => (
             <div
               key={league.league_id}
-              className="bg-white rounded-2xl shadow-sm border border-slate-200 p-4 hover:shadow-md transition-shadow duration-200"
+              className="bg-white rounded-2xl shadow-sm border border-gray-300 p-6 hover:shadow-lg transition-all duration-300"
             >
               <div className="flex flex-row items-start justify-between">
-                <div className="flex flex-col ">
-                  <div className="text-lg font-semibold text-slate-800">
+                <div className="flex flex-col">
+                  <div className="text-lg font-semibold text-gray-900">
                     {league.name || `League ${index + 1}`}
                   </div>
-                  <div className="text-sm text-slate-600 mt-1">
+                  <div className="text-sm text-gray-600 mt-1 font-medium">
                     {league.rosters || 0} teams
-                    <span className="ml-2 text-slate-500">
+                    <span className="ml-2 text-gray-500">
                       | {league.season}
                     </span>
+                    <span className="ml-2 text-gray-500">| Sleeper</span>
                   </div>
                 </div>
                 <button
                   onClick={() => {
                     handleDeleteLeague(league.league_id);
                   }}
-                  className="self-start text-red-500 hover:scale-110"
+                  className="self-start text-red-500 hover:scale-110 transition-transform duration-200"
                 >
-                  <IoMdRemoveCircleOutline />
+                  <IoMdRemoveCircleOutline className="w-5 h-5" />
                 </button>
               </div>
-              <div className="flex flex-row items-center justify-center gap-3 relative z-10 mt-8">
+              <div className="flex flex-col gap-3 mt-6">
                 <button
                   onClick={() => handleSelectLeague(league.league_id)}
-                  className="group relative w-32 h-12 flex items-center justify-center text-sm font-semibold text-white bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 overflow-hidden"
+                  className="w-full px-4 py-2 text-sm font-medium text-black bg-white border border-gray-300 rounded-md hover:bg-red-50 hover:border-red-300 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-black transition-all duration-200"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-cyan-400 to-purple-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                  <span className="relative z-10">League</span>
+                  League
                 </button>
 
                 <button
                   onClick={() => handleSelectTrade(league.league_id)}
-                  className="group relative w-32 h-12 flex items-center justify-center text-sm font-semibold text-white bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-500 rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 overflow-hidden"
+                  className="w-full px-4 py-2 text-sm font-medium text-black bg-white border border-gray-300 rounded-md hover:bg-red-50 hover:border-red-300 hover:text-red-7000 focus:outline-none focus:ring-2 focus:ring-black transition-all duration-200"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                  <span className="relative z-10">Trade Advice</span>
+                  Trade Advice
                 </button>
 
                 <button
                   onClick={() => handleSelectStartSit(league.league_id)}
-                  className="group relative w-32 h-12 flex items-center justify-center text-sm font-semibold text-white bg-gradient-to-r from-purple-500 via-pink-500 to-rose-500 rounded-2xl shadow-lg hover:shadow-xl hover:scale-105 active:scale-95 transition-all duration-200 overflow-hidden"
+                  className="w-full px-4 py-2 text-sm font-medium text-black bg-white border border-gray-300 rounded-md hover:bg-red-50 hover:border-red-300 hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-black transition-all duration-200"
                 >
-                  <div className="absolute inset-0 bg-gradient-to-r from-purple-400 to-rose-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200"></div>
-                  <span className="relative z-10">Start-Sit</span>
+                  Start-Sit
                 </button>
               </div>
             </div>

@@ -54,72 +54,83 @@ export default function LeaguePage() {
   }, [leagueRosters]);
 
   return (
-    <>
+    <div className="px-6">
       <Navbar />
-      <button
-        onClick={() => router.push("/profile/leagues")}
-        className="mb-6 px-4 py-2 text-sm font-medium text-white bg-slate-700 rounded-xl hover:bg-slate-800 transition"
-      >
-        <div>← Back to Leagues</div>
-      </button>
+      <div className="flex justify-center">
+        <button
+          onClick={() => router.push("/profile/leagues")}
+          className="mb-6 px-6 py-3 text-sm font-semibold text-black bg-white rounded-xl transition-all duration-300 hover:bg-red-50 hover:border-red-300 hover:text-red-700 shadow-sm hover:shadow-md"
+        >
+          <div className="flex items-center gap-2">
+            <span>←</span>
+            <span>Back to Leagues</span>
+          </div>
+        </button>
+      </div>
       {league && (
-        <div className="max-w-4xl mb-10 mx-auto mt-10 p-6 bg-white rounded-2xl shadow-lg border border-gray-200 space-y-8">
-          <div className="flex justify-between items-center border-b pb-4">
-            <div>
-              <h1 className="text-3xl font-extrabold text-slate-800">
-                {league.name}
-              </h1>
-            </div>
-            <div className="text-right">
-              <div className="text-sm text-slate-500">Season</div>
-              <div className="text-lg font-semibold text-cyan-600">
-                {league.season}
+        <div className="bg-[#ffffff] rounded-2xl p-8 transition-all duration-300 w-full max-w-4xl mx-auto mb-10 mt-10">
+          <div className="border-b border-gray-200 pb-4 mb-8">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-2xl font-bold bg-black bg-clip-text text-transparent">
+                  {league.name}
+                </h1>
+              </div>
+              <div className="text-right">
+                <div className="text-xs text-gray-500">Season</div>
+                <div className="text-lg font-semibold text-gray-900">
+                  {league.season}
+                </div>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
-            <div className="bg-slate-100 rounded-xl p-4">
-              <p className="text-sm text-slate-500">Teams</p>
-              <p className="text-2xl font-bold text-slate-800">
-                {league.rosters}
-              </p>
+          <div className="space-y-8">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
+              <div className="bg-gray-50 rounded-xl p-4">
+                <p className="text-sm text-gray-600 mb-2">Teams</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {league.rosters}
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <p className="text-sm text-gray-600 mb-2">Starters</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {starters.length}
+                </p>
+              </div>
+              <div className="bg-gray-50 rounded-xl p-4">
+                <p className="text-sm text-gray-600 mb-2">Bench Spots</p>
+                <p className="text-2xl font-bold text-gray-900">{benchCount}</p>
+              </div>
             </div>
-            <div className="bg-slate-100 rounded-xl p-4">
-              <p className="text-sm text-slate-500">Starters</p>
-              <p className="text-2xl font-bold text-slate-800">
-                {starters.length}
-              </p>
-            </div>
-            <div className="bg-slate-100 rounded-xl p-4">
-              <p className="text-sm text-slate-500">Bench Spots</p>
-              <p className="text-2xl font-bold text-slate-800">{benchCount}</p>
-            </div>
-          </div>
 
-          <div>
-            <h2 className="text-xl font-semibold text-slate-700 mb-2">
-              Starters Positions
-            </h2>
+            <div>
+              <div className="border-b border-gray-200 pb-2 mb-4">
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Starter Positions
+                </h3>
+              </div>
 
-            <div className="flex flex-wrap gap-2 mb-4">
-              {starters.map((pos, i) =>
-                pos === "IDP_FLEX" ? (
-                  <span
-                    key={`starter-${i}`}
-                    className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium"
-                  >
-                    DEFENSIVE FLEX
-                  </span>
-                ) : (
-                  <span
-                    key={`starter-${i}`}
-                    className="px-3 py-1 bg-green-100 text-green-800 text-sm rounded-full font-medium"
-                  >
-                    {pos}
-                  </span>
-                )
-              )}
+              <div className="flex flex-wrap gap-2">
+                {starters.map((pos, i) =>
+                  pos === "IDP_FLEX" ? (
+                    <span
+                      key={`starter-${i}`}
+                      className="px-3 py-1 bg-red-100 text-red-600 text-sm rounded-full font-medium"
+                    >
+                      DEFENSIVE FLEX
+                    </span>
+                  ) : (
+                    <span
+                      key={`starter-${i}`}
+                      className="px-3 py-1 bg-red-100 text-red-600 text-sm rounded-full font-medium"
+                    >
+                      {pos}
+                    </span>
+                  )
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -137,6 +148,6 @@ export default function LeaguePage() {
         />
       )}
       <Footer />
-    </>
+    </div>
   );
 }

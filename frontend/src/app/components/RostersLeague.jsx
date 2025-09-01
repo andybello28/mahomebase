@@ -14,92 +14,9 @@ export default function Rosters({
   starters,
 }) {
   return (
-    <div className="flex flex-row">
-      <Roster roster={userRoster} starters={starters} />
-
-      <div
-        key={selectedRoster?.roster_id}
-        className="border border-gray-300 rounded-xl p-4 shadow-sm hover:shadow-md transition"
-      >
-        <h2 className="text-lg font-bold mb-2">
-          {selectedRoster?.username || selectedRoster?.owner_id || "My Team"}
-        </h2>
-
-        <div className="text-sm text-gray-700 mb-2 font-medium">
-          Record: {selectedRoster?.settings.wins} -{" "}
-          {selectedRoster?.settings.losses}
-          {selectedRoster?.settings.ties !== 1 &&
-            ` - ${selectedRoster?.settings.ties}`}
-        </div>
-
-        <div className="mb-3">
-          {selectedRoster?.starters && selectedRoster?.starters.length > 0 && (
-            <strong>Starters:</strong>
-          )}
-
-          <ul className="list-disc list-inside ml-4">
-            {!selectedRoster?.starters ||
-            selectedRoster?.starters.length === 0 ? (
-              <>Empty Roster</>
-            ) : (
-              selectedRoster?.starters.map(({ id, data }, index) =>
-                data ? (
-                  <li key={id || index}>
-                    <span className="font-semibold text-slate-600 mr-2">
-                      {data.position || "N/A"}:
-                    </span>
-                    <PlayerCard key={id || index} player={data} />
-                  </li>
-                ) : (
-                  <li key={index}>
-                    <span className="font-semibold text-slate-600 mr-2">
-                      {starters[index] || "N/A"}:
-                    </span>
-                  </li>
-                )
-              )
-            )}
-          </ul>
-        </div>
-
-        <div className="mb-3">
-          {selectedRoster?.players && selectedRoster?.players.length > 0 && (
-            <strong>Bench:</strong>
-          )}
-          <ul className="list-disc list-inside ml-4">
-            {selectedRoster?.players
-              .filter(
-                (benchPlayer) =>
-                  !selectedRoster?.starters.some(
-                    (starter) => starter.id === benchPlayer.id
-                  )
-              )
-              .map((benchPlayer, index) =>
-                benchPlayer.data ? (
-                  <li key={benchPlayer.id || index}>
-                    <span className="font-semibold text-slate-600 mr-2">
-                      {benchPlayer.data.position || "N/A"}:
-                    </span>
-                    <PlayerCard
-                      key={benchPlayer.data.id || index}
-                      player={benchPlayer.data}
-                    />
-                  </li>
-                ) : (
-                  <li key={benchPlayer.id || index}>
-                    {" "}
-                    <span className="font-semibold text-slate-600 mr-2">
-                      {starter || "N/A"}:
-                    </span>
-                    Empty
-                  </li>
-                )
-              )}
-          </ul>
-        </div>
-      </div>
-      <div>
-        <div className="flex flex-col relative pr-[40px]">
+    <div className="flex flex-col gap-6">
+      <div className="self-end">
+        <div className="flex flex-col relative pr-[40px] w-auto">
           <button
             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
@@ -145,6 +62,111 @@ export default function Rosters({
             onClick={() => setIsDropdownOpen(false)}
           />
         )}
+      </div>
+      <div className="flex flex-row gap-8">
+        <Roster roster={userRoster} starters={starters} />
+
+        <div
+          key={selectedRoster?.roster_id}
+          className="bg-[#ffffff] rounded-2xl p-8 transition-all duration-300 w-full max-w-4xl"
+        >
+          <h2 className="text-2xl font-bold mb-2 bg-black bg-clip-text text-transparent">
+            {selectedRoster?.username || selectedRoster?.owner_id || "My Team"}
+          </h2>
+
+          <div className="text-sm text-gray-600 mb-6 font-medium">
+            {!selectedRoster?.settings.wins &&
+            !selectedRoster?.settings.losses &&
+            !selectedRoster?.settings.ties ? (
+              "No Record Data"
+            ) : (
+              <>
+                Record: {selectedRoster?.settings.wins} -{" "}
+                {selectedRoster?.settings.losses}
+                {selectedRoster?.settings.ties !== 0 &&
+                  ` - ${selectedRoster?.settings.ties}`}
+              </>
+            )}
+          </div>
+
+          {/* Starters Section */}
+          <div className="mb-6">
+            <div className="border-b border-gray-200 pb-2 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Starters</h3>
+            </div>
+            <div className="space-y-2">
+              {!selectedRoster?.starters ||
+              selectedRoster?.starters.length === 0 ? (
+                <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
+                  <span className="text-gray-500 font-medium text-lg">
+                    EMPTY
+                  </span>
+                </div>
+              ) : (
+                selectedRoster?.starters.map(({ id, data }, index) =>
+                  data ? (
+                    <div key={id || index}>
+                      <PlayerCard key={id || index} player={data} />
+                    </div>
+                  ) : (
+                    <div key={index}>
+                      <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
+                        <span className="text-gray-500 font-medium text-lg">
+                          EMPTY
+                        </span>
+                      </div>
+                    </div>
+                  )
+                )
+              )}
+            </div>
+          </div>
+
+          {/* Separator Line */}
+          <hr className="border-gray-200 mb-6" />
+
+          {/* Bench Section */}
+          <div className="mb-3">
+            <div className="border-b border-gray-200 pb-2 mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Bench</h3>
+            </div>
+            <div className="space-y-2">
+              {selectedRoster?.players && selectedRoster?.players.length > 0 ? (
+                selectedRoster?.players
+                  .filter(
+                    (benchPlayer) =>
+                      !selectedRoster?.starters.some(
+                        (starter) => starter.id === benchPlayer.id
+                      )
+                  )
+                  .map((benchPlayer, index) =>
+                    benchPlayer.data ? (
+                      <div key={benchPlayer.id || index}>
+                        <PlayerCard
+                          key={benchPlayer.data.id || index}
+                          player={benchPlayer.data}
+                        />
+                      </div>
+                    ) : (
+                      <div key={benchPlayer.id || index}>
+                        <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
+                          <span className="text-gray-500 font-medium text-lg">
+                            EMPTY
+                          </span>
+                        </div>
+                      </div>
+                    )
+                  )
+              ) : (
+                <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
+                  <span className="text-gray-500 font-medium text-lg">
+                    EMPTY
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

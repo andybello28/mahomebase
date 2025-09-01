@@ -13,6 +13,9 @@ import {
   useTrendingPlayers,
 } from "../context/Context.jsx";
 
+import { IoIosAddCircleOutline } from "react-icons/io";
+import { IoIosCloseCircle } from "react-icons/io";
+
 import Login from "../components/Login";
 import Footer from "../components/Footer";
 import Logout from "../components/Logout";
@@ -309,12 +312,12 @@ export default function Profile() {
                               onChange={(e) => setSearchTerm(e.target.value)}
                               className="flex-1 px-4 py-3 text-black placeholder-gray-400 bg-white rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300"
                             />
-                            <button
+                            {/* <button
                               onClick={() => router.push("/profile/leagues")}
                               className="px-6 py-3 rounded-xl bg-red-600 text-white font-semibold transition-transform duration-300"
                             >
                               View All
-                            </button>
+                            </button> */}
                           </div>
 
                           <div className="max-h-40 overflow-y-auto space-y-3">
@@ -419,7 +422,7 @@ export default function Profile() {
                   )}
 
                   {!user.sleeper_username && (
-                    <div className="text-gray-600 py-12 bg-gray-50 rounded-lg">
+                    <div className="bg-gray-50 text-gray-600 py-12 rounded-lg">
                       Link your Sleeper account to view trending players
                     </div>
                   )}
@@ -462,25 +465,25 @@ export default function Profile() {
                                 key={tx.transaction_id}
                                 className="bg-white px-5 py-4 border border-gray-50 rounded-2xl"
                               >
-                                <div className="flex items-center justify-between mb-2">
+                                <div className="text-s font-bold text-gray-700 mb-2">
+                                  {tx.league_data.name}
+                                </div>
+                                <div className="flex items-center justify-between mb-4">
                                   <div className="flex items-center space-x-2">
                                     <span
-                                      className={`px-2 py-1 rounded text-xs font-medium ${
+                                      className={`px-3 py-1 rounded-xl text-sm font-medium ${
                                         tx.type === "free_agent"
-                                          ? "bg-green-100 text-green-800"
+                                          ? "bg-gray-100 text-gray-700"
                                           : tx.type === "waiver"
-                                          ? "bg-yellow-100 text-yellow-800"
+                                          ? "bg-gray-100 text-gray-700"
                                           : tx.type === "trade"
-                                          ? "bg-blue-100 text-blue-800"
-                                          : "bg-gray-100 text-gray-800"
+                                          ? "bg-gray-100 text-gray-700"
+                                          : "bg-gray-100 text-gray-700"
                                       }`}
                                     >
                                       {tx.type === "free_agent"
                                         ? "free agent"
                                         : tx.type}
-                                    </span>
-                                    <span className="text-sm font-medium text-gray-900">
-                                      {tx.status}
                                     </span>
                                   </div>
                                   <span className="text-xs text-gray-500">
@@ -492,19 +495,11 @@ export default function Profile() {
                                   </span>
                                 </div>
 
-                                <div className="text-sm text-gray-700 mb-2">
-                                  <span className="font-semibold">League:</span>{" "}
-                                  {tx.league_data.name}
-                                </div>
-
                                 {(tx.type === "free_agent" ||
                                   tx.type === "waiver") && (
                                   <>
                                     {tx.adds && (
                                       <div className="mb-2">
-                                        <p className="text-sm font-semibold text-green-700 mb-1">
-                                          Added:
-                                        </p>
                                         <div className="space-y-1">
                                           {Object.entries(tx.adds).map(
                                             ([playerId], index) => {
@@ -519,11 +514,18 @@ export default function Profile() {
 
                                               return (
                                                 <div key={playerId}>
-                                                  <PlayerCard
-                                                    player={
-                                                      playerObj.playerData
-                                                    }
-                                                  />
+                                                  <div className="flex flex-row items-center">
+                                                    <p className="text-sm font-semibold text-green-700 mb-1 mr-2">
+                                                      <IoIosAddCircleOutline className="bg-green" />
+                                                    </p>
+                                                    <div className="flex-1">
+                                                      <PlayerCard
+                                                        player={
+                                                          playerObj.playerData
+                                                        }
+                                                      />
+                                                    </div>
+                                                  </div>
                                                 </div>
                                               );
                                             }
@@ -534,9 +536,6 @@ export default function Profile() {
 
                                     {tx.drops && (
                                       <div className="mb-2">
-                                        <p className="text-sm font-semibold text-red-700 mb-1">
-                                          Dropped:
-                                        </p>
                                         <div className="space-y-1">
                                           {Object.entries(tx.drops).map(
                                             ([playerId]) => {
@@ -551,11 +550,21 @@ export default function Profile() {
 
                                               return (
                                                 <div key={playerId}>
-                                                  <PlayerCard
-                                                    player={
-                                                      playerObj.playerData
-                                                    }
-                                                  />
+                                                  <div className="flex flex-row items-center">
+                                                    <p className="text-sm font-semibold text-red-700 mb-1 mr-2">
+                                                      <IoIosCloseCircle className="bg-red" />
+                                                    </p>
+                                                    <div
+                                                      key={playerId}
+                                                      className="flex-1"
+                                                    >
+                                                      <PlayerCard
+                                                        player={
+                                                          playerObj.playerData
+                                                        }
+                                                      />
+                                                    </div>
+                                                  </div>
                                                 </div>
                                               );
                                             }
@@ -570,9 +579,6 @@ export default function Profile() {
                                   <>
                                     {tx.adds && (
                                       <div className="mb-2">
-                                        <p className="text-sm font-semibold text-green-700 mb-1">
-                                          Acquired:
-                                        </p>
                                         <div className="space-y-1">
                                           {Object.entries(tx.adds)
                                             .filter(([playerId, rosterId]) => {
@@ -597,11 +603,18 @@ export default function Profile() {
 
                                               return (
                                                 <div key={playerId}>
-                                                  <PlayerCard
-                                                    player={
-                                                      playerObj.playerData
-                                                    }
-                                                  />
+                                                  <div className="flex flex-row items-center">
+                                                    <p className="text-sm font-semibold text-green-700 mb-1 mr-2">
+                                                      <IoIosAddCircleOutline className="bg-green" />
+                                                    </p>
+                                                    <div className="flex-1">
+                                                      <PlayerCard
+                                                        player={
+                                                          playerObj.playerData
+                                                        }
+                                                      />
+                                                    </div>
+                                                  </div>
                                                 </div>
                                               );
                                             })}
@@ -611,9 +624,6 @@ export default function Profile() {
 
                                     {tx.drops && (
                                       <div className="mb-2">
-                                        <p className="text-sm font-semibold text-red-700 mb-1">
-                                          Traded Away:
-                                        </p>
                                         <div className="space-y-1">
                                           {Object.entries(tx.drops)
                                             .filter(([playerId, rosterId]) => {
@@ -638,11 +648,21 @@ export default function Profile() {
 
                                               return (
                                                 <div key={playerId}>
-                                                  <PlayerCard
-                                                    player={
-                                                      playerObj.playerData
-                                                    }
-                                                  />
+                                                  <div className="flex flex-row items-center">
+                                                    <p className="text-sm font-semibold text-red-700 mb-1 mr-2">
+                                                      <IoIosCloseCircle />
+                                                    </p>
+                                                    <div
+                                                      key={playerId}
+                                                      className="flex-1"
+                                                    >
+                                                      <PlayerCard
+                                                        player={
+                                                          playerObj.playerData
+                                                        }
+                                                      />
+                                                    </div>
+                                                  </div>
                                                 </div>
                                               );
                                             })}
@@ -727,7 +747,7 @@ export default function Profile() {
                   )}
 
                   {!user.sleeper_username && (
-                    <div className="text-gray-600 py-12 bg-white rounded-lg border border-gray-200">
+                    <div className="text-gray-600 py-12 bg-gray-50 rounded-lg">
                       Link your Sleeper account to view recent activity
                     </div>
                   )}

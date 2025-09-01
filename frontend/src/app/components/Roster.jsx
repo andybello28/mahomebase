@@ -10,79 +10,88 @@ export default function Rosters({ roster, starters }) {
     <>
       <div
         key={roster.roster_id || idx}
-        className="border border-gray-300 rounded-xl p-4 shadow-sm hover:shadow-md transition"
+        className="bg-[#ffffff] rounded-2xl p-8 transition-all duration-300 w-full max-w-4xl"
       >
-        <h2 className="text-lg font-bold mb-2">
+        <h2 className="text-2xl font-bold mb-2 bg-black bg-clip-text text-transparent">
           {roster.username || roster.owner_id}
         </h2>
 
-        <div className="text-sm text-gray-700 mb-2 font-medium">
+        <div className="text-sm text-gray-600 mb-6 font-medium">
           Record: {roster.settings.wins} - {roster.settings.losses}
           {roster.settings.ties !== 1 && ` - ${roster.settings.ties}`}
         </div>
 
-        <div className="mb-3">
-          {roster.starters && roster.starters.length > 0 && (
-            <strong>Starters:</strong>
-          )}
-
-          <ul className="list-disc list-inside ml-4">
+        {/* Starters Section */}
+        <div className="mb-6">
+          <div className="border-b border-gray-200 pb-2 mb-4 bg-white">
+            <h3 className="text-lg font-semibold text-gray-900">Starters</h3>
+          </div>
+          <div className="space-y-2">
             {!roster.starters || roster.starters.length === 0 ? (
-              <>Empty Roster</>
+              <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
+                <span className="text-gray-500 font-medium text-lg">EMPTY</span>
+              </div>
             ) : (
               roster.starters.map(({ id, data }, index) =>
                 data ? (
-                  <li key={id || index}>
-                    <span className="font-semibold text-slate-600 mr-2">
-                      {data.position || "N/A"}:
-                    </span>
+                  <div key={id || index}>
                     <PlayerCard key={id || index} player={data} />
-                  </li>
+                  </div>
                 ) : (
-                  <li key={index}>
-                    <span className="font-semibold text-slate-600 mr-2">
-                      {starters[index] || "N/A"}:
-                    </span>
-                  </li>
+                  <div key={index}>
+                    <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
+                      <span className="text-gray-500 font-medium text-lg">
+                        EMPTY
+                      </span>
+                    </div>
+                  </div>
                 )
               )
             )}
-          </ul>
+          </div>
         </div>
 
+        {/* Separator Line */}
+        <hr className="border-gray-200 mb-6" />
+
+        {/* Bench Section */}
         <div className="mb-3">
-          {roster.players && roster.players.length > 0 && (
-            <strong>Bench:</strong>
-          )}
-          <ul className="list-disc list-inside ml-4">
-            {roster.players
-              .filter(
-                (benchPlayer) =>
-                  !roster.starters.some(
-                    (starter) => starter.id === benchPlayer.id
-                  )
-              )
-              .map((benchPlayer, index) =>
-                benchPlayer.data ? (
-                  <li key={benchPlayer.id || index}>
-                    <span className="font-semibold text-slate-600 mr-2">
-                      {benchPlayer.data.position || "N/A"}:
-                    </span>
-                    <PlayerCard
-                      key={benchPlayer.data.id || index}
-                      player={benchPlayer.data}
-                    />
-                  </li>
-                ) : (
-                  <li key={benchPlayer.id || index}>
-                    <span className="font-semibold text-slate-600 mr-2">
-                      {starter || "N/A"}:
-                    </span>
-                    Empty
-                  </li>
+          <div className="border-b border-gray-200 pb-2 mb-4">
+            <h3 className="text-lg font-semibold text-gray-900">Bench</h3>
+          </div>
+          <div className="space-y-2">
+            {roster.players && roster.players.length > 0 ? (
+              roster.players
+                .filter(
+                  (benchPlayer) =>
+                    !roster.starters.some(
+                      (starter) => starter.id === benchPlayer.id
+                    )
                 )
-              )}
-          </ul>
+                .map((benchPlayer, index) =>
+                  benchPlayer.data ? (
+                    <div key={benchPlayer.id || index}>
+                      <PlayerCard
+                        key={benchPlayer.data.id || index}
+                        player={benchPlayer.data}
+                      />
+                    </div>
+                  ) : (
+                    <div key={benchPlayer.id || index}>
+                      <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
+                        <span className="text-gray-500 font-medium text-lg">
+                          EMPTY
+                        </span>
+                      </div>
+                    </div>
+                  )
+                )
+            ) : (
+              <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
+                <span className="text-gray-500 font-medium text-lg">EMPTY</span>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </>
