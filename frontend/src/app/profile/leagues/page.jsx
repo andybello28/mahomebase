@@ -61,7 +61,9 @@ export default function Leagues() {
   };
 
   useEffect(() => {
-    setSelectedLeagues(allLeagues.leagues);
+    if (allLeagues) {
+      setSelectedLeagues(allLeagues.leagues);
+    }
   }, [allLeagues]);
 
   useEffect(() => {
