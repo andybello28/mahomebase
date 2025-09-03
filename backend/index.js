@@ -35,6 +35,8 @@ app.use(
         process.env.NODE_ENV === "development"
           ? null
           : ".mahomebasefantasy.com",
+      secure: process.env.NODE_ENV !== "development",
+      sameSite: process.env.NODE_ENV === "development" ? "lax" : "none",
     },
     secret: process.env.SESSION_SECRET,
     resave: false,
