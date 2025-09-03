@@ -22,7 +22,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(
   cors({
-    origin: `${process.env.FRONTEND_URL}`,
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
@@ -30,7 +30,9 @@ app.use(
 app.use(
   session({
     cookie: {
-      maxAge: 60 * 60 * 1000, // 1 hr in ms
+      maxAge: 60 * 60 * 1000, // 1 hr
+      sameSite: "none", // allow cross-site cookies
+      secure: true, // HTTPS only (production)
     },
     secret: process.env.SESSION_SECRET,
     resave: false,
