@@ -2,6 +2,8 @@
   
 # **Mahomebase**
 
+### ⬇️ See Live
+
 <a href="https://app.mahomebasefantasy.com/"><img width="80" height="80" alt="favicon" src="https://github.com/user-attachments/assets/03399f95-2349-4fab-ad4f-7dffbdb55a30" /></a>
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
@@ -66,5 +68,6 @@ A personalized fantasy football assistant tailored directly to your fantasy leag
 
 Current version: **1.0.0**
 * ✅ 1.0.0
+
 
 
