@@ -31,6 +31,10 @@ app.use(
   session({
     cookie: {
       maxAge: 60 * 60 * 1000,
+      domain:
+        process.env.NODE_ENV === "development"
+          ? null
+          : ".mahomebasefantasy.com",
     },
     secret: process.env.SESSION_SECRET,
     resave: false,
