@@ -12,7 +12,6 @@
 ![Express.js](https://img.shields.io/badge/Express.js-404D59?style=flat&logo=express&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-316192?style=flat&logo=postgresql&logoColor=white)
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=flat&logo=redis&logoColor=white)
-![Deployment](https://img.shields.io/badge/deployment-railway-white)
 </div>
 
 ## 🚀 Overview
@@ -53,7 +52,9 @@ A personalized fantasy football assistant tailored directly to your fantasy leag
 ![Redis](https://img.shields.io/badge/Redis-DC382D?style=for-the-badge&logo=redis&logoColor=white)
 
 ### Deployment
-![Railway](https://img.shields.io/badge/Railway-131415?style=for-the-badge&logo=railway&logoColor=white)
+[![Railway](https://img.shields.io/badge/Railway-131415?style=for-the-badge&logo=railway&logoColor=white)](https://your-backend-url.up.railway.app)
+[![Vercel](https://img.shields.io/badge/Vercel-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://your-frontend-url.vercel.app)
+
 
 ---
 
@@ -65,3 +66,4 @@ A personalized fantasy football assistant tailored directly to your fantasy leag
 
 Current version: **1.0.0**
 * ✅ 1.0.0
+
