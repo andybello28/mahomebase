@@ -30,9 +30,7 @@ app.use(
 app.use(
   session({
     cookie: {
-      maxAge: 60 * 60 * 1000, // 1 hr
-      sameSite: "none", // allow cross-site cookies
-      secure: true, // HTTPS only (production)
+      maxAge: 60 * 60 * 1000,
     },
     secret: process.env.SESSION_SECRET,
     resave: false,
