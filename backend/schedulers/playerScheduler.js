@@ -17,8 +17,8 @@ function startPlayerScheduler() {
 }
 
 function startWeeklyPlayerUpdate() {
-  // Every tuesday at 4 am
-  const cronExpression = "0 4 * * tue";
+  // Every day at 4 am
+  const cronExpression = "0 4 * * *";
 
   cron.schedule(cronExpression, async () => {
     try {
