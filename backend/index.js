@@ -27,6 +27,8 @@ app.use(
   })
 );
 
+app.set("trust proxy", 1); // very important for Railway / Vercel
+
 app.use(
   session({
     cookie: {

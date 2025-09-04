@@ -6,7 +6,6 @@ const frontendUrl = process.env.FRONTEND_URL;
 
 router.get("/user", (req, res) => {
   if (req.isAuthenticated()) {
-    console.log(req.user);
     res.json({ user: req.user });
   } else {
     res.status(401).json({ user: null, message: "Not authenticated" });
