@@ -4,7 +4,8 @@
 
 <img width="80" height="80" alt="favicon" src="https://github.com/user-attachments/assets/03399f95-2349-4fab-ad4f-7dffbdb55a30" />
 
-[![See Live](https://img.shields.io/badge/🎬_See_Live-View_Demo-FF6B6B?style=for-the-badge&logoColor=white)](https://mahomebasefantasy.com/)
+[![See Live](https://img.shields.io/badge/🎬_See_Live-FF6B6B?style=for-the-badge&logoColor=white)](https://mahomebasefantasy.com/)
+[![Demo](https://img.shields.io/badge/🎬_Demo-4ECDC4?style=for-the-badge&logoColor=white)](#-demo-1)
 
 ![Version](https://img.shields.io/badge/version-1.0.0-blue)
 ![Next.js](https://img.shields.io/badge/Next.js-000000?style=flat&logo=next.js&logoColor=white)
@@ -71,6 +72,7 @@ A personalized fantasy football assistant tailored directly to your fantasy leag
 
 Current version: **1.0.0**
 * ✅ 1.0.0
+
 
 
 
