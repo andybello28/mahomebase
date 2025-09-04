@@ -1,3 +1,4 @@
+// Version 1.0.0
 import "./globals.css";
 import { ToastContainer, Bounce } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
