@@ -5,8 +5,12 @@ const { getPlayer } = require("../db/queries");
 router.get("/season", async (req, res) => {
   try {
     const response = await fetch("https://api.sleeper.app/v1/state/nfl");
-    roundData = await response.json();
-    res.json({ week: roundData.week, season: roundData.season });
+    const roundData = await response.json();
+    res.json({
+      week: roundData.week,
+      season: roundData.season,
+      seasonType: roundData.season_type,
+    });
   } catch (error) {
     console.error("Error getting round: ", error);
     throw error;

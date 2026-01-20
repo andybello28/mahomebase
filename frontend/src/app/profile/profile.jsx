@@ -44,7 +44,7 @@ export default function Profile() {
   } = useUser();
 
   const { allLeagues, isLoadingLeagues } = useLeagues();
-  const { season, week } = useSeason();
+  const { season, week, seasonType } = useSeason();
   const { transactions, setTransactions, isLoadingTransactions } =
     useTransactions();
   const { trendingPlayers, isLoadingTrendingPlayers } = useTrendingPlayers();
@@ -296,11 +296,10 @@ export default function Profile() {
                   {user.sleeper_username && (
                     <>
                       <h3 className="text-xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent mb-2">
-                        {week === 0 && <>Preseason {season}</>}
-                        {week !== 0 && (
-                          <>
-                            Week {week} {season}
-                          </>
+                        {seasonType === "regular" && <>Week {week} {season}</>}
+                        {seasonType === "pre" && <>Preseason {season}</>}
+                        {(seasonType === "post" || seasonType === "off") && (
+                          <>{season} Offseason</>
                         )}
                       </h3>
 
@@ -450,11 +449,10 @@ export default function Profile() {
                   {user.sleeper_username && (
                     <>
                       <h3 className="mb-2 text-xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
-                        {week === 0 && <>Preseason {season}</>}
-                        {week !== 0 && (
-                          <>
-                            Week {week} {season}
-                          </>
+                        {seasonType === "regular" && <>Week {week} {season}</>}
+                        {seasonType === "pre" && <>Preseason {season}</>}
+                        {(seasonType === "post" || seasonType === "off") && (
+                          <>{season} Offseason</>
                         )}
                       </h3>
 

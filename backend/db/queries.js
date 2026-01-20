@@ -98,7 +98,13 @@ async function upsertLeague(googleId, leagueData) {
 
     const currentLeagueIds = currentUser?.league_ids || [];
 
-    // Always fetch fresh roster data from Sleeper
+    // Get current NFL state to check season type
+    const round_response = await fetch("https://api.sleeper.app/v1/state/nfl");
+    const state = await round_response.json();
+    const seasonType = state.season_type;
+    const round = state.week || 1;
+
+    // Fetch roster data from Sleeper
     const response = await fetch(
       `https://api.sleeper.app/v1/league/${leagueData.league_id}/rosters`
     );
@@ -107,18 +113,26 @@ async function upsertLeague(googleId, leagueData) {
       throw new Error(`Failed to fetch roster data: ${response.status}`);
     }
 
-    const roster_data = await response.json();
+    let roster_data = await response.json();
 
-    const round_response = await fetch("https://api.sleeper.app/v1/state/nfl");
-    const state = await round_response.json();
-    const today = new Date();
-    const cutoff = new Date("2025-09-04T00:00:00");
-    let round;
-    if (today < cutoff) {
-      round = 1;
-    } else {
-      round = state.week === 0 ? 1 : state.week;
+    // During offseason (post or off), preserve existing roster data if new data is empty
+    if (seasonType === "post" || seasonType === "off") {
+      const existingLeague = await prisma.league.findUnique({
+        where: { league_id: leagueData.league_id },
+        select: { roster_data: true },
+      });
+
+      // Check if roster data is empty (no players on any roster)
+      const hasPlayers = roster_data.some(
+        (roster) => roster.players && roster.players.length > 0
+      );
+
+      if (!hasPlayers && existingLeague?.roster_data) {
+        // Keep the existing roster data from the previous season
+        roster_data = existingLeague.roster_data;
+      }
     }
+
     const tx_response = await fetch(
       `https://api.sleeper.app/v1/league/${leagueData.league_id}/transactions/${round}`
     );
@@ -174,7 +188,13 @@ async function upsertLeague(googleId, leagueData) {
 
 async function updateLeague(leagueData) {
   try {
-    // Always fetch fresh roster data from Sleeper
+    // Get current NFL state to check season type
+    const round_response = await fetch("https://api.sleeper.app/v1/state/nfl");
+    const state = await round_response.json();
+    const seasonType = state.season_type;
+    const round = state.week || 1;
+
+    // Fetch roster data from Sleeper
     const response = await fetch(
       `https://api.sleeper.app/v1/league/${leagueData.league_id}/rosters`
     );
@@ -183,22 +203,31 @@ async function updateLeague(leagueData) {
       throw new Error(`Failed to fetch roster data: ${response.status}`);
     }
 
-    const roster_data = await response.json();
+    let roster_data = await response.json();
 
-    const round_response = await fetch("https://api.sleeper.app/v1/state/nfl");
-    const state = await round_response.json();
-    let round;
-    const today = new Date();
-    const cutoff = new Date("2025-09-04T00:00:00");
-    if (today < cutoff) {
-      round = 1;
-    } else {
-      round = state.week === 0 ? 1 : state.week;
+    // During offseason (post or off), preserve existing roster data if new data is empty
+    if (seasonType === "post" || seasonType === "off") {
+      const existingLeague = await prisma.league.findUnique({
+        where: { league_id: leagueData.league_id },
+        select: { roster_data: true },
+      });
+
+      // Check if roster data is empty (no players on any roster)
+      const hasPlayers = roster_data.some(
+        (roster) => roster.players && roster.players.length > 0
+      );
+
+      if (!hasPlayers && existingLeague?.roster_data) {
+        // Keep the existing roster data from the previous season
+        roster_data = existingLeague.roster_data;
+      }
     }
+
     const tx_response = await fetch(
       `https://api.sleeper.app/v1/league/${leagueData.league_id}/transactions/${round}`
     );
     const leagueTransactions = await tx_response.json();
+
     await prisma.league.update({
       where: { league_id: leagueData.league_id },
       data: {
@@ -399,6 +428,12 @@ async function updatePlayersESPN() {
   function normalizeName(name) {
     return name.toLowerCase().replace(/[^a-z0-9]/g, "");
   }
+
+  // Get the current NFL season from Sleeper API
+  const stateResponse = await fetch("https://api.sleeper.app/v1/state/nfl");
+  const state = await stateResponse.json();
+  const currentSeason = state.season;
+
   let data;
   try {
     const response = await fetch(
@@ -437,7 +472,7 @@ async function updatePlayersESPN() {
           });
 
           const response3 = await fetch(
-            `http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/2025/athletes/${athlete.id}?lang=en&region=us`
+            `http://sports.core.api.espn.com/v2/sports/football/leagues/nfl/seasons/${currentSeason}/athletes/${athlete.id}?lang=en&region=us`
           );
           const playerData2 = await response3.json();
           let name = playerData2.firstName + " " + playerData2.lastName;
