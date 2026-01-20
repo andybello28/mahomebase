@@ -107,8 +107,12 @@ router.put("/:googleid/leagues", async (req, res) => {
   } else {
     MAX_LEAGUES = league_ids.length;
   }
-  const currentYear = new Date().getFullYear().toString();
   try {
+    // Get the current NFL season from Sleeper API state
+    const stateResponse = await fetch("https://api.sleeper.app/v1/state/nfl");
+    const state = await stateResponse.json();
+    const currentSeason = state.season;
+
     if (league_ids && league_ids.length > 0) {
       const leaguePromises = league_ids.map(async (league_id) => {
         const response = await fetch(
@@ -122,7 +126,7 @@ router.put("/:googleid/leagues", async (req, res) => {
       await Promise.all(leaguePromises);
     }
     const response = await fetch(
-      `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${currentYear}`
+      `https://api.sleeper.app/v1/user/${sleeperId}/leagues/nfl/${currentSeason}`
     );
     const leagues = await response.json();
     const availableSlots = MAX_LEAGUES - (league_ids?.length || 0);

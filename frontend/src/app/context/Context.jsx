@@ -102,23 +102,21 @@ const SeasonContext = createContext();
 export function SeasonProvider({ children }) {
   const [season, setSeason] = useState("2025");
   const [week, setWeek] = useState(1);
+  const [seasonType, setSeasonType] = useState("regular");
   useEffect(() => {
     const fetchRound = async () => {
       const roundData = await getRound();
       setSeason(roundData.season);
-
-      const today = new Date();
-      const cutoff = new Date("2025-09-04T00:00:00");
-      if (today < cutoff) {
-        setWeek(0);
-      } else {
-        setWeek(roundData.week);
-      }
+      // Use the week directly from Sleeper API
+      setWeek(roundData.week || 1);
+      setSeasonType(roundData.seasonType || "regular");
     };
     fetchRound();
   }, []);
   return (
-    <SeasonContext.Provider value={{ season, setSeason, week, setWeek }}>
+    <SeasonContext.Provider
+      value={{ season, setSeason, week, setWeek, seasonType, setSeasonType }}
+    >
       {children}
     </SeasonContext.Provider>
   );
