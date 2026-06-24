@@ -20,7 +20,7 @@ router.put("/:googleid/sleeper", validateSleeper, async (req, res) => {
     const errors = validationResult(req);
     //message will be an array of messages saying why the requested league failed to be pushed.
     if (!errors.isEmpty()) {
-      let msgArray = [];
+      const msgArray = [];
       errors.array().forEach((e) => {
         msgArray.push(e.msg);
       });
@@ -190,8 +190,8 @@ router.get("/:googleid/leagues/:leagueid/transactions", async (req, res) => {
     const { sleeper_id: sleeper_id } = req.user;
     const { leagueid } = req.params;
     const league = await getLeague(leagueid);
-    let transactions = [];
-    let leagueTransactions = await getLeagueTransactions(league.league_id);
+    const transactions = [];
+    const leagueTransactions = await getLeagueTransactions(league.league_id);
 
     const userTransactions = leagueTransactions.filter(
       (tx) => tx.creator === sleeper_id

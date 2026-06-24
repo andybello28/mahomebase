@@ -27,7 +27,7 @@ router.get("/trade/:leagueid/:owner_id", async (req, res) => {
 
   userRoster.players = await Promise.all(
     userRoster.players.map(async (player) => {
-      let ret = await getPlayer(player);
+      const ret = await getPlayer(player);
       if (userRoster.starters.includes(player)) {
         ret.starter = true;
       } else {
@@ -59,7 +59,7 @@ router.get("/trade/:leagueid/:owner_id", async (req, res) => {
 
   otherRoster.players = await Promise.all(
     otherRoster.players.map(async (player) => {
-      let ret = await getPlayer(player);
+      const ret = await getPlayer(player);
       if (otherRoster.starters.includes(player)) {
         ret.starter = true;
       } else {
@@ -164,7 +164,7 @@ router.get("/lineup/:leagueid", async (req, res) => {
 
   userRoster.players = await Promise.all(
     userRoster.players.map(async (player) => {
-      let ret = await getPlayer(player);
+      const ret = await getPlayer(player);
       if (userRoster.starters.includes(player)) {
         ret.starter = true;
       } else {

@@ -23,7 +23,7 @@ router.get("/players/trending", async (req, res) => {
       "https://api.sleeper.app/v1/players/nfl/trending/add?lookback_hours=24&limit=50"
     );
     const trendingPlayers = await response.json();
-    let output = [];
+    const output = [];
     for (const player of trendingPlayers) {
       output.push(await getPlayer(player.player_id));
     }

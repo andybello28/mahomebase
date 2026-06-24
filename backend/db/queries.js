@@ -275,7 +275,7 @@ async function deleteLeague(
         },
       });
     }
-    let league = await prisma.league.findUnique({
+    const league = await prisma.league.findUnique({
       where: { league_id },
     });
     if (!league) {
@@ -315,7 +315,7 @@ async function deleteLeagues(googleId, league_ids) {
     });
 
     for (const id of league_ids) {
-      let league = await prisma.league.findUnique({
+      const league = await prisma.league.findUnique({
         where: { league_id: id },
       });
       if (league.total_linked === 1) {
@@ -463,7 +463,7 @@ async function updatePlayersESPN() {
             playerData.fantasy?.projection ??
             playerData.rotowire?.headline ??
             null;
-          let stats = {};
+          const stats = {};
           playerData.statistics?.displayNames?.forEach((label, index) => {
             const split = playerData.statistics.splits?.find(
               (s) => s.displayName === "Regular Season"
