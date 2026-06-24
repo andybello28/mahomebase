@@ -31,6 +31,20 @@ module.exports = [
     },
   },
   {
+    files: ["tests/**/*.js"],
+    languageOptions: {
+      globals: {
+        describe: "readonly",
+        test: "readonly",
+        expect: "readonly",
+        beforeAll: "readonly",
+        beforeEach: "readonly",
+        afterAll: "readonly",
+        afterEach: "readonly",
+      },
+    },
+  },
+  {
     ignores: ["node_modules/**", "generated/**", "prisma/**"],
   },
 ];
