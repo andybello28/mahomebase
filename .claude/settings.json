@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "npx",
+      "args": ["@playwright/mcp@latest"]
+    },
+    "shadcn": {
+      "command": "npx",
+      "args": ["shadcn", "mcp"],
+      "env": {
+        "CWD": "/Users/andy/Documents/GitHub/mahomebase/frontend"
+      }
+    }
+  }
+}
