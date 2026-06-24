@@ -491,7 +491,7 @@ async function updatePlayersESPN() {
               },
             });
           }
-        } catch (error) {
+        } catch (_error) {
           return null;
         }
       })

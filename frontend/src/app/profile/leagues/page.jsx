@@ -116,15 +116,9 @@ export default function Leagues() {
       {user && !isLoadingUser && (
         <div className="flex-grow flex flex-col p-6 space-y-6">
           <div className="flex flex-row gap-2">
-            <img
-              src="/assets/sleeper.png"
-              alt="Sleeper logo"
-              className="w-6 h-6 object-contain"
-            />
+            <img src="/assets/sleeper.png" alt="Sleeper logo" className="w-6 h-6 object-contain" />
             {user?.sleeper_username && (
-              <h2 className="text-xl font-bold text-gray-900">
-                {user.sleeper_username}
-              </h2>
+              <h2 className="text-xl font-bold text-gray-900">{user.sleeper_username}</h2>
             )}
           </div>
           <div className="flex flex-col gap-4">
@@ -173,16 +167,12 @@ export default function Leagues() {
           {isLoadingLeagues && (
             <div className="flex items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-3 border-red-600 border-t-transparent"></div>
-              <span className="ml-3 text-sm text-gray-600 font-medium">
-                Loading leagues...
-              </span>
+              <span className="ml-3 text-sm text-gray-600 font-medium">Loading leagues...</span>
             </div>
           )}
           {selectedLeagues.length === 0 && !isLoadingLeagues && (
             <div className="flex flex-col w-full items-center justify-center py-12 px-6">
-              <h3 className="text-2xl font-bold text-red-500 mb-3">
-                No Leagues Found
-              </h3>
+              <h3 className="text-2xl font-bold text-red-500 mb-3">No Leagues Found</h3>
             </div>
           )}
           <div className="grid gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 mb-8">
@@ -199,9 +189,7 @@ export default function Leagues() {
                       </div>
                       <div className="text-sm text-gray-600 mt-1 font-medium">
                         {league.rosters || 0} teams
-                        <span className="ml-2 text-gray-500">
-                          | {league.season}
-                        </span>
+                        <span className="ml-2 text-gray-500">| {league.season}</span>
                         <span className="ml-2 text-gray-500">| Sleeper</span>
                       </div>
                     </div>

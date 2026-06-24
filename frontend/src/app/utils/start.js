@@ -2,14 +2,11 @@ const backend_url = process.env.NEXT_PUBLIC_API_URL;
 
 const startSit = async (leagueid) => {
   try {
-    const res = await fetch(
-      `${backend_url}/recommendations/lineup/${leagueid}`,
-      {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-      }
-    );
+    const res = await fetch(`${backend_url}/recommendations/lineup/${leagueid}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+    });
 
     if (!res.ok) {
       console.error("Start/Sit API error:", res.status);

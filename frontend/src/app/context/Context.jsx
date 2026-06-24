@@ -114,9 +114,7 @@ export function SeasonProvider({ children }) {
     fetchRound();
   }, []);
   return (
-    <SeasonContext.Provider
-      value={{ season, setSeason, week, setWeek, seasonType, setSeasonType }}
-    >
+    <SeasonContext.Provider value={{ season, setSeason, week, setWeek, seasonType, setSeasonType }}>
       {children}
     </SeasonContext.Provider>
   );
@@ -169,8 +167,7 @@ export function useTransactions() {
 const TrendingPlayersContext = createContext();
 export function TrendingProvider({ children }) {
   const [trendingPlayers, setTrendingPlayers] = useState([]);
-  const [isLoadingTrendingPlayers, setIsLoadingTrendingPlayers] =
-    useState(false);
+  const [isLoadingTrendingPlayers, setIsLoadingTrendingPlayers] = useState(false);
   useEffect(() => {
     const handleFetchTrendingPlayers = async () => {
       try {

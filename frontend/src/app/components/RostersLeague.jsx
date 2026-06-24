@@ -22,9 +22,7 @@ export default function Rosters({
             className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
           >
             <span className="text-gray-500 transition-transform">
-              {selectedRoster?.username ||
-                selectedRoster?.owner_id ||
-                "Select Roster"}
+              {selectedRoster?.username || selectedRoster?.owner_id || "Select Roster"}
             </span>
             <ChevronDown
               className={`w-4 h-4 text-gray-700 transition-transform ${
@@ -47,9 +45,7 @@ export default function Rosters({
                     </button>
                   ))
                 ) : (
-                  <div className="px-4 py-2 text-gray-500 text-sm">
-                    No other rosters found
-                  </div>
+                  <div className="px-4 py-2 text-gray-500 text-sm">No other rosters found</div>
                 )}
               </div>
             </div>
@@ -57,10 +53,7 @@ export default function Rosters({
         </div>
 
         {isDropdownOpen && (
-          <div
-            className="fixed inset-0 z-0"
-            onClick={() => setIsDropdownOpen(false)}
-          />
+          <div className="fixed inset-0 z-0" onClick={() => setIsDropdownOpen(false)} />
         )}
       </div>
       <div className="flex flex-row gap-8">
@@ -81,10 +74,8 @@ export default function Rosters({
               "No Record Data"
             ) : (
               <>
-                Record: {selectedRoster?.settings.wins} -{" "}
-                {selectedRoster?.settings.losses}
-                {selectedRoster?.settings.ties !== 0 &&
-                  ` - ${selectedRoster?.settings.ties}`}
+                Record: {selectedRoster?.settings.wins} - {selectedRoster?.settings.losses}
+                {selectedRoster?.settings.ties !== 0 && ` - ${selectedRoster?.settings.ties}`}
               </>
             )}
           </div>
@@ -95,12 +86,9 @@ export default function Rosters({
               <h3 className="text-lg font-semibold text-gray-900">Starters</h3>
             </div>
             <div className="space-y-2">
-              {!selectedRoster?.starters ||
-              selectedRoster?.starters.length === 0 ? (
+              {!selectedRoster?.starters || selectedRoster?.starters.length === 0 ? (
                 <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
-                  <span className="text-gray-500 font-medium text-lg">
-                    EMPTY
-                  </span>
+                  <span className="text-gray-500 font-medium text-lg">EMPTY</span>
                 </div>
               ) : (
                 selectedRoster?.starters.map(({ id, data }, index) =>
@@ -111,9 +99,7 @@ export default function Rosters({
                   ) : (
                     <div key={index}>
                       <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
-                        <span className="text-gray-500 font-medium text-lg">
-                          EMPTY
-                        </span>
+                        <span className="text-gray-500 font-medium text-lg">EMPTY</span>
                       </div>
                     </div>
                   )
@@ -135,33 +121,24 @@ export default function Rosters({
                 selectedRoster?.players
                   .filter(
                     (benchPlayer) =>
-                      !selectedRoster?.starters.some(
-                        (starter) => starter.id === benchPlayer.id
-                      )
+                      !selectedRoster?.starters.some((starter) => starter.id === benchPlayer.id)
                   )
                   .map((benchPlayer, index) =>
                     benchPlayer.data ? (
                       <div key={benchPlayer.id || index}>
-                        <PlayerCard
-                          key={benchPlayer.data.id || index}
-                          player={benchPlayer.data}
-                        />
+                        <PlayerCard key={benchPlayer.data.id || index} player={benchPlayer.data} />
                       </div>
                     ) : (
                       <div key={benchPlayer.id || index}>
                         <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
-                          <span className="text-gray-500 font-medium text-lg">
-                            EMPTY
-                          </span>
+                          <span className="text-gray-500 font-medium text-lg">EMPTY</span>
                         </div>
                       </div>
                     )
                   )
               ) : (
                 <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
-                  <span className="text-gray-500 font-medium text-lg">
-                    EMPTY
-                  </span>
+                  <span className="text-gray-500 font-medium text-lg">EMPTY</span>
                 </div>
               )}
             </div>

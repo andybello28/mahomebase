@@ -28,13 +28,11 @@ export default function Trades() {
   const [receivedPlayers, setReceivedPlayers] = useState([]);
   const [tradedPlayers, setTradedPlayers] = useState([]);
 
-  const starters =
-    league?.roster_positions?.filter((pos) => pos !== "BN") || [];
-  const benchCount =
-    league?.roster_positions?.filter((pos) => pos === "BN").length || 0;
+  const starters = league?.roster_positions?.filter((pos) => pos !== "BN") || [];
+  const benchCount = league?.roster_positions?.filter((pos) => pos === "BN").length || 0;
 
-  const filteredScoring = Object.entries(league?.scoring_settings || {}).filter(
-    ([key]) => key.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredScoring = Object.entries(league?.scoring_settings || {}).filter(([key]) =>
+    key.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleRosterSelect = (roster) => {
@@ -48,10 +46,7 @@ export default function Trades() {
     setIsGeneratingTrade(true);
 
     try {
-      const data = await generateTrade(
-        league.league_id,
-        selectedRoster.owner_id
-      );
+      const data = await generateTrade(league.league_id, selectedRoster.owner_id);
       setTradeResult(data);
       const playersReceived = await Promise.all(
         data.output.players_received.map((p) => getPlayer(p.id))
@@ -92,11 +87,7 @@ export default function Trades() {
     <>
       <Navbar />
       <div className="flex flex-col justify-center items-center gap-6">
-        {league && (
-          <div className="text-lg font-semibold text-gray-900">
-            {league.name}
-          </div>
-        )}
+        {league && <div className="text-lg font-semibold text-gray-900">{league.name}</div>}
         <div className="flex justify-center">
           <div className="flex flex-row gap-4">
             <button
@@ -114,11 +105,7 @@ export default function Trades() {
                 disabled={isGeneratingTrade || !selectedRoster}
                 className="mb-6 px-8 py-3 text-sm font-semibold text-black bg-white rounded-xl transition-all duration-300 hover:bg-red-50 hover:border-red-300 hover:text-red-700 shadow-sm hover:shadow-md"
               >
-                {isGeneratingTrade ? (
-                  <DynamicLoadingText />
-                ) : (
-                  "Get trade advice"
-                )}
+                {isGeneratingTrade ? <DynamicLoadingText /> : "Get trade advice"}
               </button>
             </div>
           </div>
@@ -128,9 +115,7 @@ export default function Trades() {
       {isLoadingRosters && (
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-3 border-red-600 border-t-transparent"></div>
-          <span className="ml-3 text-sm text-gray-600 font-medium">
-            Loading league rosters...
-          </span>
+          <span className="ml-3 text-sm text-gray-600 font-medium">Loading league rosters...</span>
         </div>
       )}
 
@@ -153,13 +138,9 @@ export default function Trades() {
                     <div className="border-b border-gray-200 pb-2 mb-4">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-8 h-8 bg-green-500 rounded-full">
-                          <span className="text-white font-bold text-sm">
-                            ↑
-                          </span>
+                          <span className="text-white font-bold text-sm">↑</span>
                         </div>
-                        <h4 className="text-lg font-semibold text-gray-900">
-                          You Receive
-                        </h4>
+                        <h4 className="text-lg font-semibold text-gray-900">You Receive</h4>
                       </div>
                     </div>
 
@@ -180,13 +161,9 @@ export default function Trades() {
                     <div className="border-b border-gray-200 pb-2 mb-4">
                       <div className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-8 h-8 bg-red-500 rounded-full">
-                          <span className="text-white font-bold text-sm">
-                            ↓
-                          </span>
+                          <span className="text-white font-bold text-sm">↓</span>
                         </div>
-                        <h4 className="text-lg font-semibold text-gray-900">
-                          You Give Up
-                        </h4>
+                        <h4 className="text-lg font-semibold text-gray-900">You Give Up</h4>
                       </div>
                     </div>
 
@@ -223,9 +200,7 @@ export default function Trades() {
                           />
                         </svg>
                       </div>
-                      <h5 className="text-lg font-semibold text-gray-900">
-                        Analysis
-                      </h5>
+                      <h5 className="text-lg font-semibold text-gray-900">Analysis</h5>
                     </div>
                   </div>
                   <div className="rounded-xl bg-gray-50 p-6 transition-all duration-300">

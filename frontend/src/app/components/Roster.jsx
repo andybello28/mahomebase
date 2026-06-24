@@ -40,9 +40,7 @@ export default function Rosters({ roster, starters }) {
                 ) : (
                   <div key={index}>
                     <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
-                      <span className="text-gray-500 font-medium text-lg">
-                        EMPTY
-                      </span>
+                      <span className="text-gray-500 font-medium text-lg">EMPTY</span>
                     </div>
                   </div>
                 )
@@ -63,25 +61,17 @@ export default function Rosters({ roster, starters }) {
             {roster.players && roster.players.length > 0 ? (
               roster.players
                 .filter(
-                  (benchPlayer) =>
-                    !roster.starters.some(
-                      (starter) => starter.id === benchPlayer.id
-                    )
+                  (benchPlayer) => !roster.starters.some((starter) => starter.id === benchPlayer.id)
                 )
                 .map((benchPlayer, index) =>
                   benchPlayer.data ? (
                     <div key={benchPlayer.id || index}>
-                      <PlayerCard
-                        key={benchPlayer.data.id || index}
-                        player={benchPlayer.data}
-                      />
+                      <PlayerCard key={benchPlayer.data.id || index} player={benchPlayer.data} />
                     </div>
                   ) : (
                     <div key={benchPlayer.id || index}>
                       <div className="p-5 rounded-xl bg-gray-50 transition-all duration-300 cursor-pointer flex items-center justify-center">
-                        <span className="text-gray-500 font-medium text-lg">
-                          EMPTY
-                        </span>
+                        <span className="text-gray-500 font-medium text-lg">EMPTY</span>
                       </div>
                     </div>
                   )

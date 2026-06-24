@@ -27,13 +27,11 @@ export default function Trades() {
   const [isGeneratingAdvice, setIsGeneratingAdvice] = useState(false);
   const [swaps, setSwaps] = useState([]);
 
-  const starters =
-    league?.roster_positions?.filter((pos) => pos !== "BN") || [];
-  const benchCount =
-    league?.roster_positions?.filter((pos) => pos === "BN").length || 0;
+  const starters = league?.roster_positions?.filter((pos) => pos !== "BN") || [];
+  const benchCount = league?.roster_positions?.filter((pos) => pos === "BN").length || 0;
 
-  const filteredScoring = Object.entries(league?.scoring_settings || {}).filter(
-    ([key]) => key.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredScoring = Object.entries(league?.scoring_settings || {}).filter(([key]) =>
+    key.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleRosterSelect = (roster) => {
@@ -90,11 +88,7 @@ export default function Trades() {
     <div className="px-6">
       <Navbar />
       <div className="flex flex-col justify-center items-center gap-6">
-        {league && (
-          <div className="text-lg font-semibold text-gray-900">
-            {league.name}
-          </div>
-        )}
+        {league && <div className="text-lg font-semibold text-gray-900">{league.name}</div>}
         <div className="flex justify-center">
           <div className="flex flex-row gap-4">
             <button
@@ -112,11 +106,7 @@ export default function Trades() {
                 disabled={isGeneratingAdvice}
                 className="mb-6 px-7 py-3 text-sm font-semibold text-black bg-white rounded-xl transition-all duration-300 hover:bg-red-50 hover:border-red-300 hover:text-red-700 shadow-sm hover:shadow-md"
               >
-                {isGeneratingAdvice ? (
-                  <DynamicLoadingText />
-                ) : (
-                  "Get start-sit advice"
-                )}
+                {isGeneratingAdvice ? <DynamicLoadingText /> : "Get start-sit advice"}
               </button>
             </div>
           </div>
@@ -126,9 +116,7 @@ export default function Trades() {
       {isLoadingRosters && (
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-3 border-red-600 border-t-transparent"></div>
-          <span className="ml-3 text-sm text-gray-600 font-medium">
-            Loading your roster...
-          </span>
+          <span className="ml-3 text-sm text-gray-600 font-medium">Loading your roster...</span>
         </div>
       )}
 
@@ -158,9 +146,7 @@ export default function Trades() {
                             <path d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" />
                           </svg>
                         </div>
-                        <h4 className="text-lg font-semibold text-gray-900">
-                          Recommended Changes
-                        </h4>
+                        <h4 className="text-lg font-semibold text-gray-900">Recommended Changes</h4>
                       </div>
                     </div>
 
@@ -177,9 +163,7 @@ export default function Trades() {
                               {/* Player Should Start (currently on bench) */}
                               <div className="col-span-2 flex items-center gap-3">
                                 <div className="flex items-center justify-center w-8 h-8 bg-green-500 rounded-full">
-                                  <span className="text-white font-bold text-sm">
-                                    ↑
-                                  </span>
+                                  <span className="text-white font-bold text-sm">↑</span>
                                 </div>
                                 <div className="flex-1">
                                   <div className="text-xs text-green-700 font-semibold uppercase tracking-wide mb-2">
@@ -211,9 +195,7 @@ export default function Trades() {
                               {/* Player Should Be Benched (currently starting) */}
                               <div className="col-span-2 flex items-center gap-3">
                                 <div className="flex items-center justify-center w-8 h-8 bg-red-500 rounded-full">
-                                  <span className="text-white font-bold text-sm">
-                                    ↓
-                                  </span>
+                                  <span className="text-white font-bold text-sm">↓</span>
                                 </div>
                                 <div className="flex-1">
                                   <div className="text-xs text-red-700 font-semibold uppercase tracking-wide mb-2">
@@ -246,9 +228,7 @@ export default function Trades() {
                             />
                           </svg>
                         </div>
-                        <h4 className="text-lg font-semibold text-gray-900">
-                          Lineup Status
-                        </h4>
+                        <h4 className="text-lg font-semibold text-gray-900">Lineup Status</h4>
                       </div>
                     </div>
 
@@ -300,9 +280,7 @@ export default function Trades() {
                           />
                         </svg>
                       </div>
-                      <h5 className="text-lg font-semibold text-gray-900">
-                        Analysis
-                      </h5>
+                      <h5 className="text-lg font-semibold text-gray-900">Analysis</h5>
                     </div>
                   </div>
                   <div className="rounded-xl bg-gray-50 p-6 transition-all duration-300">

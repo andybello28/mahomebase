@@ -39,9 +39,7 @@ export default function PlayerCard({ player }) {
           {player?.age && (
             <div className="flex items-center gap-1">
               <span className="text-xs text-gray-500">Age:</span>
-              <span className="text-sm font-medium text-gray-800">
-                {player?.age}
-              </span>
+              <span className="text-sm font-medium text-gray-800">{player?.age}</span>
             </div>
           )}
         </div>
@@ -51,8 +49,8 @@ export default function PlayerCard({ player }) {
             {player?.years_exp == null
               ? ""
               : player?.years_exp === 0
-              ? "Rookie"
-              : `${player?.years_exp} yr${player?.years_exp > 1 ? "s" : ""}`}
+                ? "Rookie"
+                : `${player?.years_exp} yr${player?.years_exp > 1 ? "s" : ""}`}
           </div>
           <div
             className={`w-2.5 h-2.5 rounded-full ${

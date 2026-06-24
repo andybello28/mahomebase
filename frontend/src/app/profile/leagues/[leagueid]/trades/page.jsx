@@ -39,8 +39,7 @@ export default function LeaguePageWrapper() {
             Page not found
           </h1>
           <p className="mt-6 text-lg text-pretty text-gray-600 sm:text-xl">
-            Looks like this play didn't work out. Let's get you back to your
-            championship strategy.
+            Looks like this play didn't work out. Let's get you back to your championship strategy.
           </p>
           <div className="mt-10 flex items-center justify-center gap-x-6">
             <a

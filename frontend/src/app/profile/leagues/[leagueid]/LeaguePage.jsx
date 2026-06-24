@@ -19,13 +19,11 @@ export default function LeaguePage() {
   const [otherRosters, setOtherRosters] = useState([]);
   const [isLoadingRosters, setIsLoadingRosters] = useState(true);
 
-  const starters =
-    league?.roster_positions?.filter((pos) => pos !== "BN") || [];
-  const benchCount =
-    league?.roster_positions?.filter((pos) => pos === "BN").length || 0;
+  const starters = league?.roster_positions?.filter((pos) => pos !== "BN") || [];
+  const benchCount = league?.roster_positions?.filter((pos) => pos === "BN").length || 0;
 
-  const filteredScoring = Object.entries(league?.scoring_settings || {}).filter(
-    ([key]) => key.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredScoring = Object.entries(league?.scoring_settings || {}).filter(([key]) =>
+    key.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleRosterSelect = (roster) => {
@@ -78,9 +76,7 @@ export default function LeaguePage() {
               </div>
               <div className="text-right">
                 <div className="text-xs text-gray-500">Season</div>
-                <div className="text-lg font-semibold text-gray-900">
-                  {league.season}
-                </div>
+                <div className="text-lg font-semibold text-gray-900">{league.season}</div>
               </div>
             </div>
           </div>
@@ -89,15 +85,11 @@ export default function LeaguePage() {
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-center">
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-sm text-gray-600 mb-2">Teams</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {league.rosters}
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{league.rosters}</p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-sm text-gray-600 mb-2">Starters</p>
-                <p className="text-2xl font-bold text-gray-900">
-                  {starters.length}
-                </p>
+                <p className="text-2xl font-bold text-gray-900">{starters.length}</p>
               </div>
               <div className="bg-gray-50 rounded-xl p-4">
                 <p className="text-sm text-gray-600 mb-2">Bench Spots</p>
@@ -107,9 +99,7 @@ export default function LeaguePage() {
 
             <div>
               <div className="border-b border-gray-200 pb-2 mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">
-                  Starter Positions
-                </h3>
+                <h3 className="text-lg font-semibold text-gray-900">Starter Positions</h3>
               </div>
 
               <div className="flex flex-wrap gap-2">
@@ -138,9 +128,7 @@ export default function LeaguePage() {
       {isLoadingRosters && (
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-3 border-red-600 border-t-transparent"></div>
-          <span className="ml-3 text-sm text-gray-600 font-medium">
-            Loading league rosters...
-          </span>
+          <span className="ml-3 text-sm text-gray-600 font-medium">Loading league rosters...</span>
         </div>
       )}
       {!isLoadingRosters && (

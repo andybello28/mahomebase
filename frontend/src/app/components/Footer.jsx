@@ -16,8 +16,7 @@ export default function Footer() {
 
       <div className="max-w-6xl mx-auto px-4 text-center">
         <p className="text-gray-500 text-base md:text-lg font-medium">
-          © 2025 <span className="font-semibold">Mahomebase</span>. Built for
-          champions.
+          © 2025 <span className="font-semibold">Mahomebase</span>. Built for champions.
         </p>
       </div>
     </footer>

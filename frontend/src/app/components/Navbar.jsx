@@ -123,9 +123,7 @@ export default function Navbar() {
                 height={45}
                 className="rounded-xl"
               />
-              <span className="text-gray-900 font-bold text-xl tracking-tight">
-                Mahomebase
-              </span>
+              <span className="text-gray-900 font-bold text-xl tracking-tight">Mahomebase</span>
             </div>
           </div>
         </div>

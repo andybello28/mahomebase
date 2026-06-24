@@ -34,16 +34,13 @@ const updateLeagues = async (googleId) => {
 
 const getLeague = async (googleId, leagueId) => {
   try {
-    const res = await fetch(
-      `${backend_url}/users/${googleId}/leagues/${leagueId}`,
-      {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      }
-    );
+    const res = await fetch(`${backend_url}/users/${googleId}/leagues/${leagueId}`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
     const league = res.json();
     return league;
   } catch (error) {
@@ -54,16 +51,13 @@ const getLeague = async (googleId, leagueId) => {
 
 const addLeague = async (googleId, leagueId) => {
   try {
-    const res = await fetch(
-      `${backend_url}/users/${googleId}/leagues/${leagueId}`,
-      {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      }
-    );
+    const res = await fetch(`${backend_url}/users/${googleId}/leagues/${leagueId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
     const message = await res.json();
     return message;
   } catch (error) {
@@ -74,16 +68,13 @@ const addLeague = async (googleId, leagueId) => {
 
 const deleteLeague = async (googleId, leagueId) => {
   try {
-    const res = await fetch(
-      `${backend_url}/users/${googleId}/leagues/${leagueId}`,
-      {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-      }
-    );
+    const res = await fetch(`${backend_url}/users/${googleId}/leagues/${leagueId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      credentials: "include",
+    });
     if (!res.ok) {
       const errorData = await res.json();
       throw new Error(errorData.error || "Failed to delete league");

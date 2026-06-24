@@ -16,9 +16,7 @@ const DynamicLoadingText = ({ className = "" }) => {
       setIsVisible(false);
 
       setTimeout(() => {
-        setCurrentMessageIndex(
-          (prevIndex) => (prevIndex + 1) % loadingMessages.length
-        );
+        setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % loadingMessages.length);
         setIsVisible(true);
       }, 300);
     }, 2500);
@@ -50,19 +48,14 @@ export const DynamicLoadingTextInstant = ({ className = "" }) => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setCurrentMessageIndex(
-        (prevIndex) => (prevIndex + 1) % loadingMessages.length
-      );
+      setCurrentMessageIndex((prevIndex) => (prevIndex + 1) % loadingMessages.length);
     }, 2000);
 
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <span
-      className={className}
-      style={{ minWidth: "200px", display: "inline-block" }}
-    >
+    <span className={className} style={{ minWidth: "200px", display: "inline-block" }}>
       {loadingMessages[currentMessageIndex]}
     </span>
   );

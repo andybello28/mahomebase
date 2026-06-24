@@ -34,19 +34,11 @@ export default function Profile() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const {
-    user,
-    setUser,
-    setSleeperUsername,
-    sleeperId,
-    setSleeperId,
-    isLoadingUser,
-  } = useUser();
+  const { user, setUser, setSleeperUsername, sleeperId, setSleeperId, isLoadingUser } = useUser();
 
   const { allLeagues, isLoadingLeagues } = useLeagues();
   const { season, week, seasonType } = useSeason();
-  const { transactions, setTransactions, isLoadingTransactions } =
-    useTransactions();
+  const { transactions, setTransactions, isLoadingTransactions } = useTransactions();
   const { trendingPlayers, isLoadingTrendingPlayers } = useTrendingPlayers();
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -200,9 +192,7 @@ export default function Profile() {
             <div className="flex flex-col gap-8">
               <div className="bg-[#ffffff] rounded-2xl p-8 transition-all duration-300">
                 <div className="text-center items-center justify-start space-y-6">
-                  <h2 className="text-3xl font-extrabold text-black mb-2">
-                    Welcome {user.name}!
-                  </h2>
+                  <h2 className="text-3xl font-extrabold text-black mb-2">Welcome {user.name}!</h2>
 
                   {!user.sleeper_username && (
                     <>
@@ -228,9 +218,7 @@ export default function Profile() {
                             type="text"
                             value={inputSleeperUsername}
                             placeholder="Enter Sleeper Username"
-                            onChange={(e) =>
-                              setInputSleeperUsername(e.target.value)
-                            }
+                            onChange={(e) => setInputSleeperUsername(e.target.value)}
                             aria-label="Sleeper"
                             className="w-full px-4 py-3 text-black placeholder-gray-400 bg-white border border-gray-300 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-red-500 transition-all duration-300"
                           />
@@ -289,18 +277,18 @@ export default function Profile() {
 
               <div className="md:col-span-2 bg-[#ffffff] rounded-2xl p-8 transition-all duration-300">
                 <div className="text-center space-y-6">
-                  <h2 className="text-3xl font-extrabold text-black mb-2">
-                    My Leagues
-                  </h2>
+                  <h2 className="text-3xl font-extrabold text-black mb-2">My Leagues</h2>
 
                   {user.sleeper_username && (
                     <>
                       <h3 className="text-xl font-bold bg-gradient-to-r from-red-500 to-red-600 bg-clip-text text-transparent mb-2">
-                        {seasonType === "regular" && <>Week {week} {season}</>}
-                        {seasonType === "pre" && <>Preseason {season}</>}
-                        {(seasonType === "post" || seasonType === "off") && (
-                          <>{season} Offseason</>
+                        {seasonType === "regular" && (
+                          <>
+                            Week {week} {season}
+                          </>
                         )}
+                        {seasonType === "pre" && <>Preseason {season}</>}
+                        {(seasonType === "post" || seasonType === "off") && <>{season} Offseason</>}
                       </h3>
 
                       {isLoadingLeagues && (
@@ -340,8 +328,7 @@ export default function Profile() {
                                   {league.name || `League ${index + 1}`}
                                 </div>
                                 <div className="text-sm text-gray-600">
-                                  {league.rosters || 0} teams | {league.season}{" "}
-                                  | Sleeper
+                                  {league.rosters || 0} teams | {league.season} | Sleeper
                                 </div>
                               </div>
                             ))}
@@ -350,9 +337,7 @@ export default function Profile() {
                       )}
 
                       {!isLoadingLeagues && leagues.length === 0 && (
-                        <div className="text-gray-600 py-8 italic">
-                          No leagues found
-                        </div>
+                        <div className="text-gray-600 py-8 italic">No leagues found</div>
                       )}
                     </>
                   )}
@@ -385,49 +370,39 @@ export default function Profile() {
                         </div>
                       )}
 
-                      {!isLoadingTrendingPlayers &&
-                        trendingPlayers.length > 0 && (
-                          <div className="space-y-6 max-h-96 overflow-y-auto">
-                            {trendingPlayers
-                              .filter(
-                                (player) =>
-                                  player?.first_name && player?.last_name
-                              )
-                              .map((player, index) => (
-                                <PlayerCard
-                                  key={player.id || index}
-                                  player={player}
-                                />
-                              ))}
-                          </div>
-                        )}
+                      {!isLoadingTrendingPlayers && trendingPlayers.length > 0 && (
+                        <div className="space-y-6 max-h-96 overflow-y-auto">
+                          {trendingPlayers
+                            .filter((player) => player?.first_name && player?.last_name)
+                            .map((player, index) => (
+                              <PlayerCard key={player.id || index} player={player} />
+                            ))}
+                        </div>
+                      )}
 
-                      {!isLoadingTrendingPlayers &&
-                        trendingPlayers.length === 0 && (
-                          <div className="flex flex-col items-center justify-center py-16 text-center">
-                            <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-6">
-                              <svg
-                                className="w-8 h-8 text-red-600"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24"
-                              >
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-                                />
-                              </svg>
-                            </div>
-                            <p className="text-lg font-semibold text-gray-900 mb-3">
-                              No trending players
-                            </p>
-                            <p className="text-sm text-gray-600">
-                              Trending players will appear here
-                            </p>
+                      {!isLoadingTrendingPlayers && trendingPlayers.length === 0 && (
+                        <div className="flex flex-col items-center justify-center py-16 text-center">
+                          <div className="w-16 h-16 rounded-full bg-red-100 flex items-center justify-center mb-6">
+                            <svg
+                              className="w-8 h-8 text-red-600"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                              />
+                            </svg>
                           </div>
-                        )}
+                          <p className="text-lg font-semibold text-gray-900 mb-3">
+                            No trending players
+                          </p>
+                          <p className="text-sm text-gray-600">Trending players will appear here</p>
+                        </div>
+                      )}
                     </>
                   )}
 
@@ -449,11 +424,13 @@ export default function Profile() {
                   {user.sleeper_username && (
                     <>
                       <h3 className="mb-2 text-xl font-bold bg-gradient-to-r from-red-600 to-red-700 bg-clip-text text-transparent">
-                        {seasonType === "regular" && <>Week {week} {season}</>}
-                        {seasonType === "pre" && <>Preseason {season}</>}
-                        {(seasonType === "post" || seasonType === "off") && (
-                          <>{season} Offseason</>
+                        {seasonType === "regular" && (
+                          <>
+                            Week {week} {season}
+                          </>
                         )}
+                        {seasonType === "pre" && <>Preseason {season}</>}
+                        {(seasonType === "post" || seasonType === "off") && <>{season} Offseason</>}
                       </h3>
 
                       {isLoadingLeagues && (
@@ -484,61 +461,45 @@ export default function Profile() {
                                         tx.type === "free_agent"
                                           ? "bg-gray-100 text-gray-700"
                                           : tx.type === "waiver"
-                                          ? "bg-gray-100 text-gray-700"
-                                          : tx.type === "trade"
-                                          ? "bg-gray-100 text-gray-700"
-                                          : "bg-gray-100 text-gray-700"
+                                            ? "bg-gray-100 text-gray-700"
+                                            : tx.type === "trade"
+                                              ? "bg-gray-100 text-gray-700"
+                                              : "bg-gray-100 text-gray-700"
                                       }`}
                                     >
-                                      {tx.type === "free_agent"
-                                        ? "free agent"
-                                        : tx.type}
+                                      {tx.type === "free_agent" ? "free agent" : tx.type}
                                     </span>
                                   </div>
                                   <span className="text-xs text-gray-500">
                                     {tx.status_updated
-                                      ? new Date(
-                                          tx.status_updated
-                                        ).toLocaleString()
+                                      ? new Date(tx.status_updated).toLocaleString()
                                       : "Unknown"}
                                   </span>
                                 </div>
 
-                                {(tx.type === "free_agent" ||
-                                  tx.type === "waiver") && (
+                                {(tx.type === "free_agent" || tx.type === "waiver") && (
                                   <>
                                     {tx.adds && (
                                       <div className="mb-2">
                                         <div className="space-y-1">
-                                          {Object.entries(tx.adds).map(
-                                            ([playerId], index) => {
-                                              const playerObj = Array.isArray(
-                                                fetchedPlayers
-                                              )
-                                                ? fetchedPlayers.find(
-                                                    (p) =>
-                                                      p.playerId === playerId
-                                                  )
-                                                : null;
+                                          {Object.entries(tx.adds).map(([playerId], index) => {
+                                            const playerObj = Array.isArray(fetchedPlayers)
+                                              ? fetchedPlayers.find((p) => p.playerId === playerId)
+                                              : null;
 
-                                              return (
-                                                <div key={playerId}>
-                                                  <div className="flex flex-row items-center">
-                                                    <p className="text-sm font-semibold text-green-700 mb-1 mr-2">
-                                                      <IoIosAddCircleOutline className="bg-green" />
-                                                    </p>
-                                                    <div className="flex-1">
-                                                      <PlayerCard
-                                                        player={
-                                                          playerObj.playerData
-                                                        }
-                                                      />
-                                                    </div>
+                                            return (
+                                              <div key={playerId}>
+                                                <div className="flex flex-row items-center">
+                                                  <p className="text-sm font-semibold text-green-700 mb-1 mr-2">
+                                                    <IoIosAddCircleOutline className="bg-green" />
+                                                  </p>
+                                                  <div className="flex-1">
+                                                    <PlayerCard player={playerObj.playerData} />
                                                   </div>
                                                 </div>
-                                              );
-                                            }
-                                          )}
+                                              </div>
+                                            );
+                                          })}
                                         </div>
                                       </div>
                                     )}
@@ -546,38 +507,24 @@ export default function Profile() {
                                     {tx.drops && (
                                       <div className="mb-2">
                                         <div className="space-y-1">
-                                          {Object.entries(tx.drops).map(
-                                            ([playerId]) => {
-                                              const playerObj = Array.isArray(
-                                                fetchedPlayers
-                                              )
-                                                ? fetchedPlayers.find(
-                                                    (p) =>
-                                                      p.playerId === playerId
-                                                  )
-                                                : null;
+                                          {Object.entries(tx.drops).map(([playerId]) => {
+                                            const playerObj = Array.isArray(fetchedPlayers)
+                                              ? fetchedPlayers.find((p) => p.playerId === playerId)
+                                              : null;
 
-                                              return (
-                                                <div key={playerId}>
-                                                  <div className="flex flex-row items-center">
-                                                    <p className="text-sm font-semibold text-red-700 mb-1 mr-2">
-                                                      <IoIosCloseCircle className="bg-red" />
-                                                    </p>
-                                                    <div
-                                                      key={playerId}
-                                                      className="flex-1"
-                                                    >
-                                                      <PlayerCard
-                                                        player={
-                                                          playerObj.playerData
-                                                        }
-                                                      />
-                                                    </div>
+                                            return (
+                                              <div key={playerId}>
+                                                <div className="flex flex-row items-center">
+                                                  <p className="text-sm font-semibold text-red-700 mb-1 mr-2">
+                                                    <IoIosCloseCircle className="bg-red" />
+                                                  </p>
+                                                  <div key={playerId} className="flex-1">
+                                                    <PlayerCard player={playerObj.playerData} />
                                                   </div>
                                                 </div>
-                                              );
-                                            }
-                                          )}
+                                              </div>
+                                            );
+                                          })}
                                         </div>
                                       </div>
                                     )}
@@ -592,21 +539,13 @@ export default function Profile() {
                                           {Object.entries(tx.adds)
                                             .filter(([playerId, rosterId]) => {
                                               const roster =
-                                                tx.league_data?.roster_data?.[
-                                                  rosterId - 1
-                                                ];
-                                              return (
-                                                roster?.owner_id ===
-                                                user?.sleeper_id
-                                              );
+                                                tx.league_data?.roster_data?.[rosterId - 1];
+                                              return roster?.owner_id === user?.sleeper_id;
                                             })
                                             .map(([playerId, rosterId]) => {
-                                              const playerObj = Array.isArray(
-                                                fetchedPlayers
-                                              )
+                                              const playerObj = Array.isArray(fetchedPlayers)
                                                 ? fetchedPlayers.find(
-                                                    (p) =>
-                                                      p.playerId === playerId
+                                                    (p) => p.playerId === playerId
                                                   )
                                                 : null;
 
@@ -617,11 +556,7 @@ export default function Profile() {
                                                       <IoIosAddCircleOutline className="bg-green" />
                                                     </p>
                                                     <div className="flex-1">
-                                                      <PlayerCard
-                                                        player={
-                                                          playerObj.playerData
-                                                        }
-                                                      />
+                                                      <PlayerCard player={playerObj.playerData} />
                                                     </div>
                                                   </div>
                                                 </div>
@@ -637,21 +572,13 @@ export default function Profile() {
                                           {Object.entries(tx.drops)
                                             .filter(([playerId, rosterId]) => {
                                               const roster =
-                                                tx.league_data?.roster_data?.[
-                                                  rosterId - 1
-                                                ];
-                                              return (
-                                                roster?.owner_id ===
-                                                user.sleeper_id
-                                              );
+                                                tx.league_data?.roster_data?.[rosterId - 1];
+                                              return roster?.owner_id === user.sleeper_id;
                                             })
                                             .map(([playerId, rosterId]) => {
-                                              const playerObj = Array.isArray(
-                                                fetchedPlayers
-                                              )
+                                              const playerObj = Array.isArray(fetchedPlayers)
                                                 ? fetchedPlayers.find(
-                                                    (p) =>
-                                                      p.playerId === playerId
+                                                    (p) => p.playerId === playerId
                                                   )
                                                 : null;
 
@@ -661,15 +588,8 @@ export default function Profile() {
                                                     <p className="text-sm font-semibold text-red-700 mb-1 mr-2">
                                                       <IoIosCloseCircle />
                                                     </p>
-                                                    <div
-                                                      key={playerId}
-                                                      className="flex-1"
-                                                    >
-                                                      <PlayerCard
-                                                        player={
-                                                          playerObj.playerData
-                                                        }
-                                                      />
+                                                    <div key={playerId} className="flex-1">
+                                                      <PlayerCard player={playerObj.playerData} />
                                                     </div>
                                                   </div>
                                                 </div>
@@ -681,37 +601,22 @@ export default function Profile() {
 
                                     <div className="mb-2">
                                       {tx.draft_picks.map((pick, index) => {
-                                        const acquired =
-                                          pick.owner_id === user.sleeper_id;
-                                        const gaveUp =
-                                          pick.previous_owner_id ===
-                                          user.sleeper_id;
+                                        const acquired = pick.owner_id === user.sleeper_id;
+                                        const gaveUp = pick.previous_owner_id === user.sleeper_id;
 
                                         if (acquired) {
                                           return (
-                                            <p
-                                              key={index}
-                                              className="text-sm text-green-700"
-                                            >
-                                              <span className="font-semibold">
-                                                Acquired
-                                              </span>{" "}
-                                              Pick: Round {pick.round},{" "}
-                                              {pick.season}
+                                            <p key={index} className="text-sm text-green-700">
+                                              <span className="font-semibold">Acquired</span> Pick:
+                                              Round {pick.round}, {pick.season}
                                             </p>
                                           );
                                         }
                                         if (gaveUp) {
                                           return (
-                                            <p
-                                              key={index}
-                                              className="text-sm text-red-700"
-                                            >
-                                              <span className="font-semibold">
-                                                Gave Up
-                                              </span>{" "}
-                                              Pick: Round {pick.round},{" "}
-                                              {pick.season}
+                                            <p key={index} className="text-sm text-red-700">
+                                              <span className="font-semibold">Gave Up</span> Pick:
+                                              Round {pick.round}, {pick.season}
                                             </p>
                                           );
                                         }

@@ -21,16 +21,13 @@ export default function LoginPage() {
           </svg>
         </div>
 
-        <p className="text-base font-semibold text-red-500">
-          Authentication Required
-        </p>
+        <p className="text-base font-semibold text-red-500">Authentication Required</p>
         <h1 className="mt-4 text-4xl font-bold tracking-tight text-balance text-gray-900 sm:text-6xl lg:text-7xl">
           Please Log In
         </h1>
         <p className="mt-6 text-lg text-pretty text-gray-600 sm:text-xl max-w-2xl mx-auto">
-          You need to be logged in to access your championship strategies and
-          AI-powered insights. Connect with your account to get back in the
-          game.
+          You need to be logged in to access your championship strategies and AI-powered insights.
+          Connect with your account to get back in the game.
         </p>
 
         <div className="mt-10 space-y-6">
