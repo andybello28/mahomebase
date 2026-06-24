@@ -1,0 +1,62 @@
+- generic [ref=e1]:
+  - generic [ref=e2]:
+    - navigation [ref=e3]:
+      - generic [ref=e4]:
+        - generic:
+          - link "Leagues" [ref=e6] [cursor=pointer]:
+            - /url: /profile/leagues
+            - text: Leagues
+          - link "Mahomebase Logo" [ref=e8] [cursor=pointer]:
+            - /url: /
+            - img "Mahomebase Logo" [ref=e9]
+          - button "My Profile" [ref=e11]: My Profile
+    - generic [ref=e14]:
+      - heading "Mahomebase" [level=1] [ref=e15]
+      - heading "Your Home Base for" [level=2] [ref=e16]
+      - heading "Fantasy Football Domination" [level=2] [ref=e17]
+      - paragraph [ref=e18]:
+        - text: Updated AI-driven insights and
+        - generic [ref=e19]: championship-winning strategies
+        - text: connected right to your sleeper account. Here's to getting that ring.
+      - generic [ref=e20]:
+        - generic [ref=e21]:
+          - img [ref=e23]
+          - heading "AI-powered Analytics" [level=3] [ref=e25]
+          - paragraph [ref=e26]: Deep analysis catered directly to your team, opponents rosters, league settings, and live NFL data.
+        - generic [ref=e27]:
+          - img [ref=e29]
+          - heading "Up to Date Insights" [level=3] [ref=e31]
+          - paragraph [ref=e32]: Up to date on all your sleeper settings, league info, NFL data, and player news.
+        - generic [ref=e33]:
+          - img [ref=e35]
+          - heading "Championship Strategies" [level=3] [ref=e37]
+          - paragraph [ref=e38]: Proven methods and personalized game plans to maximize your winning potential.
+    - generic [ref=e42]:
+      - generic [ref=e43]:
+        - generic [ref=e44]: Welcome to the future of fantasy football.
+        - generic [ref=e45]: Fantasy football is hard. We find ourselves teetering back and forth between players on the waiver wire, bench, or in trades. Tired of generic advice, gut-based trades, and hours deciding who to start, we created what we always wished we had.
+        - generic [ref=e46]: More than just a tool, Mahomebase is creating an intelligent platform that transforms raw data into actionable insights for all your leagues, centralized in one place. Whether you're chasing your first championship or adding another ring to your collection, Mahomebase is designed to be your competitive edge.
+        - generic [ref=e48]:
+          - generic [ref=e49]:
+            - img "Sleeper Logo" [ref=e50]
+            - generic [ref=e51]: Available
+          - generic [ref=e52]:
+            - img "ESPN Logo" [ref=e53]
+            - generic [ref=e54]: Coming Soon...
+          - generic [ref=e55]:
+            - img "NFL Logo" [ref=e56]
+            - generic [ref=e57]: Coming Soon...
+        - generic [ref=e58]: Ready to dominate your leagues?
+        - button "Get Started Now" [active] [ref=e60]
+      - contentinfo [ref=e61]:
+        - link "Mahomebase Logo" [ref=e62] [cursor=pointer]:
+          - /url: /
+          - img "Mahomebase Logo" [ref=e63]
+        - paragraph [ref=e65]: © 2025 Mahomebase. Built for champions.
+  - region "Notifications Alt+T":
+    - alert [ref=e68]:
+      - text: Redirecting for sign in...
+      - button "close" [ref=e69] [cursor=pointer]:
+        - img [ref=e70]
+      - progressbar "notification timer" [ref=e74]
+  - alert [ref=e66]

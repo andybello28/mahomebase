@@ -1,0 +1,12 @@
+-- AlterTable: add missing columns to User
+ALTER TABLE "User"
+  ADD COLUMN IF NOT EXISTS "email" TEXT,
+  ADD COLUMN IF NOT EXISTS "name" TEXT NOT NULL DEFAULT '',
+  ADD COLUMN IF NOT EXISTS "sleeper_username" TEXT,
+  ADD COLUMN IF NOT EXISTS "sleeper_id" TEXT,
+  ADD COLUMN IF NOT EXISTS "league_ids" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+  ADD COLUMN IF NOT EXISTS "excluded_league_ids" TEXT[] NOT NULL DEFAULT ARRAY[]::TEXT[],
+  ADD COLUMN IF NOT EXISTS "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP;
+
+-- CreateIndex
+CREATE UNIQUE INDEX IF NOT EXISTS "User_email_key" ON "User"("email");

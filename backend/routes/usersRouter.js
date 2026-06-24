@@ -111,7 +111,12 @@ router.put("/:googleid/leagues", async (req, res) => {
     // Get the current NFL season from Sleeper API state
     const stateResponse = await fetch("https://api.sleeper.app/v1/state/nfl");
     const state = await stateResponse.json();
-    const currentSeason = state.season;
+    // During offseason, Sleeper increments `season` to the upcoming year but
+    // leagues still live under the previous completed season (league_season).
+    const currentSeason =
+      state.season_type === "off" || state.season_type === "post"
+        ? state.previous_season
+        : state.season;
 
     if (league_ids && league_ids.length > 0) {
       const leaguePromises = league_ids.map(async (league_id) => {
