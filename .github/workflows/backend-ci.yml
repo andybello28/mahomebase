@@ -13,7 +13,7 @@ on:
       - ".github/workflows/backend-ci.yml"
 
 jobs:
-  check:
+  ci:
     runs-on: ubuntu-latest
 
     steps:
@@ -30,6 +30,14 @@ jobs:
         run: npm ci
         working-directory: backend
 
-      - name: Syntax check
-        run: node --check $(find . -name "*.js" -not -path "./node_modules/*" -not -path "./prisma/*")
+      - name: Lint
+        run: npm run lint
+        working-directory: backend
+
+      - name: Validate Prisma schema
+        run: npx prisma validate
+        working-directory: backend
+
+      - name: Run tests
+        run: npm test
         working-directory: backend
